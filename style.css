@@ -1,59 +1,58 @@
-/* (Mantenha o CSS anterior e adicione/substitua estas partes) */
-
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 body {
     background: radial-gradient(circle at top, #1a023a, #0b0118);
     color: white; font-family: 'Inter', sans-serif;
-    display: flex; justify-content: center; margin: 0; min-height: 100vh;
+    display: flex; justify-content: center; margin: 0; min-height: 100vh; overflow-x: hidden;
 }
-.app-container { width: 100%; max-width: 420px; padding: 25px; transition: filter 0.3s; }
 
-/* ... (Estilos anteriores de Header, Card e Progress Bar permanecem iguais) ... */
+.app-container { width: 100%; max-width: 420px; padding: 25px; transition: 0.3s; }
+
+/* Header */
 .profile-header { text-align: center; margin-bottom: 25px; }
 .avatar-wrapper { position: relative; display: inline-block; }
-.avatar { width: 110px; height: 110px; border-radius: 50%; border: 3px solid #bc13fe; box-shadow: 0 0 20px rgba(188, 19, 254, 0.6); object-fit: cover; background: #222; }
-.status-dot { position: absolute; bottom: 8px; right: 8px; width: 18px; height: 18px; border-radius: 50%; border: 3px solid #0b0118; background: #444; }
-h1 { font-size: 1.8em; margin: 12px 0 5px 0; letter-spacing: -1px; }
-.activity-banner { background: rgba(188, 19, 254, 0.12); border: 1px solid rgba(188, 19, 254, 0.3); padding: 6px 16px; border-radius: 30px; font-size: 0.75em; display: inline-block; color: #e0aaff; text-transform: uppercase; font-weight: bold; }
-.glass-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 20px; text-align: center; }
+.avatar { width: 110px; height: 110px; border-radius: 50%; border: 3px solid #bc13fe; box-shadow: 0 0 20px rgba(188, 19, 254, 0.6); object-fit: cover; }
+.status-dot { position: absolute; bottom: 8px; right: 8px; width: 18px; height: 18px; border-radius: 50%; border: 3px solid #0b0118; }
+.activity-banner { background: rgba(188, 19, 254, 0.12); border: 1px solid rgba(188, 19, 254, 0.3); padding: 6px 16px; border-radius: 30px; font-size: 0.75em; display: inline-block; color: #e0aaff; font-weight: bold; }
+
+/* Cards e Finanças */
+.glass-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 20px; text-align: center; }
 #artist-saldo { color: #ffd700; font-size: 2.4em; margin: 5px 0; }
-.progress-bg { background: rgba(255,255,255,0.08); height: 10px; border-radius: 10px; overflow: hidden; margin-top: 5px;}
-.progress { height: 100%; transition: width 1s ease-in-out; }
+.fortuna-label { font-size: 0.85em; opacity: 0.7; }
+
+/* Progress Bars */
+.stat-bar { margin-top: 15px; }
+.stat-info { display: flex; justify-content: space-between; font-size: 0.65em; font-weight: bold; margin-bottom: 5px; }
+.progress-bg { background: rgba(255,255,255,0.1); height: 10px; border-radius: 5px; overflow: hidden; }
+.progress { height: 100%; transition: width 1s ease; }
 .gold { background: linear-gradient(to right, #bc13fe, #ffd700); }
 .red { background: linear-gradient(to right, #ff4b2b, #ff0000); }
+
+/* Menu Grid */
 .actions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 25px; }
-.action-btn { background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); padding: 20px; border-radius: 20px; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; }
-.icon { font-size: 1.6em; }
+.action-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); padding: 20px; border-radius: 20px; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; }
+.action-btn:active { transform: scale(0.95); background: rgba(188, 19, 254, 0.2); }
 
-/* ESTRUTURA DO MODAL */
-.modal {
+/* MODAL (JANELA) */
+.modal-overlay {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.7); display: none; /* Escondido por padrão */
-    align-items: flex-end; z-index: 100;
+    background: rgba(0,0,0,0.8); display: none; align-items: flex-end; z-index: 1000;
 }
-.modal.active { display: flex; animation: fadeIn 0.3s; }
+.modal-overlay.active { display: flex; }
 .modal-content {
-    width: 100%; border-radius: 30px 30px 0 0;
-    padding: 30px; transform: translateY(100%);
-    transition: transform 0.3s ease-out;
+    width: 100%; border-radius: 30px 30px 0 0; padding-bottom: 50px;
+    transform: translateY(100%); transition: transform 0.3s ease;
 }
-.modal.active .modal-content { transform: translateY(0); }
-
+.modal-overlay.active .modal-content { transform: translateY(0); }
 .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.close-btn { background: none; border: none; color: white; font-size: 1.5em; cursor: pointer; }
-.modal-desc { font-size: 0.9em; opacity: 0.7; margin-bottom: 20px; }
+.close-btn { background: none; border: none; color: white; font-size: 1.5rem; }
 
-/* OPÇÕES DO MENU */
+/* Opções de Cinema */
 .option-list { display: flex; flex-direction: column; gap: 12px; }
 .option-card {
     background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-    padding: 15px; border-radius: 15px; color: white;
-    display: flex; justify-content: space-between; align-items: center;
-    cursor: pointer; text-align: left;
+    padding: 15px; border-radius: 15px; display: flex; justify-content: space-between;
+    align-items: center; color: white; cursor: pointer; text-align: left;
 }
-.option-card:active { background: rgba(188, 19, 254, 0.2); border-color: #bc13fe; }
 .opt-title { display: block; font-weight: bold; }
-.opt-price { font-size: 0.8em; color: #ffd700; }
-.opt-effect { font-size: 0.7em; background: #bc13fe; padding: 4px 8px; border-radius: 5px; }
-
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.opt-price { color: #ffd700; font-size: 0.8em; }
+.opt-badge { background: #bc13fe; padding: 4px 8px; border-radius: 6px; font-size: 0.7em; }
