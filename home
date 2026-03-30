@@ -1,0 +1,42 @@
+// Substitua pela URL que você copiou do Google Apps Script
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwxbkUndhZPtFvtK1uIFTkPNN-m6WeiFVMU3IDzuahsC0oQp8Ba2GLQFOAPkWv8eiA3/exec";
+
+async function carregarPerfil() {
+  // Pega o nome do artista pela URL do navegador
+  const urlParams = new URLSearchParams(window.location.search);
+  const nomeArtista = urlParams.get('nome');
+
+  if (!nomeArtista) {
+    document.getElementById('artist-name').innerText = "Artista não selecionado";
+    return;
+  }
+
+  try {
+    const response = await fetch(`${SCRIPT_URL}?nome=${nomeArtista}`);
+    const data = await response.json();
+
+    // Atualiza os Textos
+    document.getElementById('artist-name').innerText = data.nome;
+    document.getElementById('artist-status').innerText = (data.status === "Livre") ? "🟢" : "🔴";
+    document.getElementById('artist-saldo').innerText = `$EC ${data.saldo.toLocaleString('pt-BR')}`;
+    document.getElementById('artist-fortuna').innerText = `$${data.fortuna_total.toLocaleString('pt-BR')}`;
+    
+    // Atualiza a Foto
+    document.getElementById('artist-photo').src = data.foto;
+
+    // Atualiza as Barras (Prestígio e Fadiga)
+    const percPrestigio = (data.prestigio / 1000) * 100;
+    document.getElementById('bar-prestigio').style.width = percPrestigio + "%";
+    document.getElementById('val-prestigio').innerText = `${data.prestigio}/1000`;
+
+    document.getElementById('bar-fadiga').style.width = data.fadiga + "%";
+    document.getElementById('val-fadiga').innerText = `${data.fadiga}%`;
+
+  } catch (error) {
+    console.error("Erro ao carregar dados:", error);
+    document.getElementById('artist-name').innerText = "Erro ao carregar";
+  }
+}
+
+// Inicia a função ao abrir a página
+window.onload = carregarPerfil;
