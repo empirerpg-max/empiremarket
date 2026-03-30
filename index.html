@@ -64,35 +64,32 @@
 
             <div class="form-group">
                 <div class="input-item">
-                    <label>Título da Obra <span class="required">*</span></label>
-                    <input type="text" id="obra-titulo" placeholder="Nome do filme ou série">
+                    <label>Título da Obra <span class="req">*</span></label>
+                    <input type="text" id="obra-titulo" placeholder="Ex: O Mistério de Caddo Lake">
                 </div>
                 
                 <div class="input-row">
                     <div class="input-item">
-                        <label>Gênero <span class="required">*</span></label>
+                        <label>Gênero <span class="req">*</span></label>
                         <select id="obra-genero">
-                            <option value="">Selecione...</option>
+                            <option value="">Escolha...</option>
                             <option value="Ação">Ação</option>
-                            <option value="Aventura">Aventura</option>
                             <option value="Comédia">Comédia</option>
                             <option value="Drama">Drama</option>
-                            <option value="Fantasia">Fantasia</option>
-                            <option value="Ficção Científica">Ficção Científica</option>
-                            <option value="Musical">Musical</option>
-                            <option value="Romance">Romance</option>
-                            <option value="Suspense">Suspense</option>
                             <option value="Terror">Terror</option>
+                            <option value="Suspense">Suspense</option>
+                            <option value="Ficção">Ficção</option>
+                            <option value="Musical">Musical</option>
                         </select>
                     </div>
                     <div class="input-item">
-                        <label>Ano <span class="required">*</span></label>
+                        <label>Ano <span class="req">*</span></label>
                         <input type="number" id="obra-ano" value="2026">
                     </div>
                 </div>
             </div>
             
-            <p class="modal-desc">Escolha a categoria do contrato:</p>
+            <p class="modal-desc">Selecione o tipo de contrato:</p>
             
             <div class="option-list">
                 <div class="option-card" onclick="contratarFilme('Filme Independente')">
