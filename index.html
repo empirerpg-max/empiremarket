@@ -15,7 +15,6 @@
                 <div id="status-dot" class="status-dot"></div>
             </div>
             <h1 id="artist-name">Carregando...</h1>
-            
             <div id="activity-banner" class="activity-banner">
                 <span id="current-activity">Verificando agenda...</span>
             </div>
@@ -29,40 +28,65 @@
 
         <div class="stats-group">
             <div class="stat-bar">
-                <div class="stat-info">
-                    <span>PRESTÍGIO</span>
-                    <span id="txt-prestigio" class="val-num">0/1000</span>
-                </div>
-                <div class="progress-bg"><div id="bar-prestigio" class="progress gold" style="width: 0%"></div></div>
+                <div class="stat-info"><span>PRESTÍGIO</span><span id="txt-prestigio" class="val-num">0/1000</span></div>
+                <div class="progress-bg"><div id="bar-prestigio" class="progress gold"></div></div>
             </div>
-            
             <div class="stat-bar">
-                <div class="stat-info">
-                    <span>FADIGA</span>
-                    <span id="txt-fadiga" class="val-num">0%</span>
-                </div>
-                <div class="progress-bg"><div id="bar-fadiga" class="progress red" style="width: 0%"></div></div>
+                <div class="stat-info"><span>FADIGA</span><span id="txt-fadiga" class="val-num">0%</span></div>
+                <div class="progress-bg"><div id="bar-fadiga" class="progress red"></div></div>
             </div>
         </div>
 
         <nav class="actions-grid">
             <div class="action-btn" onclick="alert('Menu de Tours em breve!')">
-                <span class="icon">🎤</span>
-                <span>Tour</span>
+                <span class="icon">🎤</span><span>Tour</span>
             </div>
-            <div class="action-btn" onclick="alert('Menu de Cinema em breve!')">
-                <span class="icon">🎬</span>
-                <span>Cinema</span>
+            <div class="action-btn" onclick="openCinema()">
+                <span class="icon">🎬</span><span>Cinema</span>
             </div>
-            <div class="action-btn" onclick="alert('Menu de Negócios em breve!')">
-                <span class="icon">🏢</span>
-                <span>Business</span>
+            <div class="action-btn" onclick="alert('Negócios em breve!')">
+                <span class="icon">🏢</span><span>Business</span>
             </div>
             <div class="action-btn" onclick="alert('Mercado em breve!')">
-                <span class="icon">🛒</span>
-                <span>Market</span>
+                <span class="icon">🛒</span><span>Market</span>
             </div>
         </nav>
+    </div>
+
+    <div id="modal-cinema" class="modal">
+        <div class="modal-content glass-card">
+            <div class="modal-header">
+                <h3>Hollywood Casting</h3>
+                <button class="close-btn" onclick="closeCinema()">✕</button>
+            </div>
+            <p class="modal-desc">Escolha seu próximo projeto cinematográfico:</p>
+            
+            <div class="option-list">
+                <button class="option-card" onclick="contratarFilme('Filme Independente')">
+                    <div class="option-info">
+                        <span class="opt-title">Filme Independente</span>
+                        <span class="opt-price">$EC 250.000</span>
+                    </div>
+                    <span class="opt-effect">+50 Prestígio</span>
+                </button>
+
+                <button class="option-card" onclick="contratarFilme('Papel em Série TV')">
+                    <div class="option-info">
+                        <span class="opt-title">Papel em Série TV</span>
+                        <span class="opt-price">$EC 1.200.000</span>
+                    </div>
+                    <span class="opt-effect">+30 Prestígio</span>
+                </button>
+
+                <button class="option-card" onclick="contratarFilme('Blockbuster Cinema')">
+                    <div class="option-info">
+                        <span class="opt-title">Blockbuster Cinema</span>
+                        <span class="opt-price">$EC 5.000.000</span>
+                    </div>
+                    <span class="opt-effect">+10 Prestígio</span>
+                </button>
+            </div>
+        </div>
     </div>
 
     <script src="script.js"></script>
