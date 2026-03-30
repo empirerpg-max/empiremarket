@@ -1,10 +1,9 @@
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwxbkUndhZPtFvtK1uIFTkPNN-m6WeiFVMU3IDzuahsC0oQp8Ba2GLQFOAPkWv8eiA3/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwxbkUndhZPtFvtK1uIFTkPNN-m6WeiFVMU3IDzuahsC0oQp8Ba2GLQFOAPkWv8eiA3/exec"; // <--- COLOQUE SUA URL AQUI
 
-// Abrir/Fechar Modal
+// Abrir/Fechar Cinema
 function openCinema() { document.getElementById('modal-cinema').classList.add('active'); }
 function closeCinema() { document.getElementById('modal-cinema').classList.remove('active'); }
 
-// Carregar Dados da Home
 async function loadData() {
     const params = new URLSearchParams(window.location.search);
     const nome = params.get('nome');
@@ -19,7 +18,7 @@ async function loadData() {
         document.getElementById('artist-saldo').innerText = `$EC ${user.saldo.toLocaleString('pt-BR')}`;
         document.getElementById('artist-fortuna').innerText = `$${user.fortuna.toLocaleString('pt-BR')}`;
         
-        // Status Dot e Banner
+        // Status indicator
         const dot = document.getElementById('status-dot');
         const banner = document.getElementById('current-activity');
         if(user.status === "Livre") {
@@ -31,27 +30,25 @@ async function loadData() {
         }
 
         document.getElementById('bar-prestigio').style.width = (user.prestigio / 10) + "%";
-        document.getElementById('txt-prestigio').innerText = user.prestigio + "/1000";
+        document.getElementById('txt-prestigio').innerText = `${user.prestigio}/1000`;
         document.getElementById('bar-fadiga').style.width = user.fadiga + "%";
         document.getElementById('txt-fadiga').innerText = user.fadiga + "%";
     } catch (e) { console.error(e); }
 }
 
-// CONTRATAR FILME (Envia para a Planilha)
+// CONTRATAR FILME
 async function contratarFilme(tipo) {
     const nome = new URLSearchParams(window.location.search).get('nome');
-    if(!confirm(`Deseja investir em: ${tipo}?`)) return;
+    if(!confirm(`Assinar contrato para: ${tipo}?`)) return;
 
-    // Feedback visual de carregamento
     document.body.style.opacity = "0.5";
 
     try {
         const response = await fetch(`${SCRIPT_URL}?acao=contratar_filme&nome=${nome}&tipo=${tipo}`);
-        const result = await response.text();
-        
-        alert(result); // Mostra "Sucesso!" ou "Saldo Insuficiente"
+        const text = await response.text();
+        alert(text);
         closeCinema();
-        loadData(); // Atualiza a tela com o novo saldo e status
+        loadData(); // Atualiza os dados após a compra
     } catch (e) {
         alert("Erro ao processar contrato.");
     } finally {
