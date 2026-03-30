@@ -1,0 +1,27 @@
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwxbkUndhZPtFvtK1uIFTkPNN-m6WeiFVMU3IDzuahsC0oQp8Ba2GLQFOAPkWv8eiA3/exec";
+
+async function loadData() {
+    const params = new URLSearchParams(window.location.search);
+    const nome = params.get('nome');
+    
+    if(!nome) return;
+
+    try {
+        const response = await fetch(`${SCRIPT_URL}?nome=${nome}`);
+        const user = await response.json();
+
+        document.getElementById('artist-name').innerText = user.nome;
+        document.getElementById('artist-photo').src = user.foto;
+        document.getElementById('artist-saldo').innerText = `$EC ${user.saldo.toLocaleString()}`;
+        document.getElementById('artist-fortuna').innerText = `$${user.fortuna.toLocaleString()}`;
+        
+        document.getElementById('bar-prestigio').style.width = (user.prestigio / 10) + "%";
+        document.getElementById('txt-prestigio').innerText = user.prestigio + "/1000";
+        
+        document.getElementById('bar-fadiga').style.width = user.fadiga + "%";
+        document.getElementById('txt-fadiga').innerText = user.fadiga + "%";
+    } catch (e) {
+        console.error("Erro ao carregar", e);
+    }
+}
+window.onload = loadData;
