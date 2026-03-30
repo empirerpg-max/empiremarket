@@ -1,14 +1,17 @@
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwxbkUndhZPtFvtK1uIFTkPNN-m6WeiFVMU3IDzuahsC0oQp8Ba2GLQFOAPkWv8eiA3/exec"; // <--- COLOQUE SUA URL AQUI
 
-// Funções do Modal
-function openCinema() { 
-    document.getElementById('modal-cinema').classList.add('active'); 
-}
-function closeCinema() { 
-    document.getElementById('modal-cinema').classList.remove('active'); 
+function openCinema() {
+    const modal = document.getElementById('modal-cinema');
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden'; // Impede o fundo de rolar
 }
 
-// Carregar Dados Iniciais
+function closeCinema() {
+    const modal = document.getElementById('modal-cinema');
+    modal.classList.remove('active');
+    document.body.style.overflow = 'auto';
+}
+
 async function loadData() {
     const params = new URLSearchParams(window.location.search);
     const nome = params.get('nome');
@@ -18,13 +21,13 @@ async function loadData() {
         const response = await fetch(`${SCRIPT_URL}?nome=${nome}`);
         const user = await response.json();
 
-        // Dados Básicos
+        // Dados
         document.getElementById('artist-name').innerText = user.nome;
         document.getElementById('artist-photo').src = user.foto;
         document.getElementById('artist-saldo').innerText = `$EC ${user.saldo.toLocaleString('pt-BR')}`;
         document.getElementById('artist-fortuna').innerText = `$${user.fortuna.toLocaleString('pt-BR')}`;
         
-        // Status e Banner
+        // Status
         const dot = document.getElementById('status-dot');
         const banner = document.getElementById('current-activity');
         if(user.status === "Livre") {
@@ -42,17 +45,15 @@ async function loadData() {
         document.getElementById('txt-fadiga').innerText = user.fadiga + "%";
 
     } catch (e) {
-        console.error("Erro ao carregar dados:", e);
+        console.error("Erro ao carregar:", e);
     }
 }
 
-// Contratar Filme
 async function contratarFilme(tipo) {
     const nome = new URLSearchParams(window.location.search).get('nome');
     if(!confirm(`Deseja assinar contrato para: ${tipo}?`)) return;
 
-    // Feedback visual
-    document.body.style.pointerEvents = "none";
+    // Loading
     document.body.style.opacity = "0.7";
 
     try {
@@ -61,15 +62,13 @@ async function contratarFilme(tipo) {
         
         alert(text);
         closeCinema();
-        await loadData(); // Recarrega os dados para mostrar o novo saldo/status
+        await loadData();
 
     } catch (e) {
-        alert("Erro ao processar transação.");
+        alert("Erro na transação.");
     } finally {
-        document.body.style.pointerEvents = "all";
         document.body.style.opacity = "1";
     }
 }
 
-// Iniciar
 window.onload = loadData;
