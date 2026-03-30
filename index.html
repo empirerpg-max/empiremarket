@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Empire Market - Perfil</title>
+    <title>Empire Market</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
 </head>
 <body>
+
     <div class="app-container">
         <header class="profile-header">
             <div class="avatar-wrapper">
@@ -28,11 +29,11 @@
 
         <div class="stats-group">
             <div class="stat-bar">
-                <div class="stat-info"><span>PRESTÍGIO</span><span id="txt-prestigio" class="val-num">0/1000</span></div>
+                <div class="stat-info"><span>PRESTÍGIO</span><span id="txt-prestigio">0/1000</span></div>
                 <div class="progress-bg"><div id="bar-prestigio" class="progress gold"></div></div>
             </div>
             <div class="stat-bar">
-                <div class="stat-info"><span>FADIGA</span><span id="txt-fadiga" class="val-num">0%</span></div>
+                <div class="stat-info"><span>FADIGA</span><span id="txt-fadiga">0%</span></div>
                 <div class="progress-bg"><div id="bar-fadiga" class="progress red"></div></div>
             </div>
         </div>
@@ -63,29 +64,29 @@
             <p class="modal-desc">Escolha seu próximo projeto:</p>
             
             <div class="option-list">
-                <button class="option-card" onclick="contratarFilme('Filme Independente')">
+                <div class="option-card" onclick="contratarFilme('Filme Independente')">
                     <div class="option-text">
                         <span class="opt-title">Filme Independente</span>
                         <span class="opt-price">$EC 250.000</span>
                     </div>
                     <span class="opt-badge">+50 P</span>
-                </button>
+                </div>
 
-                <button class="option-card" onclick="contratarFilme('Papel em Série TV')">
+                <div class="option-card" onclick="contratarFilme('Papel em Série TV')">
                     <div class="option-text">
                         <span class="opt-title">Papel em Série TV</span>
                         <span class="opt-price">$EC 1.200.000</span>
                     </div>
                     <span class="opt-badge">+30 P</span>
-                </button>
+                </div>
 
-                <button class="option-card" onclick="contratarFilme('Blockbuster Cinema')">
+                <div class="option-card" onclick="contratarFilme('Blockbuster Cinema')">
                     <div class="option-text">
                         <span class="opt-title">Blockbuster Cinema</span>
                         <span class="opt-price">$EC 5.000.000</span>
                     </div>
                     <span class="opt-badge">+10 P</span>
-                </button>
+                </div>
             </div>
         </div>
     </div>
