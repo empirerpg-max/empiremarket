@@ -1,20 +1,15 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Empire Mini App</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div class="app-container">
-        <header class="profile-header">
-            <div class="avatar-wrapper">
-                <img src="" id="artist-photo" class="avatar">
-                <div class="status-dot" id="status-dot"></div>
-            </div>
-            <h1 id="artist-name">Carregando...</h1>
-        </header>
+<header class="profile-header">
+    <div class="avatar-wrapper">
+        <img src="" id="artist-photo" class="avatar">
+        <div id="status-indicator" class="status-dot"></div>
+    </div>
+    <h1 id="artist-name">Carregando...</h1>
+    <div id="activity-banner" class="activity-banner">
+        <span id="current-activity">Verificando agenda...</span>
+    </div>
+</header>
 
         <div class="glass-card main-stats">
             <p>Saldo Empire Coins</p>
