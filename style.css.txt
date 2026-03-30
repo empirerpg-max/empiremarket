@@ -1,0 +1,26 @@
+body {
+    background: #0b0118;
+    color: white;
+    font-family: sans-serif;
+    display: flex;
+    justify-content: center;
+    margin: 0;
+}
+.app-container { width: 90%; max-width: 400px; padding: 20px; }
+.profile-header { text-align: center; margin-bottom: 30px; }
+.avatar { width: 100px; height: 100px; border-radius: 50%; border: 3px solid #bc13fe; box-shadow: 0 0 20px #bc13fe; }
+.glass-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 20px;
+    text-align: center;
+}
+#artist-saldo { color: #ffd700; font-size: 2em; margin: 5px 0; }
+.progress-bg { background: rgba(255,255,255,0.1); height: 10px; border-radius: 5px; margin: 10px 0; }
+.progress { height: 100%; border-radius: 5px; transition: 0.5s; }
+.gold { background: linear-gradient(to right, #ffd700, #ffae00); }
+.red { background: #ff4b2b; }
+.actions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 30px; }
+.action-btn { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px; text-align: center; cursor: pointer; }

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Empire Mini App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="profile-header">
+            <div class="avatar-wrapper">
+                <img src="" id="artist-photo" class="avatar">
+                <div class="status-dot" id="status-dot"></div>
+            </div>
+            <h1 id="artist-name">Carregando...</h1>
+        </header>
+
+        <div class="glass-card main-stats">
+            <p>Saldo Empire Coins</p>
+            <h2 id="artist-saldo">$EC 0</h2>
+            <p class="fortuna-label">Fortuna Total: <span id="artist-fortuna">$0</span></p>
+        </div>
+
+        <div class="stats-group">
+            <div class="stat-bar">
+                <label>Prestígio <span id="txt-prestigio">0/1000</span></label>
+                <div class="progress-bg"><div id="bar-prestigio" class="progress gold"></div></div>
+            </div>
+            <div class="stat-bar">
+                <label>Fadiga <span id="txt-fadiga">0%</span></label>
+                <div class="progress-bg"><div id="bar-fadiga" class="progress red"></div></div>
+            </div>
+        </div>
+
+        <nav class="actions-grid">
+            <div class="action-btn">🎤<span>Tour</span></div>
+            <div class="action-btn">🎬<span>Cinema</span></div>
+            <div class="action-btn">🏢<span>Negócios</span></div>
+            <div class="action-btn">🛒<span>Loja</span></div>
+        </nav>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
