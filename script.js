@@ -1,5 +1,5 @@
 // ATENÇÃO: COLOQUE SUA URL ABAIXO
-const SCRIPT_URL = "SUA_URL_DO_APPS_SCRIPT_AQUI";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwxbkUndhZPtFvtK1uIFTkPNN-m6WeiFVMU3IDzuahsC0oQp8Ba2GLQFOAPkWv8eiA3/exec";
 
 async function loadData() {
     const params = new URLSearchParams(window.location.search);
