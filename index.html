@@ -1,40 +1,70 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-<header class="profile-header">
-    <div class="avatar-wrapper">
-        <img src="" id="artist-photo" class="avatar">
-        <div id="status-indicator" class="status-dot"></div>
-    </div>
-    <h1 id="artist-name">Carregando...</h1>
-    <div id="activity-banner" class="activity-banner">
-        <span id="current-activity">Verificando agenda...</span>
-    </div>
-</header>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Empire Market - Perfil</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <header class="profile-header">
+            <div class="avatar-wrapper">
+                <img src="" id="artist-photo" class="avatar">
+                <div id="status-dot" class="status-dot"></div>
+            </div>
+            <h1 id="artist-name">Carregando...</h1>
+            
+            <div id="activity-banner" class="activity-banner">
+                <span id="current-activity">Verificando agenda...</span>
+            </div>
+        </header>
 
         <div class="glass-card main-stats">
-            <p>Saldo Empire Coins</p>
+            <p class="label-small">SALDO EMPIRE COINS</p>
             <h2 id="artist-saldo">$EC 0</h2>
-            <p class="fortuna-label">Fortuna Total: <span id="artist-fortuna">$0</span></p>
+            <p class="fortuna-label">Patrimônio Líquido: <span id="artist-fortuna">$0</span></p>
         </div>
 
         <div class="stats-group">
             <div class="stat-bar">
-                <label>Prestígio <span id="txt-prestigio">0/1000</span></label>
-                <div class="progress-bg"><div id="bar-prestigio" class="progress gold"></div></div>
+                <div class="stat-info">
+                    <span>PRESTÍGIO</span>
+                    <span id="txt-prestigio" class="val-num">0/1000</span>
+                </div>
+                <div class="progress-bg"><div id="bar-prestigio" class="progress gold" style="width: 0%"></div></div>
             </div>
+            
             <div class="stat-bar">
-                <label>Fadiga <span id="txt-fadiga">0%</span></label>
-                <div class="progress-bg"><div id="bar-fadiga" class="progress red"></div></div>
+                <div class="stat-info">
+                    <span>FADIGA</span>
+                    <span id="txt-fadiga" class="val-num">0%</span>
+                </div>
+                <div class="progress-bg"><div id="bar-fadiga" class="progress red" style="width: 0%"></div></div>
             </div>
         </div>
 
         <nav class="actions-grid">
-            <div class="action-btn">🎤<span>Tour</span></div>
-            <div class="action-btn">🎬<span>Cinema</span></div>
-            <div class="action-btn">🏢<span>Negócios</span></div>
-            <div class="action-btn">🛒<span>Loja</span></div>
+            <div class="action-btn" onclick="alert('Menu de Tours em breve!')">
+                <span class="icon">🎤</span>
+                <span>Tour</span>
+            </div>
+            <div class="action-btn" onclick="alert('Menu de Cinema em breve!')">
+                <span class="icon">🎬</span>
+                <span>Cinema</span>
+            </div>
+            <div class="action-btn" onclick="alert('Menu de Negócios em breve!')">
+                <span class="icon">🏢</span>
+                <span>Business</span>
+            </div>
+            <div class="action-btn" onclick="alert('Mercado em breve!')">
+                <span class="icon">🛒</span>
+                <span>Market</span>
+            </div>
         </nav>
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>
