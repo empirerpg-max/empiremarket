@@ -1,4 +1,4 @@
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwxbkUndhZPtFvtK1uIFTkPNN-m6WeiFVMU3IDzuahsC0oQp8Ba2GLQFOAPkWv8eiA3/exec"; // <--- COLOQUE SUA URL AQUI
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwxbkUndhZPtFvtK1uIFTkPNN-m6WeiFVMU3IDzuahsC0oQp8Ba2GLQFOAPkWv8eiA3/exec"; 
 
 function openCinema() {
     document.getElementById('modal-cinema').classList.add('active');
@@ -6,7 +6,6 @@ function openCinema() {
 
 function closeCinema() {
     document.getElementById('modal-cinema').classList.remove('active');
-    document.getElementById('obra-titulo').value = ""; // Limpa ao fechar
 }
 
 async function loadData() {
@@ -43,29 +42,33 @@ async function loadData() {
 
 async function contratarFilme(categoria) {
     const nome = new URLSearchParams(window.location.search).get('nome');
+    
+    // Captura os dados
     const titulo = document.getElementById('obra-titulo').value.trim();
+    const genero = document.getElementById('obra-genero').value;
+    const ano = document.getElementById('obra-ano').value;
 
-    // Validação: Não pode deixar o nome vazio
-    if (!titulo) {
-        alert("Por favor, dê um nome para o seu projeto cinematográfico!");
-        return;
+    // VALIDAÇÃO: OBRIGATÓRIOS
+    if (!titulo || !genero || !ano) {
+        alert("⚠️ ATENÇÃO: Todos os campos (Título, Gênero e Ano) são obrigatórios para assinar o contrato!");
+        return; // Para a execução aqui
     }
 
-    if(!confirm(`Iniciar produção de "${titulo}" como ${categoria}?`)) return;
+    if(!confirm(`Confirmar produção de "${titulo}"?\nInvestimento: ${categoria}`)) return;
 
     document.body.style.opacity = "0.7";
     document.body.style.pointerEvents = "none";
 
     try {
-        // Enviamos o nome (artista), a categoria (tipo) e o título digitado
-        const response = await fetch(`${SCRIPT_URL}?acao=contratar_filme&nome=${nome}&tipo=${categoria}&titulo=${encodeURIComponent(titulo)}`);
+        const url = `${SCRIPT_URL}?acao=contratar_filme&nome=${nome}&tipo=${categoria}&titulo=${encodeURIComponent(titulo)}&genero=${genero}&ano=${ano}`;
+        const response = await fetch(url);
         const text = await response.text();
         
         alert(text);
         closeCinema();
         await loadData();
     } catch (e) {
-        alert("Erro na conexão com Hollywood.");
+        alert("Erro na conexão.");
     } finally {
         document.body.style.opacity = "1";
         document.body.style.pointerEvents = "all";
