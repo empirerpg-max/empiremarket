@@ -1,5 +1,5 @@
 // ATENÇÃO: COLOQUE SUA URL DO GOOGLE ABAIXO
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwxbkUndhZPtFvtK1uIFTkPNN-m6WeiFVMU3IDzuahsC0oQp8Ba2GLQFOAPkWv8eiA3/exec"; 
+const SCRIPT_URL = "SUA_URL_DO_GOOGLE_AQUI"; 
 
 function openCinema() { 
     document.getElementById('modal-cinema').classList.add('active'); 
