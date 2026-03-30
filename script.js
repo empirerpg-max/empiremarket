@@ -28,15 +28,12 @@ async function loadData() {
 
 async function contratarFilme(categoria) {
     const nome = new URLSearchParams(window.location.search).get('nome');
-    
-    // Captura dos dados
     const titulo = document.getElementById('obra-titulo').value.trim();
     const genero = document.getElementById('obra-genero').value;
     const ano = document.getElementById('obra-ano').value;
 
-    // VALIDAÇÃO OBRIGATÓRIA
     if (!titulo || !genero || !ano) {
-        alert("⚠️ Por favor, preencha o Título, Gênero e Ano antes de contratar!");
+        alert("⚠️ Por favor, preencha o Título, Gênero e Ano!");
         return;
     }
 
