@@ -1,125 +1,126 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Empire Market</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
-</head>
-<body>
+/* Reset e Base */
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+body {
+    background: #0b0118;
+    background-image: radial-gradient(circle at top, #1a023a, #0b0118);
+    color: white; font-family: 'Inter', sans-serif;
+    display: flex; justify-content: center; min-height: 100vh;
+}
 
-    <div class="app-container">
-        <header class="profile-header">
-            <div class="avatar-wrapper">
-                <img src="" id="artist-photo" class="avatar">
-                <div id="status-dot" class="status-dot"></div>
-            </div>
-            <h1 id="artist-name">Carregando...</h1>
-            <div id="activity-banner" class="activity-banner">
-                <span id="current-activity">Verificando agenda...</span>
-            </div>
-        </header>
+.app-container {
+    width: 100%; max-width: 420px;
+    padding: 40px 25px; display: flex; flex-direction: column; align-items: center;
+}
 
-        <div class="glass-card main-stats">
-            <p class="label-small">SALDO EMPIRE COINS</p>
-            <h2 id="artist-saldo">$EC 0</h2>
-            <p class="fortuna-label">Patrimônio Líquido: <span id="artist-fortuna">$0</span></p>
-        </div>
+/* Header Estiloso */
+.profile-header { text-align: center; margin-bottom: 30px; }
+.avatar-wrapper { position: relative; display: inline-block; margin-bottom: 15px; }
+.avatar { 
+    width: 115px; height: 115px; border-radius: 50%; 
+    border: 3px solid #bc13fe; box-shadow: 0 0 25px rgba(188, 19, 254, 0.5);
+    object-fit: cover; background: #222;
+}
+.status-dot { 
+    position: absolute; bottom: 8px; right: 8px; 
+    width: 18px; height: 18px; border-radius: 50%; border: 3px solid #0b0118;
+}
+h1 { font-size: 2em; letter-spacing: -1px; margin-bottom: 10px; font-weight: 700; }
+.activity-banner { 
+    background: rgba(188, 19, 254, 0.15); border: 1px solid rgba(188, 19, 254, 0.4); 
+    padding: 6px 16px; border-radius: 30px; font-size: 0.75em; 
+    color: #e0aaff; font-weight: bold; text-transform: uppercase;
+}
 
-        <div class="stats-group">
-            <div class="stat-bar">
-                <div class="stat-info"><span>PRESTÍGIO</span><span id="txt-prestigio">0/1000</span></div>
-                <div class="progress-bg"><div id="bar-prestigio" class="progress gold"></div></div>
-            </div>
-            <div class="stat-bar">
-                <div class="stat-info"><span>FADIGA</span><span id="txt-fadiga">0%</span></div>
-                <div class="progress-bg"><div id="bar-fadiga" class="progress red"></div></div>
-            </div>
-        </div>
+/* Cards Glassmorphism */
+.glass-card { 
+    background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 25px; 
+    padding: 25px; text-align: center; width: 100%;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+#artist-saldo { color: #ffd700; font-size: 2.4em; margin: 8px 0; font-weight: 800; }
+.label-small { font-size: 0.7em; opacity: 0.5; letter-spacing: 2px; }
+.fortuna-label { font-size: 0.85em; opacity: 0.8; }
 
-        <nav class="actions-grid">
-            <div class="action-btn" onclick="alert('Menu de Tours em breve!')">
-                <span class="icon">🎤</span><span>Tour</span>
-            </div>
-            <div class="action-btn" onclick="openCinema()">
-                <span class="icon">🎬</span><span>Cinema</span>
-            </div>
-            <div class="action-btn" onclick="alert('Menu de Negócios em breve!')">
-                <span class="icon">🏢</span><span>Business</span>
-            </div>
-            <div class="action-btn" onclick="alert('Mercado em breve!')">
-                <span class="icon">🛒</span><span>Market</span>
-            </div>
-        </nav>
-    </div>
+/* Status Bars */
+.stats-group { width: 100%; margin-top: 25px; }
+.stat-bar { margin-bottom: 20px; }
+.stat-info { display: flex; justify-content: space-between; font-size: 0.75em; font-weight: bold; margin-bottom: 8px; }
+.progress-bg { background: rgba(255,255,255,0.08); height: 12px; border-radius: 10px; }
+.progress { height: 100%; border-radius: 10px; transition: width 1s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+.gold { background: linear-gradient(to right, #bc13fe, #ffd700); box-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
+.red { background: linear-gradient(to right, #ff4b2b, #ff0000); box-shadow: 0 0 10px rgba(255, 75, 43, 0.3); }
 
-    <div id="modal-cinema" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-drag-handle"></div>
-            <div class="modal-header">
-                <h3>Hollywood Casting</h3>
-                <button class="close-btn" onclick="closeCinema()">✕</button>
-            </div>
+/* Menu Grid */
+.actions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 30px; width: 100%; }
+.action-btn { 
+    background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); 
+    padding: 22px; border-radius: 22px; display: flex; flex-direction: column; 
+    align-items: center; gap: 8px; cursor: pointer; transition: 0.3s;
+}
+.action-btn:active { transform: scale(0.92); background: rgba(188, 19, 254, 0.2); }
+.icon { font-size: 1.6em; }
+.action-btn span:last-child { font-size: 0.75em; font-weight: bold; text-transform: uppercase; opacity: 0.8; }
 
-            <div class="form-container">
-                <div class="input-field">
-                    <label>TÍTULO DA OBRA <span class="req">*</span></label>
-                    <input type="text" id="obra-titulo" placeholder="Nome do filme ou série">
-                </div>
-                
-                <div class="input-row">
-                    <div class="input-field">
-                        <label>GÊNERO <span class="req">*</span></label>
-                        <div class="select-wrapper">
-                            <select id="obra-genero">
-                                <option value="" disabled selected>Escolha...</option>
-                                <option value="Ação">Ação</option>
-                                <option value="Comédia">Comédia</option>
-                                <option value="Drama">Drama</option>
-                                <option value="Terror">Terror</option>
-                                <option value="Musical">Musical</option>
-                                <option value="Suspense">Suspense</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="input-field">
-                        <label>ANO <span class="req">*</span></label>
-                        <input type="number" id="obra-ano" value="2026">
-                    </div>
-                </div>
-            </div>
-            
-            <p class="section-title">SELECIONE O CONTRATO:</p>
-            
-            <div class="option-list">
-                <div class="option-card" onclick="contratarFilme('Filme Independente')">
-                    <div class="option-info">
-                        <span class="opt-name">Filme Independente</span>
-                        <span class="opt-val">$EC 250.000</span>
-                    </div>
-                    <span class="badge">+10 P</span>
-                </div>
+/* MODAL / GAVETA */
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(8px);
+    display: none; justify-content: center; align-items: flex-end; z-index: 9999;
+}
+.modal-overlay.active { display: flex; }
+.modal-content {
+    width: 100%; max-width: 420px; background: #0f0221; 
+    border-top: 2px solid #bc13fe; border-radius: 30px 30px 0 0;
+    padding: 20px 25px 50px 25px; transform: translateY(100%); transition: transform 0.4s ease;
+}
+.modal-overlay.active .modal-content { transform: translateY(0); }
+.modal-drag-handle { width: 50px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 10px; margin: 0 auto 20px auto; }
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+.close-btn { background: none; border: none; color: white; font-size: 1.6rem; cursor: pointer; }
 
-                <div class="option-card" onclick="contratarFilme('Papel em Série TV')">
-                    <div class="option-info">
-                        <span class="opt-name">Papel em Série TV</span>
-                        <span class="opt-val">$EC 1.200.000</span>
-                    </div>
-                    <span class="badge">+30 P</span>
-                </div>
+/* FORMULÁRIO LUXUOSO */
+.form-container { margin-bottom: 25px; }
+.input-field { margin-bottom: 15px; text-align: left; }
+.input-field label { display: block; font-size: 0.7em; font-weight: 800; color: #bc13fe; margin-bottom: 8px; letter-spacing: 1px; }
+.req { color: #ff4b2b; }
+.input-row { display: flex; gap: 12px; }
 
-                <div class="option-card" onclick="contratarFilme('Blockbuster Cinema')">
-                    <div class="option-info">
-                        <span class="opt-name">Blockbuster Cinema</span>
-                        <span class="opt-val">$EC 5.000.000</span>
-                    </div>
-                    <span class="badge">+50 P</span>
-                </div>
-            </div>
-        </div>
-    </div>
+/* CORREÇÃO DO SELECT E INPUTS */
+.input-field input, .select-wrapper select {
+    width: 100%; background: rgba(255,255,255,0.06); 
+    border: 1px solid rgba(255,255,255,0.15); border-radius: 15px;
+    padding: 15px; color: white; font-family: 'Inter', sans-serif;
+    font-size: 1em; outline: none; transition: 0.3s;
+}
 
-    <script src="script.js"></script>
-</body>
-</html>
+/* Estilo do Dropdown */
+.select-wrapper { position: relative; width: 100%; }
+.select-wrapper select {
+    appearance: none; -webkit-appearance: none;
+    cursor: pointer; padding-right: 45px;
+}
+/* Seta do Dropdown Customizada */
+.select-wrapper::after {
+    content: '▼'; font-size: 0.7em; color: #bc13fe;
+    position: absolute; right: 18px; top: 50%; transform: translateY(-50%);
+    pointer-events: none;
+}
+.select-wrapper select option { background: #0f0221; color: white; }
+
+.input-field input:focus, .select-wrapper select:focus { 
+    border-color: #bc13fe; background: rgba(188, 19, 254, 0.1); 
+}
+
+/* Opções de Contrato */
+.section-title { font-size: 0.8em; font-weight: 800; opacity: 0.4; margin-bottom: 15px; text-align: left; letter-spacing: 1px; }
+.option-list { display: flex; flex-direction: column; gap: 12px; }
+.option-card {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+    padding: 18px 20px; border-radius: 20px; display: flex; justify-content: space-between;
+    align-items: center; cursor: pointer; transition: 0.3s;
+}
+.option-card:active { background: rgba(188, 19, 254, 0.2); border-color: #bc13fe; }
+.opt-name { display: block; font-weight: 700; font-size: 1em; }
+.opt-val { color: #ffd700; font-size: 0.85em; margin-top: 4px; display: block; }
+.badge { background: #bc13fe; padding: 5px 12px; border-radius: 10px; font-size: 0.75em; font-weight: bold; box-shadow: 0 0 10px rgba(188, 19, 254, 0.4); }
