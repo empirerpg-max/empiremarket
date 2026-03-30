@@ -1,26 +1,78 @@
+/* Reset e Base */
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 body {
-    background: #0b0118;
+    background: radial-gradient(circle at top, #1a023a, #0b0118);
     color: white;
-    font-family: sans-serif;
+    font-family: 'Inter', sans-serif;
     display: flex;
     justify-content: center;
     margin: 0;
+    min-height: 100vh;
 }
-.app-container { width: 90%; max-width: 400px; padding: 20px; }
-.profile-header { text-align: center; margin-bottom: 30px; }
-.avatar { width: 100px; height: 100px; border-radius: 50%; border: 3px solid #bc13fe; box-shadow: 0 0 20px #bc13fe; }
+
+.app-container { width: 100%; max-width: 420px; padding: 25px; }
+
+/* Header e Foto */
+.profile-header { text-align: center; margin-bottom: 25px; }
+
+.avatar-wrapper { position: relative; display: inline-block; }
+.avatar { 
+    width: 110px; height: 110px; border-radius: 50%; 
+    border: 3px solid #bc13fe; box-shadow: 0 0 20px rgba(188, 19, 254, 0.6);
+    object-fit: cover; background: #222;
+}
+.status-dot {
+    position: absolute; bottom: 8px; right: 8px;
+    width: 18px; height: 18px; border-radius: 50%;
+    border: 3px solid #0b0118; background: #444; /* Cor neutra inicial */
+}
+
+h1 { font-size: 1.8em; margin: 12px 0 5px 0; letter-spacing: -1px; }
+
+/* Banner de Atividade */
+.activity-banner {
+    background: rgba(188, 19, 254, 0.12);
+    border: 1px solid rgba(188, 19, 254, 0.3);
+    padding: 6px 16px; border-radius: 30px;
+    font-size: 0.75em; display: inline-block;
+    color: #e0aaff; text-transform: uppercase; font-weight: bold;
+    box-shadow: 0 0 15px rgba(188, 19, 254, 0.15);
+}
+
+/* Card Principal (Dinheiro) */
 .glass-card {
     background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(15px);
+    backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 20px;
-    padding: 20px;
-    text-align: center;
+    border-radius: 24px; padding: 20px; text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
 }
-#artist-saldo { color: #ffd700; font-size: 2em; margin: 5px 0; }
-.progress-bg { background: rgba(255,255,255,0.1); height: 10px; border-radius: 5px; margin: 10px 0; }
-.progress { height: 100%; border-radius: 5px; transition: 0.5s; }
-.gold { background: linear-gradient(to right, #ffd700, #ffae00); }
-.red { background: #ff4b2b; }
-.actions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 30px; }
-.action-btn { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px; text-align: center; cursor: pointer; }
+.label-small { font-size: 0.65em; opacity: 0.6; letter-spacing: 2px; margin-bottom: 5px; }
+#artist-saldo { 
+    color: #ffd700; font-size: 2.4em; margin: 5px 0; 
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+.fortuna-label { font-size: 0.85em; opacity: 0.8; }
+.fortuna-label span { font-weight: bold; color: #fff; }
+
+/* Barras de Progresso */
+.stats-group { margin-top: 25px; }
+.stat-bar { margin-bottom: 18px; }
+.stat-info { display: flex; justify-content: space-between; font-size: 0.65em; font-weight: bold; margin-bottom: 6px; opacity: 0.8; }
+.progress-bg { background: rgba(255,255,255,0.08); height: 10px; border-radius: 10px; overflow: hidden; }
+.progress { height: 100%; border-radius: 10px; transition: width 1.2s cubic-bezier(0.17, 0.67, 0.83, 0.67); }
+.gold { background: linear-gradient(to right, #bc13fe, #ffd700); box-shadow: 0 0 10px rgba(255, 215, 0, 0.4); }
+.red { background: linear-gradient(to right, #ff4b2b, #ff0000); box-shadow: 0 0 10px rgba(255, 75, 43, 0.4); }
+
+/* Menu de Ações (Grid) */
+.actions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 25px; }
+.action-btn {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 20px; border-radius: 20px;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    cursor: pointer; transition: 0.2s all;
+}
+.action-btn:active { transform: scale(0.92); background: rgba(188, 19, 254, 0.15); border-color: rgba(188, 19, 254, 0.5); }
+.icon { font-size: 1.6em; }
+.action-btn span:last-child { font-size: 0.7em; font-weight: bold; text-transform: uppercase; opacity: 0.8; }
