@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="app-container">
+    <div class="app-container" id="main-content">
         <header class="profile-header">
             <div class="avatar-wrapper">
                 <img src="" id="artist-photo" class="avatar">
@@ -53,37 +53,37 @@
         </nav>
     </div>
 
-    <div id="modal-cinema" class="modal">
+    <div id="modal-cinema" class="modal-overlay">
         <div class="modal-content glass-card">
             <div class="modal-header">
                 <h3>Hollywood Casting</h3>
                 <button class="close-btn" onclick="closeCinema()">✕</button>
             </div>
-            <p class="modal-desc">Escolha seu próximo projeto cinematográfico:</p>
+            <p class="modal-desc">Escolha seu próximo projeto:</p>
             
             <div class="option-list">
                 <button class="option-card" onclick="contratarFilme('Filme Independente')">
-                    <div class="option-info">
+                    <div class="option-text">
                         <span class="opt-title">Filme Independente</span>
                         <span class="opt-price">$EC 250.000</span>
                     </div>
-                    <span class="opt-effect">+50 Prestígio</span>
+                    <span class="opt-badge">+50 P</span>
                 </button>
 
                 <button class="option-card" onclick="contratarFilme('Papel em Série TV')">
-                    <div class="option-info">
+                    <div class="option-text">
                         <span class="opt-title">Papel em Série TV</span>
                         <span class="opt-price">$EC 1.200.000</span>
                     </div>
-                    <span class="opt-effect">+30 Prestígio</span>
+                    <span class="opt-badge">+30 P</span>
                 </button>
 
                 <button class="option-card" onclick="contratarFilme('Blockbuster Cinema')">
-                    <div class="option-info">
+                    <div class="option-text">
                         <span class="opt-title">Blockbuster Cinema</span>
                         <span class="opt-price">$EC 5.000.000</span>
                     </div>
-                    <span class="opt-effect">+10 Prestígio</span>
+                    <span class="opt-badge">+10 P</span>
                 </button>
             </div>
         </div>
