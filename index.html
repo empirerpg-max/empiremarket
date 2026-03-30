@@ -61,7 +61,13 @@
                 <h3>Hollywood Casting</h3>
                 <button class="close-btn" onclick="closeCinema()">✕</button>
             </div>
-            <p class="modal-desc">Escolha seu próximo projeto:</p>
+
+            <div class="input-group">
+                <label for="obra-titulo">Título da Obra</label>
+                <input type="text" id="obra-titulo" placeholder="Ex: O Mistério de Caddo Lake..." maxlength="40">
+            </div>
+            
+            <p class="modal-desc">Escolha a categoria do projeto:</p>
             
             <div class="option-list">
                 <div class="option-card" onclick="contratarFilme('Filme Independente')">
