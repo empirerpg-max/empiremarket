@@ -1,13 +1,11 @@
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-
 body {
     background: #0b0118; background-image: radial-gradient(circle at top, #1a023a, #0b0118);
     color: white; font-family: 'Inter', sans-serif; display: flex; justify-content: center; min-height: 100vh;
 }
-
 .app-container { width: 100%; max-width: 420px; padding: 40px 20px; display: flex; flex-direction: column; align-items: center; }
 
-/* Perfil */
+/* Header */
 .profile-header { text-align: center; margin-bottom: 25px; width: 100%; }
 .avatar-wrapper { position: relative; display: inline-block; }
 .avatar { width: 110px; height: 110px; border-radius: 50%; border: 3px solid #bc13fe; box-shadow: 0 0 20px rgba(188, 19, 254, 0.5); object-fit: cover; }
@@ -15,12 +13,12 @@ body {
 h1 { font-size: 1.8em; font-weight: 800; margin: 10px 0; text-transform: uppercase; letter-spacing: -1px; }
 .activity-banner { background: rgba(188, 19, 254, 0.15); border: 1px solid rgba(188, 19, 254, 0.3); padding: 5px 15px; border-radius: 20px; font-size: 0.7em; font-weight: bold; color: #e0aaff; text-transform: uppercase; }
 
-/* Cards */
+/* Glass Cards */
 .glass-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 25px; width: 100%; text-align: center; }
 #artist-saldo { color: #ffd700; font-size: 2.2em; margin: 5px 0; font-weight: 800; }
 .label-small { font-size: 0.6em; opacity: 0.5; letter-spacing: 2px; }
 
-/* Barras */
+/* Progress Bars */
 .stats-group { width: 100%; margin-top: 20px; }
 .stat-info { display: flex; justify-content: space-between; font-size: 0.65em; font-weight: 800; margin-bottom: 6px; }
 .progress-bg { background: rgba(255,255,255,0.08); height: 10px; border-radius: 10px; margin-bottom: 18px; }
@@ -28,7 +26,7 @@ h1 { font-size: 1.8em; font-weight: 800; margin: 10px 0; text-transform: upperca
 .gold { background: linear-gradient(to right, #bc13fe, #ffd700); }
 .red { background: linear-gradient(to right, #ff4b2b, #ff0000); }
 
-/* Menu */
+/* Buttons */
 .actions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; margin-top: 25px; }
 .action-btn { background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.1); padding: 22px; border-radius: 20px; display: flex; flex-direction: column; align-items: center; gap: 10px; cursor: pointer; transition: 0.2s; }
 .action-btn:active { transform: scale(0.95); }
@@ -38,11 +36,10 @@ h1 { font-size: 1.8em; font-weight: 800; margin: 10px 0; text-transform: upperca
 .modal-overlay.active { display: flex; }
 .modal-content { width: 100%; max-width: 420px; background: #0f0221; border-top: 2px solid #bc13fe; border-radius: 30px 30px 0 0; padding: 25px 25px 45px 25px; transform: translateY(100%); transition: transform 0.4s ease; }
 .modal-overlay.active .modal-content { transform: translateY(0); }
-.modal-drag-handle { width: 45px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 10px; margin: 0 auto 20px auto; }
 .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
 .close-btn { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
 
-/* Form e Inputs */
+/* Form e Select Premium */
 .input-field { margin-bottom: 20px; text-align: left; }
 .input-field label { display: block; font-size: 0.65em; font-weight: 800; color: #bc13fe; margin-bottom: 8px; text-transform: uppercase; }
 .input-row { display: flex; gap: 12px; }
@@ -50,6 +47,7 @@ h1 { font-size: 1.8em; font-weight: 800; margin: 10px 0; text-transform: upperca
 .custom-select-wrapper { position: relative; flex: 1.5; }
 .custom-select-wrapper select { appearance: none; -webkit-appearance: none; cursor: pointer; padding-right: 35px; }
 .custom-select-wrapper::after { content: '▼'; font-size: 0.6em; color: #bc13fe; position: absolute; right: 15px; top: 50%; transform: translateY(-50%); pointer-events: none; }
+.custom-select-wrapper select option { background: #0f0221; color: white; }
 
 /* Option Cards (Layout Reto) */
 .option-list { display: flex; flex-direction: column; gap: 12px; }
@@ -58,8 +56,5 @@ h1 { font-size: 1.8em; font-weight: 800; margin: 10px 0; text-transform: upperca
 .opt-name { font-weight: 800; font-size: 0.95em; }
 .opt-val { color: #ffd700; font-size: 0.8em; }
 .badge { background: #bc13fe; padding: 5px 12px; border-radius: 10px; font-size: 0.65em; font-weight: 800; }
-.section-title { font-size: 0.7em; font-weight: 800; opacity: 0.4; margin-bottom: 12px; text-align: left; text-transform: uppercase; }
 
-/* Botão de Ação Principal */
-.main-action-btn { width: 100%; background: linear-gradient(45deg, #bc13fe, #ffd700); border: none; padding: 18px; border-radius: 15px; color: #0b0118; font-weight: 800; font-size: 1em; text-transform: uppercase; cursor: pointer; margin-top: 10px; box-shadow: 0 5px 15px rgba(188, 19, 254, 0.4); }
-.main-action-btn:active { transform: scale(0.96); }
+.main-action-btn { width: 100%; background: linear-gradient(45deg, #bc13fe, #ffd700); border: none; padding: 18px; border-radius: 15px; color: #0b0118; font-weight: 800; font-size: 1em; text-transform: uppercase; cursor: pointer; margin-top: 10px; }
