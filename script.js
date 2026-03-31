@@ -2,7 +2,7 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwxbkUndhZPtFvtK1uIF
 
 let ARTISTA_DATA = {};
 
-// Controles dos Modais
+// Funções de Abrir/Fechar
 function openCinema() { document.getElementById('modal-cinema').classList.add('active'); }
 function closeCinema() { document.getElementById('modal-cinema').classList.remove('active'); }
 function openTour() { document.getElementById('modal-tour').classList.add('active'); }
@@ -10,12 +10,13 @@ function closeTour() { document.getElementById('modal-tour').classList.remove('a
 function openPlanejar() { document.getElementById('modal-planejar-tour').classList.add('active'); }
 function closePlanejar() { document.getElementById('modal-planejar-tour').classList.remove('active'); }
 
-// Verifica se o Artista vai comprar ou planejar a Tour
+// Lógica de Clique na Tour
 function checkTourStatus() {
+    console.log("Status Atual:", ARTISTA_DATA.status);
     if (ARTISTA_DATA.status && ARTISTA_DATA.status.includes("Planejamento")) {
         openPlanejar();
-    } else if (ARTISTA_DATA.status !== "Livre") {
-        alert("Você já está em um projeto!");
+    } else if (ARTISTA_DATA.status && ARTISTA_DATA.status !== "Livre") {
+        alert("Você já está ocupado com outro projeto!");
     } else {
         openTour();
     }
@@ -56,7 +57,7 @@ async function loadData() {
         document.getElementById('txt-prestigio').innerText = `${ARTISTA_DATA.prestigio}/1000`;
         document.getElementById('bar-fadiga').style.width = ARTISTA_DATA.fadiga + "%";
         document.getElementById('txt-fadiga').innerText = ARTISTA_DATA.fadiga + "%";
-    } catch (e) { console.error(e); }
+    } catch (e) { console.error("Erro ao carregar:", e); }
 }
 
 async function contratarFilme(cat) {
@@ -78,13 +79,11 @@ async function contratarTour(porte) {
 async function gerarItinerario() {
     const nome = ARTISTA_DATA.nome;
     const qtd = document.getElementById('tour-qtd-datas').value;
-    if(!confirm(`Gerar ${qtd} datas? Isso definirá sua rota final.`)) return;
     await enviarAcao('gerar_itinerario', { nome, qtd: qtd });
 }
 
 async function enviarAcao(acao, params) {
     document.body.style.opacity = "0.5";
-    document.body.style.pointerEvents = "none";
     let url = `${SCRIPT_URL}?acao=${acao}`;
     for (let k in params) url += `&${k}=${encodeURIComponent(params[k])}`;
     try {
@@ -94,7 +93,6 @@ async function enviarAcao(acao, params) {
         location.reload(); 
     } catch (e) { alert("Erro de conexão."); }
     document.body.style.opacity = "1";
-    document.body.style.pointerEvents = "all";
 }
 
 window.onload = loadData;
