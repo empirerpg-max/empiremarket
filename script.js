@@ -2,7 +2,6 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwxbkUndhZPtFvtK1uIF
 
 let ARTISTA_DATA = {};
 
-// Funções de Abrir/Fechar
 function openCinema() { document.getElementById('modal-cinema').classList.add('active'); }
 function closeCinema() { document.getElementById('modal-cinema').classList.remove('active'); }
 function openTour() { document.getElementById('modal-tour').classList.add('active'); }
@@ -10,13 +9,11 @@ function closeTour() { document.getElementById('modal-tour').classList.remove('a
 function openPlanejar() { document.getElementById('modal-planejar-tour').classList.add('active'); }
 function closePlanejar() { document.getElementById('modal-planejar-tour').classList.remove('active'); }
 
-// Lógica de Clique na Tour
 function checkTourStatus() {
-    console.log("Status Atual:", ARTISTA_DATA.status);
     if (ARTISTA_DATA.status && ARTISTA_DATA.status.includes("Planejamento")) {
         openPlanejar();
     } else if (ARTISTA_DATA.status && ARTISTA_DATA.status !== "Livre") {
-        alert("Você já está ocupado com outro projeto!");
+        alert("Já tens um projeto ativo!");
     } else {
         openTour();
     }
@@ -31,55 +28,75 @@ async function loadData() {
         const response = await fetch(`${SCRIPT_URL}?nome=${nome}`);
         ARTISTA_DATA = await response.json();
         
+        // 1. Atualiza Perfil
         document.getElementById('artist-name').innerText = ARTISTA_DATA.nome;
         document.getElementById('artist-photo').src = ARTISTA_DATA.foto;
         document.getElementById('artist-saldo').innerText = `$EC ${ARTISTA_DATA.saldo.toLocaleString('pt-BR')}`;
         
-        const dot = document.getElementById('status-dot');
         const banner = document.getElementById('current-activity');
-        const tourLabel = document.getElementById('label-tour');
-
-        if(ARTISTA_DATA.status === "Livre") {
-            dot.style.background = "#00ff88";
-            banner.innerText = "Disponível para Projetos";
-            tourLabel.innerText = "Tour";
-        } else if (ARTISTA_DATA.status.includes("Planejamento")) {
-            dot.style.background = "#ffd700";
-            banner.innerText = "Aguardando Itinerário";
-            tourLabel.innerText = "Planejar Tour";
-        } else {
-            dot.style.background = "#bc13fe";
-            banner.innerText = ARTISTA_DATA.status;
-            tourLabel.innerText = "Ver Tour";
-        }
+        banner.innerText = (ARTISTA_DATA.status === "Livre") ? "Disponível para Projetos" : ARTISTA_DATA.status;
 
         document.getElementById('bar-prestigio').style.width = (ARTISTA_DATA.prestigio / 10) + "%";
-        document.getElementById('txt-prestigio').innerText = `${ARTISTA_DATA.prestigio}/1000`;
         document.getElementById('bar-fadiga').style.width = ARTISTA_DATA.fadiga + "%";
-        document.getElementById('txt-fadiga').innerText = ARTISTA_DATA.fadiga + "%";
-    } catch (e) { console.error("Erro ao carregar:", e); }
+
+        // 2. RENDERIZA CENTRAL DE GESTÃO
+        renderManagement();
+
+    } catch (e) { console.error(e); }
+}
+
+function renderManagement() {
+    const container = document.getElementById('management-area');
+    container.innerHTML = ""; // Limpa
+
+    let temProjeto = false;
+
+    // Se estiver em Rota (Tour)
+    if (ARTISTA_DATA.itinerario) {
+        temProjeto = true;
+        container.innerHTML += `
+            <div class="mgmt-card">
+                <h4>🎤 ROTA DA TOUR ATIVA</h4>
+                <p class="mgmt-data">${ARTISTA_DATA.itinerario}</p>
+                <small style="opacity:0.5; font-size:10px; display:block; margin-top:10px;">Status: Em Rota</small>
+            </div>
+        `;
+    }
+
+    // Se estiver Gravando Filme
+    if (ARTISTA_DATA.status && ARTISTA_DATA.status.includes("🎬")) {
+        temProjeto = true;
+        container.innerHTML += `
+            <div class="mgmt-card">
+                <h4>🎬 PRODUÇÃO DE CINEMA</h4>
+                <p class="mgmt-data">Gravando projeto: ${ARTISTA_DATA.status.replace("🎬 ", "")}</p>
+                <small style="opacity:0.5; font-size:10px; display:block; margin-top:10px;">Lançamento estimado: 3 dias</small>
+            </div>
+        `;
+    }
+
+    if (!temProjeto) {
+        container.innerHTML = '<p class="empty-msg">Nenhum projeto ativo no momento.</p>';
+    }
 }
 
 async function contratarFilme(cat) {
-    const nome = ARTISTA_DATA.nome;
-    const t = document.getElementById('obra-titulo').value.trim();
+    const t = document.getElementById('obra-titulo').value;
     const g = document.getElementById('obra-genero').value;
     const a = document.getElementById('obra-ano').value;
-    if(!t || !g || !a) { alert("Preencha todos os campos!"); return; }
-    await enviarAcao('contratar_filme', { nome, tipo: cat, titulo: t, genero: g, ano: a });
+    if(!t) return alert("Dê um título!");
+    await enviarAcao('contratar_filme', { nome: ARTISTA_DATA.nome, tipo: cat, titulo: t, genero: g, ano: a });
 }
 
 async function contratarTour(porte) {
-    const nome = ARTISTA_DATA.nome;
-    const t = document.getElementById('tour-nome').value.trim();
-    if(!t) { alert("Dê um nome à Tour!"); return; }
-    await enviarAcao('contratar_tour', { nome, tipo: porte, titulo: t });
+    const t = document.getElementById('tour-nome').value;
+    if(!t) return alert("Dê um nome!");
+    await enviarAcao('contratar_tour', { nome: ARTISTA_DATA.nome, tipo: porte, titulo: t });
 }
 
 async function gerarItinerario() {
-    const nome = ARTISTA_DATA.nome;
-    const qtd = document.getElementById('tour-qtd-datas').value;
-    await enviarAcao('gerar_itinerario', { nome, qtd: qtd });
+    const q = document.getElementById('tour-qtd-datas').value;
+    await enviarAcao('gerar_itinerario', { nome: ARTISTA_DATA.nome, qtd: q });
 }
 
 async function enviarAcao(acao, params) {
@@ -89,10 +106,9 @@ async function enviarAcao(acao, params) {
     try {
         const res = await fetch(url);
         const txt = await res.text();
-        alert(txt);
+        if (!txt.includes('{"nome":')) alert(txt);
         location.reload(); 
     } catch (e) { alert("Erro de conexão."); }
-    document.body.style.opacity = "1";
 }
 
 window.onload = loadData;
