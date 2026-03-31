@@ -39,8 +39,8 @@
         </div>
 
         <nav class="actions-grid">
-            <div class="action-btn" onclick="openTour()">
-                <span class="icon">🎤</span><span>Tour</span>
+            <div class="action-btn" id="btn-tour-action" onclick="checkTourStatus()">
+                <span class="icon">🎤</span><span id="label-tour">Tour</span>
             </div>
             <div class="action-btn" onclick="openCinema()">
                 <span class="icon">🎬</span><span>Cinema</span>
@@ -61,23 +61,20 @@
                 <h3>Hollywood Casting</h3>
                 <button class="close-btn" onclick="closeCinema()">✕</button>
             </div>
-
             <div class="form-container">
                 <div class="input-field">
                     <label>TÍTULO DA OBRA <span class="req">*</span></label>
-                    <input type="text" id="obra-titulo" placeholder="Ex: Caddo Lake">
+                    <input type="text" id="obra-titulo" placeholder="Nome do filme ou série">
                 </div>
-                
                 <div class="input-row">
                     <div class="input-field">
                         <label>GÊNERO <span class="req">*</span></label>
                         <div class="custom-select-wrapper">
                             <select id="obra-genero">
                                 <option value="" disabled selected>Escolha...</option>
-                                <option value="Ação">Ação</option><option value="Aventura">Aventura</option>
-                                <option value="Comédia">Comédia</option><option value="Drama">Drama</option>
-                                <option value="Musical">Musical</option><option value="Terror">Terror</option>
-                                <option value="Suspense">Suspense</option><option value="Thriller">Thriller</option>
+                                <option value="Ação">Ação</option><option value="Drama">Drama</option>
+                                <option value="Terror">Terror</option><option value="Suspense">Suspense</option>
+                                <option value="Musical">Musical</option>
                             </select>
                         </div>
                     </div>
@@ -87,31 +84,10 @@
                     </div>
                 </div>
             </div>
-            
-            <p class="section-title">SELECIONE O CONTRATO:</p>
-            
+            <p class="section-title">CONTRATOS:</p>
             <div class="option-list">
-                <div class="option-card" onclick="contratarFilme('Filme Independente')">
-                    <div class="option-info">
-                        <span class="opt-name">Filme Independente</span>
-                        <span class="opt-val">$EC 250.000</span>
-                    </div>
-                    <span class="badge">+10 P</span>
-                </div>
-                <div class="option-card" onclick="contratarFilme('Papel em Série TV')">
-                    <div class="option-info">
-                        <span class="opt-name">Papel em Série TV</span>
-                        <span class="opt-val">$EC 1.200.000</span>
-                    </div>
-                    <span class="badge">+30 P</span>
-                </div>
-                <div class="option-card" onclick="contratarFilme('Blockbuster Cinema')">
-                    <div class="option-info">
-                        <span class="opt-name">Blockbuster Cinema</span>
-                        <span class="opt-val">$EC 5.000.000</span>
-                    </div>
-                    <span class="badge">+50 P</span>
-                </div>
+                <div class="option-card" onclick="contratarFilme('Filme Independente')"><div class="option-info"><span class="opt-name">Indie</span><span class="opt-val">$EC 250k</span></div><span class="badge">+10 P</span></div>
+                <div class="option-card" onclick="contratarFilme('Blockbuster Cinema')"><div class="option-info"><span class="opt-name">Blockbuster</span><span class="opt-val">$EC 5M</span></div><span class="badge">+50 P</span></div>
             </div>
         </div>
     </div>
@@ -119,26 +95,28 @@
     <div id="modal-tour" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-drag-handle"></div>
-            <div class="modal-header">
-                <h3>Empire Tour</h3>
-                <button class="close-btn" onclick="closeTour()">✕</button>
+            <div class="modal-header"><h3>Investir em Logística</h3><button class="close-btn" onclick="closeTour()">✕</button></div>
+            <div class="form-container">
+                <div class="input-field"><label>NOME DA TOUR <span class="req">*</span></label><input type="text" id="tour-nome" placeholder="Ex: The Raven Tour"></div>
             </div>
+            <div class="option-list">
+                <div class="option-card" onclick="contratarTour('Tour de Clubs')"><div class="option-info"><span class="opt-name">Clubs</span><span class="opt-val">$EC 100k</span></div><span class="badge">Cash +</span></div>
+                <div class="option-card" onclick="contratarTour('Tour de Estádios')"><div class="option-info"><span class="opt-name">Estádios</span><span class="opt-val">$EC 15M</span></div><span class="badge">Cash +++</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-planejar-tour" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-drag-handle"></div>
+            <div class="modal-header"><h3>Planejar Itinerário</h3><button class="close-btn" onclick="closePlanejar()">✕</button></div>
             <div class="form-container">
                 <div class="input-field">
-                    <label>NOME DA TOUR <span class="req">*</span></label>
-                    <input type="text" id="tour-nome" placeholder="Ex: The Raven World Tour">
+                    <label>QUANTIDADE DE DATAS <span class="req">*</span></label>
+                    <input type="number" id="tour-qtd-datas" value="5" min="1" max="30">
+                    <p class="modal-desc">O sistema sorteará as cidades com base no porte da sua logística.</p>
                 </div>
-            </div>
-            <p class="section-title">LOGÍSTICA:</p>
-            <div class="option-list">
-                <div class="option-card" onclick="contratarTour('Club Tour')">
-                    <div class="option-info"><span class="opt-name">Club Tour</span><span class="opt-val">$EC 150.000</span></div>
-                    <span class="badge">Cash +</span>
-                </div>
-                <div class="option-card" onclick="contratarTour('Stadium Tour')">
-                    <div class="option-info"><span class="opt-name">Stadium Tour</span><span class="opt-val">$EC 4.500.000</span></div>
-                    <span class="badge">Cash +++</span>
-                </div>
+                <button class="main-action-btn" onclick="gerarItinerario()">GERAR TURNÊ AGORA</button>
             </div>
         </div>
     </div>
