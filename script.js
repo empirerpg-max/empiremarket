@@ -12,7 +12,7 @@ function openAgenda() { document.getElementById('modal-agenda').classList.add('a
 function closeAgenda() { document.getElementById('modal-agenda').classList.remove('active'); }
 
 function checkTourStatus() {
-    if (ARTISTA_DATA.status && (ARTISTA_DATA.status.includes("Preparando"))) {
+    if (ARTISTA_DATA.status && (ARTISTA_DATA.status.includes("Preparando") || ARTISTA_DATA.status.includes("Planejamento"))) {
         openPlanejar();
     } else if (ARTISTA_DATA.status && ARTISTA_DATA.status !== "Livre") {
         alert("Já tens um projeto ativo!");
@@ -55,20 +55,20 @@ function renderDashboard() {
         temAlgo = true;
         container.innerHTML += `
             <div class="mgmt-card">
-                <h4>🎤 ${ARTISTA_DATA.tour.nomeTour}</h4>
+                <h4>🎤 CENTRAL DA TURNÊ</h4>
                 <div class="mgmt-data">
                     <p><b>Próximo Show:</b> ${ARTISTA_DATA.tour.proximo}</p>
-                    <p><b>Status:</b> Show ${ARTISTA_DATA.tour.showAtual} de ${ARTISTA_DATA.tour.totalShows}</p>
-                    <p><b>Total Arrecadado:</b> $EC ${ARTISTA_DATA.tour.arrecadacao.toLocaleString('pt-BR')}</p>
+                    <p><b>Progresso:</b> Show ${ARTISTA_DATA.tour.showAtual} de ${ARTISTA_DATA.tour.totalShows}</p>
+                    <p><b>Arrecadação:</b> $EC ${ARTISTA_DATA.tour.arrecadacao.toLocaleString('pt-BR')}</p>
                 </div>
                 <button class="btn-book" onclick="openAgenda()">Abrir Tour Book</button>
             </div>`;
-    } else if (ARTISTA_DATA.status && ARTISTA_DATA.status.includes("Preparando")) {
+    } else if (ARTISTA_DATA.status && (ARTISTA_DATA.status.includes("Preparando") || ARTISTA_DATA.status.includes("Planejamento"))) {
         temAlgo = true;
         container.innerHTML += `
             <div class="mgmt-card">
-                <h4>🎤 TURNÊ EM PREPARAÇÃO</h4>
-                <p style="font-size:0.75em; opacity:0.7;">Logística contratada! Clique no botão <b>Tour</b> no Hub para definir as datas e início.</p>
+                <h4>🎤 TURNÊ COMPRADA</h4>
+                <p style="font-size:0.75em; opacity:0.7;">Logística contratada! Clique no botão <b>Tour</b> no Hub para definir datas e início.</p>
             </div>`;
     }
 
@@ -85,13 +85,13 @@ function renderDashboard() {
 }
 
 function renderAgendaFull() {
-    const area = document.getElementById('agenda-lista');
-    area.innerHTML = "";
+    const list = document.getElementById('agenda-lista');
+    list.innerHTML = "";
     if(!ARTISTA_DATA.tour || !ARTISTA_DATA.tour.agenda) return;
 
-    const itinerario = JSON.parse(ARTISTA_DATA.tour.agenda);
-    itinerario.forEach((item) => {
-        area.innerHTML += `
+    const agenda = JSON.parse(ARTISTA_DATA.tour.agenda);
+    agenda.forEach((item) => {
+        list.innerHTML += `
             <div class="agenda-row">
                 <div class="agenda-info">
                     <span>${item.data}</span>
@@ -120,7 +120,7 @@ async function contratarTour(porte) {
 async function gerarItinerario() {
     const q = document.getElementById('tour-qtd-datas').value;
     const d = document.getElementById('tour-data-inicio').value;
-    if(!d) return alert("Define o início da tour!");
+    if(!d) return alert("Define a data de início!");
     await enviar('gerar_itinerario', { nome: ARTISTA_DATA.nome, qtd: q, dataInicio: d });
 }
 
