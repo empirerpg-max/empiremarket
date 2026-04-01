@@ -24,7 +24,8 @@
         <div class="glass-card main-stats">
             <p class="label-small">SALDO DISPONÍVEL</p>
             <h2 id="artist-saldo">$EC 0</h2>
-            <p class="fortuna-label">Património Líquido: <span id="artist-fortuna">$0</span></p>
+            <p class="fortuna-label">Patrimônio Líquido: <span id="artist-fortuna">$0</span></p>
+            
             <div class="stats-group">
                 <div class="stat-bar">
                     <div class="stat-info"><span>PRESTÍGIO</span><span id="txt-prestigio">0/1000</span></div>
@@ -37,9 +38,9 @@
             </div>
         </div>
 
-        <h3 class="section-title-main">Empire Hub <small>Mercado e Compras</small></h3>
+        <h3 class="section-title-main">Empire Hub <small>Market</small></h3>
         <nav class="actions-grid">
-            <div class="action-btn" onclick="checkTourStatus()">
+            <div class="action-btn" id="btn-tour" onclick="checkTourStatus()">
                 <span class="icon">🎤</span><span>Tour</span>
             </div>
             <div class="action-btn" onclick="openCinema()">
@@ -53,63 +54,31 @@
             </div>
         </nav>
 
-        <h3 class="section-title-main">Gestão Ativa <small>Projetos Atuais</small></h3>
+        <h3 class="section-title-main">Gestão Ativa <small>Projetos</small></h3>
         <div id="management-area" class="management-container">
-            <p class="empty-msg">Nenhum projeto ativo no momento.</p>
+            <p class="empty-msg">Nenhum projeto ativo.</p>
         </div>
     </div>
 
     <div id="modal-cinema" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-drag-handle"></div>
-            <div class="modal-header">
-                <h3>Hollywood Casting</h3>
-                <button class="close-btn" onclick="closeCinema()">✕</button>
-            </div>
+            <div class="modal-header"><h3>Hollywood Casting</h3><button class="close-btn" onclick="closeCinema()">✕</button></div>
             <div class="form-container">
-                <div class="input-field">
-                    <label>TÍTULO DA OBRA <span class="req">*</span></label>
-                    <input type="text" id="obra-titulo" placeholder="Nome do projeto">
-                </div>
+                <div class="input-field"><label>TÍTULO DA OBRA <span class="req">*</span></label><input type="text" id="obra-titulo" placeholder="Nome do projeto"></div>
                 <div class="input-row">
-                    <div class="input-field">
-                        <label>GÊNERO <span class="req">*</span></label>
-                        <div class="custom-select-wrapper">
-                            <select id="obra-genero">
-                                <option value="" disabled selected>Escolha...</option>
-                                <option value="Ação">Ação</option><option value="Animação">Animação</option>
-                                <option value="Aventura">Aventura</option><option value="Biografia">Biografia</option>
-                                <option value="Comédia">Comédia</option><option value="Comédia Romântica">Comédia Romântica</option>
-                                <option value="Crime / Policial">Crime / Policial</option><option value="Documentário">Documentário</option>
-                                <option value="Drama">Drama</option><option value="Fantasia">Fantasia</option>
-                                <option value="Faroeste">Faroeste</option><option value="Ficção Científica">Ficção Científica</option>
-                                <option value="Guerra">Guerra</option><option value="Mistério">Mistério</option>
-                                <option value="Musical">Musical</option><option value="Romance">Romance</option>
-                                <option value="Suspense">Suspense</option><option value="Terror">Terror</option>
-                                <option value="Thriller">Thriller</option>
-                            </select>
-                        </div>
+                    <div class="input-field"><label>GÊNERO <span class="req">*</span></label>
+                        <div class="custom-select-wrapper"><select id="obra-genero">
+                            <option value="" disabled selected>Escolha...</option>
+                            <option value="Ação">Ação</option><option value="Animação">Animação</option><option value="Comédia">Comédia</option><option value="Drama">Drama</option><option value="Musical">Musical</option><option value="Terror">Terror</option><option value="Suspense">Suspense</option>
+                        </select></div>
                     </div>
-                    <div class="input-field">
-                        <label>ANO <span class="req">*</span></label>
-                        <input type="number" id="obra-ano" value="2026">
-                    </div>
+                    <div class="input-field"><label>ANO <span class="req">*</span></label><input type="number" id="obra-ano" value="2026"></div>
                 </div>
             </div>
-            <p class="section-title">CONTRATOS:</p>
             <div class="option-list">
-                <div class="option-card" onclick="contratarFilme('Filme Independente')">
-                    <div class="option-info"><span class="opt-name">Filme Independente</span><span class="opt-val">$EC 250k</span></div>
-                    <span class="badge">+10 P</span>
-                </div>
-                <div class="option-card" onclick="contratarFilme('Papel em Série TV')">
-                    <div class="option-info"><span class="opt-name">Papel em Série TV</span><span class="opt-val">$EC 1.2M</span></div>
-                    <span class="badge">+30 P</span>
-                </div>
-                <div class="option-card" onclick="contratarFilme('Blockbuster Cinema')">
-                    <div class="option-info"><span class="opt-name">Blockbuster Cinema</span><span class="opt-val">$EC 5M</span></div>
-                    <span class="badge">+50 P</span>
-                </div>
+                <div class="option-card" onclick="contratarFilme('Filme Independente')"><div class="option-info"><span class="opt-name">Filme Independente</span><span class="opt-val">$EC 250k</span></div><span class="badge">+10 P</span></div>
+                <div class="option-card" onclick="contratarFilme('Blockbuster Cinema')"><div class="option-info"><span class="opt-name">Blockbuster Cinema</span><span class="opt-val">$EC 5M</span></div><span class="badge">+50 P</span></div>
             </div>
         </div>
     </div>
@@ -117,23 +86,14 @@
     <div id="modal-tour" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-drag-handle"></div>
-            <div class="modal-header"><h3>Investir em Logística</h3><button class="close-btn" onclick="closeTour()">✕</button></div>
+            <div class="modal-header"><h3>Logística de Turnê</h3><button class="close-btn" onclick="closeTour()">✕</button></div>
             <div class="form-container">
-                <div class="input-field"><label>NOME DA TOUR <span class="req">*</span></label><input type="text" id="tour-nome" placeholder="Ex: The Raven Tour"></div>
+                <div class="input-field"><label>NOME DA TURNÊ <span class="req">*</span></label><input type="text" id="tour-nome" placeholder="Ex: Renaissance World Tour"></div>
             </div>
             <div class="option-list">
-                <div class="option-card" onclick="contratarTour('Tour de Clubs')">
-                    <div class="option-info"><span class="opt-name">Clubs</span><span class="opt-val">$EC 100k</span></div>
-                    <span class="badge">Cash +</span>
-                </div>
-                <div class="option-card" onclick="contratarTour('Tour de Arenas')">
-                    <div class="option-info"><span class="opt-name">Arenas</span><span class="opt-val">$EC 2M</span></div>
-                    <span class="badge">Cash ++</span>
-                </div>
-                <div class="option-card" onclick="contratarTour('Tour de Estádios')">
-                    <div class="option-info"><span class="opt-name">Estádios</span><span class="opt-val">$EC 15M</span></div>
-                    <span class="badge">Cash +++</span>
-                </div>
+                <div class="option-card" onclick="contratarTour('Tour de Clubs')"><div class="option-info"><span class="opt-name">Tour de Clubs</span><span class="opt-val">$EC 100k</span></div><span class="badge">Cash +</span></div>
+                <div class="option-card" onclick="contratarTour('Tour de Arenas')"><div class="option-info"><span class="opt-name">Tour de Arenas</span><span class="opt-val">$EC 2M</span></div><span class="badge">Cash ++</span></div>
+                <div class="option-card" onclick="contratarTour('Tour de Estádios')"><div class="option-info"><span class="opt-name">Tour de Estádios</span><span class="opt-val">$EC 15M</span></div><span class="badge">Cash +++</span></div>
             </div>
         </div>
     </div>
@@ -141,14 +101,10 @@
     <div id="modal-planejar-tour" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-drag-handle"></div>
-            <div class="modal-header"><h3>Planejar Itinerário</h3><button class="close-btn" onclick="closePlanejar()">✕</button></div>
+            <div class="modal-header"><h3>Definir Rota</h3><button class="close-btn" onclick="closePlanejar()">✕</button></div>
             <div class="form-container">
-                <div class="input-field">
-                    <label>QUANTIDADE DE DATAS <span class="req">*</span></label>
-                    <input type="number" id="tour-qtd-datas" value="5" min="1" max="30">
-                    <p class="modal-desc" style="font-size: 0.7em; opacity: 0.5; margin-top: 10px;">O sistema sorteará as cidades com base no porte da logística.</p>
-                </div>
-                <button class="main-action-btn" onclick="gerarItinerario()">GERAR ROTA AGORA</button>
+                <div class="input-field"><label>QUANTIDADE DE DATAS <span class="req">*</span></label><input type="number" id="tour-qtd-datas" value="5" min="1" max="30"></div>
+                <button class="main-action-btn" onclick="gerarItinerario()">Gerar Rota Agora</button>
             </div>
         </div>
     </div>
