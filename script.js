@@ -12,7 +12,7 @@ function openAgenda() { document.getElementById('modal-agenda').classList.add('a
 function closeAgenda() { document.getElementById('modal-agenda').classList.remove('active'); }
 
 function checkTourStatus() {
-    if (ARTISTA_DATA.status && (ARTISTA_DATA.status.includes("Preparando") || ARTISTA_DATA.status.includes("Planejamento"))) {
+    if (ARTISTA_DATA.status && ARTISTA_DATA.status.includes("Preparando")) {
         openPlanejar();
     } else if (ARTISTA_DATA.status && ARTISTA_DATA.status !== "Livre") {
         alert("Já tens um projeto ativo!");
@@ -34,7 +34,6 @@ async function loadData() {
         document.getElementById('artist-photo').src = ARTISTA_DATA.foto;
         document.getElementById('artist-saldo').innerText = `$EC ${ARTISTA_DATA.saldo.toLocaleString('pt-BR')}`;
         document.getElementById('artist-fortuna').innerText = `$${ARTISTA_DATA.fortuna.toLocaleString('pt-BR')}`;
-        
         document.getElementById('current-activity').innerText = (ARTISTA_DATA.status === "Livre") ? "Disponível para Projetos" : ARTISTA_DATA.status;
 
         document.getElementById('bar-prestigio').style.width = (ARTISTA_DATA.prestigio / 10) + "%";
@@ -55,20 +54,20 @@ function renderDashboard() {
         temAlgo = true;
         container.innerHTML += `
             <div class="mgmt-card">
-                <h4>🎤 CENTRAL DA TURNÊ</h4>
+                <h4>🎤 ATIVIDADE: ${ARTISTA_DATA.tour.nomeTour}</h4>
                 <div class="mgmt-data">
                     <p><b>Próximo Show:</b> ${ARTISTA_DATA.tour.proximo}</p>
                     <p><b>Progresso:</b> Show ${ARTISTA_DATA.tour.showAtual} de ${ARTISTA_DATA.tour.totalShows}</p>
-                    <p><b>Arrecadação:</b> $EC ${ARTISTA_DATA.tour.arrecadacao.toLocaleString('pt-BR')}</p>
+                    <p><b>Arrecadação Total:</b> $EC ${ARTISTA_DATA.tour.arrecadacao.toLocaleString('pt-BR')}</p>
                 </div>
-                <button class="btn-book" onclick="openAgenda()">Abrir Tour Book</button>
+                <button class="btn-open-agenda" onclick="openAgenda()">Ver Itinerário Completo</button>
             </div>`;
-    } else if (ARTISTA_DATA.status && (ARTISTA_DATA.status.includes("Preparando") || ARTISTA_DATA.status.includes("Planejamento"))) {
+    } else if (ARTISTA_DATA.status && ARTISTA_DATA.status.includes("Preparando")) {
         temAlgo = true;
         container.innerHTML += `
             <div class="mgmt-card">
                 <h4>🎤 TURNÊ COMPRADA</h4>
-                <p style="font-size:0.75em; opacity:0.7;">Logística contratada! Clique no botão <b>Tour</b> no Hub para definir datas e início.</p>
+                <p style="font-size:0.75em; opacity:0.7;">Logística aprovada. Clique em <b>Tour</b> no Hub para definir as datas e o início.</p>
             </div>`;
     }
 
@@ -76,8 +75,8 @@ function renderDashboard() {
         temAlgo = true;
         container.innerHTML += `
             <div class="mgmt-card">
-                <h4>🎬 CENTRAL DE CINEMA</h4>
-                <div class="mgmt-data"><p><b>Projeto:</b> ${ARTISTA_DATA.status.replace("🎬 ", "")}</p><p>Status: Em Gravação</p></div>
+                <h4>🎬 PROJETO DE CINEMA</h4>
+                <div class="mgmt-data"><p><b>Obra:</b> ${ARTISTA_DATA.status.replace("🎬 ", "")}</p><p>Status: Em Gravação</p></div>
             </div>`;
     }
 
@@ -85,21 +84,21 @@ function renderDashboard() {
 }
 
 function renderAgendaFull() {
-    const list = document.getElementById('agenda-lista');
-    list.innerHTML = "";
+    const area = document.getElementById('agenda-lista');
+    area.innerHTML = "";
     if(!ARTISTA_DATA.tour || !ARTISTA_DATA.tour.agenda) return;
 
-    const agenda = JSON.parse(ARTISTA_DATA.tour.agenda);
-    agenda.forEach((item) => {
-        list.innerHTML += `
+    const itinerario = JSON.parse(ARTISTA_DATA.tour.agenda);
+    itinerario.forEach((item) => {
+        area.innerHTML += `
             <div class="agenda-row">
                 <div class="agenda-info">
-                    <span>${item.data}</span>
-                    <span>${item.local}</span>
+                    <small>${item.data}</small>
+                    <b>${item.local}</b>
                 </div>
                 <div class="agenda-stats">
-                    <b>EC ${item.arrecadado.toLocaleString('pt-BR')}</b>
-                    <small>${item.vendidos.toLocaleString('pt-BR')} / ${item.capacidade.toLocaleString('pt-BR')}</small>
+                    <span>EC ${item.arrecadado.toLocaleString('pt-BR')}</span>
+                    <small>${item.vendidos.toLocaleString('pt-BR')} pax</small>
                 </div>
             </div>`;
     });
