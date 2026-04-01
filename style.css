@@ -1,57 +1,69 @@
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
 body {
     background: #0b0118; background-image: radial-gradient(circle at top, #1a023a, #0b0118);
-    color: white; font-family: 'Inter', sans-serif; display: flex; justify-content: center; min-height: 100vh;
+    color: white; font-family: 'Inter', sans-serif; overflow-x: hidden;
 }
-.app-container { width: 100%; max-width: 400px; padding: 30px 20px; display: flex; flex-direction: column; align-items: center; }
+.app-container { width: 100%; max-width: 400px; margin: 0 auto; padding: 20px; }
 
-/* Avatar e Pill */
-.profile-header { text-align: center; margin-bottom: 25px; width: 100%; }
+/* Navegação entre Telas */
+.app-view { display: none; width: 100%; animation: fadeIn 0.3s ease-in-out; }
+.app-view.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* TELA DE TOUR: HEADER */
+.view-header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; }
+.back-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; width: 45px; height: 45px; border-radius: 50%; font-size: 1.2em; cursor: pointer; }
+.view-header h2 { font-size: 1.2em; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #bc13fe; }
+
+/* TELA DE TOUR: RESUMO */
+.tour-summary { text-align: left !important; position: relative; overflow: hidden; }
+.tour-badge { position: absolute; top: 15px; right: 15px; background: #00ff88; color: #0b0118; font-size: 0.55em; font-weight: 900; padding: 4px 10px; border-radius: 20px; }
+#tour-display-name { font-size: 1.4em; font-weight: 800; margin-bottom: 15px; text-transform: uppercase; }
+.tour-stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; }
+.t-stat b { display: block; font-size: 0.55em; opacity: 0.5; letter-spacing: 1px; }
+.t-stat span { font-size: 1em; font-weight: 700; color: #ffd700; }
+
+/* AGENDA LIST */
+.tour-agenda-container { display: flex; flex-direction: column; gap: 12px; margin-top: 15px; padding-bottom: 50px; }
+.agenda-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 18px; display: flex; justify-content: space-between; align-items: center; }
+.agenda-card .info b { display: block; font-size: 0.9em; margin-top: 3px; }
+.agenda-card .info small { font-size: 0.6em; color: #bc13fe; font-weight: 800; text-transform: uppercase; }
+.agenda-card .stats { text-align: right; }
+.agenda-card .stats b { color: #ffd700; font-size: 0.8em; display: block; }
+.agenda-card .stats small { font-size: 0.65em; opacity: 0.5; }
+
+/* DESIGN ORIGINAL (MANTIDO) */
+.profile-header { text-align: center; margin-bottom: 25px; }
 .avatar { width: 105px; height: 105px; border-radius: 50%; border: 3px solid #bc13fe; box-shadow: 0 0 25px rgba(188, 19, 254, 0.5); object-fit: cover; }
-.avatar-wrapper { position: relative; display: inline-block; margin-bottom: 10px; }
 .status-dot { position: absolute; bottom: 5px; right: 5px; width: 18px; height: 18px; border-radius: 50%; border: 3px solid #0b0118; background: #00ff88; }
-h1 { font-size: 1.9em; font-weight: 800; margin: 10px 0 5px 0; text-transform: uppercase; letter-spacing: -1px; }
+.avatar-wrapper { position: relative; display: inline-block; margin-bottom: 10px; }
+h1 { font-size: 1.8em; font-weight: 800; margin: 10px 0 5px 0; text-transform: uppercase; letter-spacing: -1px; }
 .status-pill { background: rgba(188, 19, 254, 0.15); border: 1px solid rgba(188, 19, 254, 0.4); padding: 5px 18px; border-radius: 30px; display: inline-block; font-size: 0.65em; font-weight: 800; color: #bc13fe; }
 
-/* Card de Status */
-.glass-card { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 25px; padding: 25px; width: 100%; text-align: center; margin-bottom: 25px; }
+.glass-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 25px; padding: 25px; width: 100%; text-align: center; margin-bottom: 25px; }
 #artist-saldo { color: #ffd700; font-size: 2.3em; font-weight: 800; margin: 5px 0; letter-spacing: -1px; }
-.label-small { font-size: 0.6em; opacity: 0.5; letter-spacing: 1px; text-transform: uppercase; }
 
-/* Barras */
-.stats-group { width: 100%; margin-top: 20px; }
 .stat-info { display: flex; justify-content: space-between; font-size: 0.65em; font-weight: 800; margin-bottom: 6px; }
-.progress-bg { background: rgba(255,255,255,0.08); height: 10px; border-radius: 10px; margin-bottom: 15px; overflow: hidden; }
+.progress-bg { background: rgba(255,255,255,0.08); height: 11px; border-radius: 10px; margin-bottom: 15px; overflow: hidden; }
 .progress { height: 100%; border-radius: 10px; transition: width 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-.gold { background: linear-gradient(to right, #bc13fe, #ffd700); box-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
-.red { background: linear-gradient(to right, #ff4b2b, #ff0000); box-shadow: 0 0 10px rgba(255, 75, 43, 0.3); }
+.gold { background: linear-gradient(to right, #bc13fe, #ffd700); }
+.red { background: linear-gradient(to right, #ff4b2b, #ff0000); }
 
-/* Menu de Navegação Vertical (IMAGE_ABBD46) */
 .main-navigation { width: 100%; display: flex; flex-direction: column; gap: 12px; }
 .nav-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 18px; border-radius: 22px; display: flex; align-items: center; gap: 18px; cursor: pointer; transition: 0.3s; }
 .nav-icon-box { width: 52px; height: 52px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1.3em; }
 .hub-bg { background: rgba(0, 150, 255, 0.1); border: 1px solid rgba(0, 150, 255, 0.3); }
 .mgmt-bg { background: rgba(255, 150, 0, 0.1); border: 1px solid rgba(255, 150, 0, 0.3); }
 .archive-bg { background: rgba(150, 150, 150, 0.1); border: 1px solid rgba(150, 150, 150, 0.3); }
-.nav-text b { display: block; font-size: 1em; color: #fff; margin-bottom: 2px; }
-.nav-text span { font-size: 0.7em; opacity: 0.4; }
 
-/* Modais */
+/* MODAIS */
 .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); display: none; justify-content: center; align-items: flex-end; z-index: 1000; }
 .modal-overlay.active { display: flex; }
 .modal-content { width: 100%; max-width: 400px; background: #0f0221; border-top: 2px solid #bc13fe; border-radius: 30px 30px 0 0; padding: 25px; transform: translateY(100%); transition: 0.4s transform ease; }
 .modal-overlay.active .modal-content { transform: translateY(0); }
 .close-btn { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; opacity: 0.7; }
-
-/* Fortuna no Hub */
 .fortuna-badge-hub { background: linear-gradient(135deg, rgba(255, 215, 0, 0.08), rgba(188, 19, 254, 0.08)); border: 1px solid rgba(255, 215, 0, 0.2); border-radius: 20px; padding: 18px; text-align: center; margin-bottom: 20px; }
-.fortuna-badge-hub p { font-size: 0.55em; letter-spacing: 2px; opacity: 0.6; margin-bottom: 5px; text-transform: uppercase; }
-.fortuna-badge-hub h4 { font-size: 1.7em; color: #ffd700; font-weight: 800; text-shadow: 0 0 15px rgba(255, 215, 0, 0.3); }
-
-/* Hub Grid */
 .hub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .hub-btn { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); padding: 22px 10px; border-radius: 22px; display: flex; flex-direction: column; align-items: center; gap: 10px; cursor: pointer; }
 .hub-btn span { font-size: 0.65em; font-weight: 800; text-transform: uppercase; color: #bc13fe; }
-
-/* Project Card */
-.project-card { background: rgba(255,255,255,0.03); border-left: 4px solid #bc13fe; padding: 18px; border-radius: 15px; margin-bottom: 12px; cursor: pointer; }
+.main-action-btn { width: 100%; background: linear-gradient(45deg, #bc13fe, #ffd700); border: none; padding: 18px; border-radius: 15px; color: #0b0118; font-weight: 800; text-transform: uppercase; margin-top: 15px; cursor: pointer; }
