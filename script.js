@@ -1,13 +1,15 @@
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwxbkUndhZPtFvtK1uIFTkPNN-m6WeiFVMU3IDzuahsC0oQp8Ba2GLQFOAPkWv8eiA3/exec"; 
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwxbkUndhZPtFvtK1uIFTkPNN-m6WeiFVMU3IDzuahsC0oQp8Ba2GLQFOAPkWv8eiA3/exec"; // COLOQUE SEU /exec AQUI
 
 let ARTISTA_DATA = {};
 
-function showScreen(viewId) {
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById(viewId).classList.add('active');
+// TROCA DE TELAS (SPA REAL)
+function showScreen(screenId) {
+    document.querySelectorAll('.app-screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(screenId).classList.add('active');
     window.scrollTo(0,0);
 }
 
+// CARREGAMENTO INICIAL
 async function loadData() {
     const params = new URLSearchParams(window.location.search);
     const nome = params.get('nome');
@@ -17,26 +19,31 @@ async function loadData() {
         const response = await fetch(`${SCRIPT_URL}?nome=${nome}`);
         ARTISTA_DATA = await response.json();
         
+        // Atualiza Interface Fixa
         document.getElementById('artist-name').innerText = ARTISTA_DATA.nome;
         document.getElementById('artist-photo').src = ARTISTA_DATA.foto;
         document.getElementById('artist-saldo').innerText = `$EC ${ARTISTA_DATA.saldo.toLocaleString('pt-BR')}`;
         document.getElementById('hub-fortuna').innerText = `$${ARTISTA_DATA.fortuna.toLocaleString('pt-BR')}`;
-        document.getElementById('current-activity').innerText = (ARTISTA_DATA.status === "Livre") ? "DISPONÍVEL" : ARTISTA_DATA.status.toUpperCase();
+        
+        const banner = document.getElementById('current-activity');
+        banner.innerText = (ARTISTA_DATA.status === "Livre") ? "DISPONÍVEL" : ARTISTA_DATA.status.toUpperCase();
 
+        // Barras
         document.getElementById('bar-prestigio').style.width = (ARTISTA_DATA.prestigio / 10) + "%";
         document.getElementById('txt-prestigio').innerText = `${ARTISTA_DATA.prestigio}/1000`;
         document.getElementById('bar-fadiga').style.width = ARTISTA_DATA.fadiga + "%";
         document.getElementById('txt-fadiga').innerText = ARTISTA_DATA.fadiga + "%";
 
-    } catch (e) { console.error("Falha no carregamento", e); }
+    } catch (e) { console.error("Erro na sincronização", e); }
 }
 
-// GESTÃO DIRETA
+// GESTÃO DE PROJETOS (DASHBOARD)
 function checkManagementView() {
-    const container = document.getElementById('mgmt-area');
+    const container = document.getElementById('mgmt-content');
     container.innerHTML = "";
 
     if (ARTISTA_DATA.tour_info) {
+        // TELA COM DASHBOARD DA TOUR ATIVA
         const info = ARTISTA_DATA.tour_info;
         const agenda = JSON.parse(info.agenda);
         let agendaHtml = "";
@@ -56,17 +63,16 @@ function checkManagementView() {
                     <div class="t-stat"><b>PROGRESSO</b><span>Show ${info.showAtual}/${info.totalShows}</span></div>
                 </div>
             </div>
+            <h3 style="font-size:0.85em; font-weight:800; color:#bc13fe; margin: 15px 0; text-align:left; text-transform:uppercase;">Itinerário</h3>
             ${agendaHtml}`;
-    } else if (ARTISTA_DATA.status && ARTISTA_DATA.status.includes("Preparando")) {
-        container.innerHTML = "<p style='text-align:center; opacity:0.3; margin-top:50px;'>Logística comprada, mas sem agenda. Isso não deveria ocorrer com o novo sistema!</p>";
     } else {
         container.innerHTML = "<p style='text-align:center; opacity:0.3; margin-top:50px;'>Nenhum projeto ativo.</p>";
     }
-    showScreen('view-mgmt');
+    showScreen('screen-mgmt');
 }
 
-// COMPRA UNIFICADA (AÇÃO ÚNICA)
-async function processarCompraTour(porte) {
+// AÇÃO ÚNICA: COMPRAR E GERAR AGENDA (FIM DO ERRO DE CONEXÃO)
+async function processarCompraUnificada(porte) {
     const nomeT = document.getElementById('t-nome').value;
     const dataT = document.getElementById('t-data').value;
     const qtdT = document.getElementById('t-qtd').value;
