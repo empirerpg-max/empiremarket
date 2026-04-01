@@ -1,4 +1,4 @@
-const SCRIPT_URL = "SUA_URL_AQUI"; 
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwxbkUndhZPtFvtK1uIFTkPNN-m6WeiFVMU3IDzuahsC0oQp8Ba2GLQFOAPkWv8eiA3/exec"; 
 
 let ARTISTA_DATA = {};
 
