@@ -8,9 +8,11 @@ function openTour() { document.getElementById('modal-tour').classList.add('activ
 function closeTour() { document.getElementById('modal-tour').classList.remove('active'); }
 function openPlanejar() { document.getElementById('modal-planejar-tour').classList.add('active'); }
 function closePlanejar() { document.getElementById('modal-planejar-tour').classList.remove('active'); }
+function openAgenda() { document.getElementById('modal-agenda').classList.add('active'); renderAgenda(); }
+function closeAgenda() { document.getElementById('modal-agenda').classList.remove('active'); }
 
 function checkTourStatus() {
-    if (ARTISTA_DATA.status && (ARTISTA_DATA.status.includes("Planejamento") || ARTISTA_DATA.status.includes("Preparando"))) {
+    if (ARTISTA_DATA.status && (ARTISTA_DATA.status.includes("Preparando") || ARTISTA_DATA.status.includes("Planejamento"))) {
         openPlanejar();
     } else if (ARTISTA_DATA.status && ARTISTA_DATA.status !== "Livre") {
         alert("Já tens um projeto ativo!");
@@ -52,23 +54,21 @@ function renderDashboard() {
 
     if (ARTISTA_DATA.tour) {
         temProjeto = true;
-        let tags = ARTISTA_DATA.tour.rota.split(" → ").map(c => `<span class="city-tag">${c}</span>`).join("");
         container.innerHTML += `
             <div class="mgmt-card">
                 <h4>🎤 CENTRAL DA TURNÊ</h4>
                 <div class="mgmt-data">
                     <p><b>Próximo:</b> ${ARTISTA_DATA.tour.proximo}</p>
-                    <p><b>Progresso:</b> Show ${ARTISTA_DATA.tour.showAtual}</p>
                     <p><b>Arrecadação:</b> $EC ${ARTISTA_DATA.tour.arrecadacao.toLocaleString('pt-BR')}</p>
-                    <div style="margin-top:10px;">${tags}</div>
                 </div>
+                <button class="btn-detalhes" onclick="openAgenda()">Ver Agenda Completa</button>
             </div>`;
-    } else if (ARTISTA_DATA.status && (ARTISTA_DATA.status.includes("Planejamento") || ARTISTA_DATA.status.includes("Preparando"))) {
+    } else if (ARTISTA_DATA.status && (ARTISTA_DATA.status.includes("Preparando"))) {
         temProjeto = true;
         container.innerHTML += `
             <div class="mgmt-card">
                 <h4>🎤 TURNÊ COMPRADA</h4>
-                <p class="mgmt-data">Logística pronta. Clique no botão <b>Tour</b> acima para gerar seu itinerário!</p>
+                <p style="font-size:0.75em; opacity:0.8;">Logística pronta. Clique no botão <b>Tour</b> acima para definir datas e início.</p>
             </div>`;
     }
 
@@ -77,30 +77,51 @@ function renderDashboard() {
         container.innerHTML += `
             <div class="mgmt-card">
                 <h4>🎬 CENTRAL DE CINEMA</h4>
-                <p class="mgmt-data"><b>Projeto:</b> ${ARTISTA_DATA.status.replace("🎬 ", "")}<br><b>Status:</b> Em Gravação</p>
+                <div class="mgmt-data"><p><b>Projeto:</b> ${ARTISTA_DATA.status.replace("🎬 ", "")}</p><p>Status: Em Gravação</p></div>
             </div>`;
     }
 
-    if (!temProjeto) container.innerHTML = '<p class="empty-msg">Nenhum projeto ativo no momento.</p>';
+    if (!temProjeto) container.innerHTML = '<p class="empty-msg">Nenhum projeto ativo.</p>';
+}
+
+function renderAgenda() {
+    const list = document.getElementById('agenda-detalhada');
+    list.innerHTML = "";
+    if(!ARTISTA_DATA.tour || !ARTISTA_DATA.tour.itinerario_json) return;
+
+    const agenda = JSON.parse(ARTISTA_DATA.tour.itinerario_json);
+    agenda.forEach((item, index) => {
+        list.innerHTML += `
+            <div class="agenda-item">
+                <div>
+                    <span class="agenda-date">${item.data}</span>
+                    <span class="agenda-venue">${item.local}</span>
+                </div>
+                <div style="text-align:right;">
+                    <span class="agenda-sold" style="display:block;">${item.vendidos.toLocaleString('pt-BR')} / ${item.capacidade.toLocaleString('pt-BR')}</span>
+                    <span style="font-size:10px; color:#ffd700;">EC ${item.arrecadado.toLocaleString('pt-BR')}</span>
+                </div>
+            </div>`;
+    });
 }
 
 async function contratarFilme(cat) {
-    const t = document.getElementById('obra-titulo').value.trim();
+    const t = document.getElementById('obra-titulo').value;
     const g = document.getElementById('obra-genero').value;
     const a = document.getElementById('obra-ano').value;
-    if(!t || !g) return alert("Título e Gênero obrigatórios!");
     await enviarAcao('contratar_filme', { nome: ARTISTA_DATA.nome, tipo: cat, titulo: t, genero: g, ano: a });
 }
 
 async function contratarTour(porte) {
-    const t = document.getElementById('tour-nome').value.trim();
-    if(!t) return alert("Dê um nome à turnê!");
+    const t = document.getElementById('tour-nome').value;
     await enviarAcao('contratar_tour', { nome: ARTISTA_DATA.nome, tipo: porte, titulo: t });
 }
 
 async function gerarItinerario() {
     const q = document.getElementById('tour-qtd-datas').value;
-    await enviarAcao('gerar_itinerario', { nome: ARTISTA_DATA.nome, qtd: q });
+    const d = document.getElementById('tour-data-inicio').value;
+    if(!d) return alert("Define a data de início!");
+    await enviarAcao('gerar_itinerario', { nome: ARTISTA_DATA.nome, qtd: q, dataInicio: d });
 }
 
 async function enviarAcao(acao, params) {
