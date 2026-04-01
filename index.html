@@ -31,9 +31,9 @@
             </div>
         </div>
 
-        <section id="home-screen" class="app-view active">
+        <section id="home-screen" class="app-screen active">
             <div class="main-navigation">
-                <div class="nav-card" onclick="showScreen('hub-screen')">
+                <div class="nav-card" onclick="showView('hub-screen')">
                     <div class="nav-icon-box hub-bg">🏢</div>
                     <div class="nav-text"><b>Empire Hub</b><span>Market & Investimentos</span></div>
                 </div>
@@ -48,40 +48,43 @@
             </div>
         </section>
 
-        <section id="hub-screen" class="app-view">
+        <section id="hub-screen" class="app-screen">
             <div class="view-header">
-                <button class="back-btn" onclick="showScreen('home-screen')">←</button>
+                <button class="back-btn" onclick="showView('home-screen')">←</button>
                 <h2>Empire Hub</h2>
             </div>
-            <div class="fortuna-badge-hub"><p>PATRIMÔNIO LÍQUIDO</p><h4 id="hub-fortuna">$0</h4></div>
+            <div class="fortuna-badge-hub">
+                <p>PATRIMÔNIO LÍQUIDO</p>
+                <h4 id="hub-fortuna">$0</h4>
+            </div>
             <div class="hub-grid">
                 <div class="hub-btn" onclick="openModal('modal-tour-compra')">🎤<span>Tour</span></div>
                 <div class="hub-btn" onclick="openModal('modal-cinema-compra')">🎬<span>Cinema</span></div>
-                <div class="hub-btn" onclick="alert('TV em breve')">📺<span>TV</span></div>
-                <div class="hub-btn" onclick="alert('Empresas em breve')">🏢<span>Business</span></div>
+                <div class="hub-btn">🏢<span>Empresas</span></div>
+                <div class="hub-btn">🛒<span>Market</span></div>
             </div>
         </section>
 
-        <section id="mgmt-screen" class="app-view">
+        <section id="mgmt-screen" class="app-screen">
             <div class="view-header">
-                <button class="back-btn" onclick="showScreen('home-screen')">←</button>
+                <button class="back-btn" onclick="showView('home-screen')">←</button>
                 <h2>Gestão Ativa</h2>
             </div>
-            <div id="mgmt-list-container">
+            <div id="mgmt-list-content">
                 </div>
         </section>
 
-        <section id="tour-details-screen" class="app-view">
+        <section id="tour-details-screen" class="app-screen">
             <div class="view-header">
-                <button class="back-btn" onclick="showScreen('mgmt-screen')">←</button>
+                <button class="back-btn" onclick="showView('mgmt-screen')">←</button>
                 <h2>Tour Management</h2>
             </div>
             <div id="tour-details-content"></div>
         </section>
 
-        <section id="cinema-details-screen" class="app-view">
+        <section id="cinema-details-screen" class="app-screen">
             <div class="view-header">
-                <button class="back-btn" onclick="showScreen('mgmt-screen')">←</button>
+                <button class="back-btn" onclick="showView('mgmt-screen')">←</button>
                 <h2>Cinema/TV Studio</h2>
             </div>
             <div id="cinema-details-content"></div>
@@ -94,8 +97,8 @@
             <div class="modal-header"><h3>Contratar Tour</h3><button class="close-btn" onclick="closeModal('modal-tour-compra')">✕</button></div>
             <div class="input-field"><label>NOME DA TURNÊ *</label><input type="text" id="tour-nome" placeholder="Ex: Renaissance"></div>
             <div class="option-list">
-                <div class="option-card" onclick="contratarTour('Tour de Estádios')"><b>Estádios</b><span>$EC 15.000.000</span></div>
-                <div class="option-card" onclick="contratarTour('Tour de Clubs')"><b>Clubs</b><span>$EC 100.000</span></div>
+                <div class="option-card" onclick="contratarTour('Tour de Estádios')"><b>Estádios</b><span>$EC 15M</span></div>
+                <div class="option-card" onclick="contratarTour('Tour de Clubs')"><b>Clubs</b><span>$EC 100k</span></div>
             </div>
         </div>
     </div>
@@ -103,10 +106,9 @@
     <div id="modal-cinema-compra" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header"><h3>Hollywood Casting</h3><button class="close-btn" onclick="closeModal('modal-cinema-compra')">✕</button></div>
-            <div class="input-field"><label>TÍTULO DA OBRA *</label><input type="text" id="cinema-titulo" placeholder="Ex: O Mistério de Caddo Lake"></div>
+            <div class="input-field"><label>TÍTULO DA OBRA *</label><input type="text" id="cinema-titulo" placeholder="Nome do projeto"></div>
             <div class="option-list">
-                <div class="option-card" onclick="contratarCinema('Blockbuster Cinema')"><b>Blockbuster</b><span>$EC 5.000.000</span></div>
-                <div class="option-card" onclick="contratarCinema('Filme Independente')"><b>Indie</b><span>$EC 250.000</span></div>
+                <div class="option-card" onclick="contratarCinema('Blockbuster Cinema')"><b>Blockbuster</b><span>$EC 5M</span></div>
             </div>
         </div>
     </div>
