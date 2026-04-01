@@ -5,12 +5,12 @@ body {
 }
 .app-container { width: 100%; max-width: 400px; margin: 0 auto; padding: 25px; display: flex; flex-direction: column; align-items: center; }
 
-/* CONTROLE DE TELAS */
-.app-screen { display: none; width: 100%; }
-.app-screen.active { display: block; animation: slideUp 0.3s ease; }
-@keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+/* CONTROLE DE TELAS (SPA) */
+.app-view { display: none; width: 100%; }
+.app-view.active { display: block; animation: slideIn 0.3s ease-out; }
+@keyframes slideIn { from { opacity: 0; transform: translateX(10px); } to { opacity: 1; transform: translateX(0); } }
 
-/* HEADER (FIXO) */
+/* HEADER (DESIGN ABBD46) */
 .profile-header { text-align: center; margin-bottom: 25px; width: 100%; }
 .avatar { width: 105px; height: 105px; border-radius: 50%; border: 3px solid #bc13fe; box-shadow: 0 0 25px rgba(188, 19, 254, 0.5); object-fit: cover; }
 .avatar-wrapper { position: relative; display: inline-block; margin-bottom: 10px; }
@@ -18,12 +18,12 @@ body {
 h1 { font-size: 1.9em; font-weight: 800; margin: 10px 0 5px 0; text-transform: uppercase; letter-spacing: -1px; }
 .status-pill { background: rgba(188, 19, 254, 0.15); border: 1px solid rgba(188, 19, 254, 0.4); padding: 5px 18px; border-radius: 30px; display: inline-block; font-size: 0.65em; font-weight: 800; color: #bc13fe; }
 
-/* CARD DE STATUS */
+/* STATUS CARD */
 .glass-card { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 25px; padding: 25px; width: 100%; text-align: center; margin-bottom: 25px; }
 #artist-saldo { color: #ffd700; font-size: 2.3em; font-weight: 800; margin: 5px 0; letter-spacing: -1px; }
 .label-small { font-size: 0.6em; opacity: 0.5; letter-spacing: 1px; text-transform: uppercase; }
 
-/* BARRAS */
+/* BARRAS NEON */
 .stat-info { display: flex; justify-content: space-between; font-size: 0.65em; font-weight: 800; margin-bottom: 6px; }
 .progress-bg { background: rgba(255,255,255,0.08); height: 11px; border-radius: 10px; margin-bottom: 15px; overflow: hidden; }
 .progress { height: 100%; border-radius: 10px; transition: width 1s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
@@ -41,11 +41,19 @@ h1 { font-size: 1.9em; font-weight: 800; margin: 10px 0 5px 0; text-transform: u
 .nav-text b { display: block; font-size: 1em; color: #fff; }
 .nav-text span { font-size: 0.7em; opacity: 0.4; }
 
-/* TELA DE TOUR CENTER */
+/* TELA DE GESTÃO E HUB */
 .view-header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; width: 100%; }
-.back-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2em; }
+.back-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.fortuna-badge-hub { background: linear-gradient(135deg, rgba(255, 215, 0, 0.08), rgba(188, 19, 254, 0.08)); border: 1px solid rgba(255, 215, 0, 0.2); border-radius: 20px; padding: 20px; text-align: center; margin-bottom: 20px; }
+.fortuna-badge-hub h4 { font-size: 1.7em; color: #ffd700; font-weight: 800; text-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
+
+.hub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.hub-btn { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); padding: 25px 10px; border-radius: 22px; display: flex; flex-direction: column; align-items: center; gap: 10px; cursor: pointer; }
+.hub-btn span { font-size: 0.65em; font-weight: 800; text-transform: uppercase; color: #bc13fe; }
+
+/* AGENDA E SETUP */
 .tour-stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); }
-.t-stat b { display: block; font-size: 0.55em; opacity: 0.5; }
+.t-stat b { display: block; font-size: 0.55em; opacity: 0.5; text-transform: uppercase; }
 .t-stat span { font-size: 0.9em; font-weight: 700; color: #ffd700; }
 .agenda-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 18px; padding: 18px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
 
@@ -54,11 +62,8 @@ h1 { font-size: 1.9em; font-weight: 800; margin: 10px 0 5px 0; text-transform: u
 .modal-overlay.active { display: flex; }
 .modal-content { width: 100%; max-width: 400px; background: #0f0221; border-top: 2px solid #bc13fe; border-radius: 30px 30px 0 0; padding: 25px; transform: translateY(100%); transition: 0.4s transform ease; }
 .modal-overlay.active .modal-content { transform: translateY(0); }
-.fortuna-badge-hub { background: linear-gradient(135deg, rgba(255, 215, 0, 0.08), rgba(188, 19, 254, 0.08)); border: 1px solid rgba(255, 215, 0, 0.2); border-radius: 20px; padding: 18px; text-align: center; margin-bottom: 20px; }
-.hub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.hub-btn { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); padding: 20px 10px; border-radius: 22px; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; }
-.close-btn { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; opacity: 0.7; }
+.close-btn { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
 .main-action-btn { width: 100%; background: linear-gradient(45deg, #bc13fe, #ffd700); border: none; padding: 18px; border-radius: 15px; color: #0b0118; font-weight: 800; text-transform: uppercase; margin-top: 15px; cursor: pointer; }
 .input-field { margin-bottom: 15px; text-align: left; }
-.input-field label { font-size: 0.65em; font-weight: 800; color: #bc13fe; display: block; margin-bottom: 5px; }
+.input-field label { font-size: 0.65em; font-weight: 800; color: #bc13fe; display: block; margin-bottom: 5px; text-transform: uppercase; }
 .input-field input { width: 100%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; padding: 14px; color: white; outline: none; }
