@@ -20,24 +20,24 @@
             <div class="status-pill"><span id="current-activity">Sincronizando...</span></div>
         </header>
 
-        <section id="home-screen" class="app-view active">
-            <div class="glass-card main-stats">
-                <p class="label-small">SALDO EMPIRE COINS</p>
-                <h2 id="artist-saldo">$EC 0</h2>
-                <div class="stats-group">
-                    <div class="stat-info"><span>PRESTÍGIO</span><span id="txt-prestigio">0/1000</span></div>
-                    <div class="progress-bg"><div id="bar-prestigio" class="progress gold"></div></div>
-                    <div class="stat-info"><span>FADIGA</span><span id="txt-fadiga">0%</span></div>
-                    <div class="progress-bg"><div id="bar-fadiga" class="progress red"></div></div>
-                </div>
+        <div class="glass-card main-stats">
+            <p class="label-small">SALDO EMPIRE COINS</p>
+            <h2 id="artist-saldo">$EC 0</h2>
+            <div class="stats-group">
+                <div class="stat-info"><span>PRESTÍGIO</span><span id="txt-prestigio">0/1000</span></div>
+                <div class="progress-bg"><div id="bar-prestigio" class="progress gold"></div></div>
+                <div class="stat-info"><span>FADIGA</span><span id="txt-fadiga">0%</span></div>
+                <div class="progress-bg"><div id="bar-fadiga" class="progress red"></div></div>
             </div>
+        </div>
 
+        <section id="home-screen" class="app-view active">
             <div class="main-navigation">
                 <div class="nav-card" onclick="showScreen('hub-screen')">
                     <div class="nav-icon-box hub-bg">🏢</div>
                     <div class="nav-text"><b>Empire Hub</b><span>Market & Investimentos</span></div>
                 </div>
-                <div class="nav-card" onclick="checkManagementTransition()">
+                <div class="nav-card" onclick="openManagementScreen()">
                     <div class="nav-icon-box mgmt-bg">⚡</div>
                     <div class="nav-text"><b>Gestão de Projetos</b><span>Acompanhamento Ativo</span></div>
                 </div>
@@ -53,36 +53,60 @@
                 <button class="back-btn" onclick="showScreen('home-screen')">←</button>
                 <h2>Empire Hub</h2>
             </div>
-            <div class="fortuna-badge-hub">
-                <p>PATRIMÔNIO LÍQUIDO</p>
-                <h4 id="hub-fortuna">$0</h4>
-            </div>
+            <div class="fortuna-badge-hub"><p>PATRIMÔNIO LÍQUIDO</p><h4 id="hub-fortuna">$0</h4></div>
             <div class="hub-grid">
                 <div class="hub-btn" onclick="openModal('modal-tour-compra')">🎤<span>Tour</span></div>
-                <div class="hub-btn" onclick="alert('Cinema em breve')">🎬<span>Cinema</span></div>
-                <div class="hub-btn">🏢<span>Empresas</span></div>
-                <div class="hub-btn">🛒<span>Market</span></div>
+                <div class="hub-btn" onclick="openModal('modal-cinema-compra')">🎬<span>Cinema</span></div>
+                <div class="hub-btn" onclick="alert('TV em breve')">📺<span>TV</span></div>
+                <div class="hub-btn" onclick="alert('Empresas em breve')">🏢<span>Business</span></div>
             </div>
         </section>
 
         <section id="mgmt-screen" class="app-view">
             <div class="view-header">
                 <button class="back-btn" onclick="showScreen('home-screen')">←</button>
-                <h2 id="mgmt-view-title">Gestão Ativa</h2>
+                <h2>Gestão Ativa</h2>
             </div>
-            <div id="mgmt-dynamic-content">
+            <div id="mgmt-list-container">
                 </div>
+        </section>
+
+        <section id="tour-details-screen" class="app-view">
+            <div class="view-header">
+                <button class="back-btn" onclick="showScreen('mgmt-screen')">←</button>
+                <h2>Tour Management</h2>
+            </div>
+            <div id="tour-details-content"></div>
+        </section>
+
+        <section id="cinema-details-screen" class="app-view">
+            <div class="view-header">
+                <button class="back-btn" onclick="showScreen('mgmt-screen')">←</button>
+                <h2>Cinema/TV Studio</h2>
+            </div>
+            <div id="cinema-details-content"></div>
         </section>
 
     </div>
 
     <div id="modal-tour-compra" class="modal-overlay">
         <div class="modal-content">
-            <div class="modal-header"><h3>Contratar Logística</h3><button class="close-btn" onclick="closeModal('modal-tour-compra')">✕</button></div>
+            <div class="modal-header"><h3>Contratar Tour</h3><button class="close-btn" onclick="closeModal('modal-tour-compra')">✕</button></div>
             <div class="input-field"><label>NOME DA TURNÊ *</label><input type="text" id="tour-nome" placeholder="Ex: Renaissance"></div>
             <div class="option-list">
-                <div class="option-card" onclick="contratarTour('Tour de Estádios')"><b>Tour de Estádios</b><span>$EC 15M</span></div>
-                <div class="option-card" onclick="contratarTour('Tour de Clubs')"><b>Tour de Clubs</b><span>$EC 100k</span></div>
+                <div class="option-card" onclick="contratarTour('Tour de Estádios')"><b>Estádios</b><span>$EC 15.000.000</span></div>
+                <div class="option-card" onclick="contratarTour('Tour de Clubs')"><b>Clubs</b><span>$EC 100.000</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-cinema-compra" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header"><h3>Hollywood Casting</h3><button class="close-btn" onclick="closeModal('modal-cinema-compra')">✕</button></div>
+            <div class="input-field"><label>TÍTULO DA OBRA *</label><input type="text" id="cinema-titulo" placeholder="Ex: O Mistério de Caddo Lake"></div>
+            <div class="option-list">
+                <div class="option-card" onclick="contratarCinema('Blockbuster Cinema')"><b>Blockbuster</b><span>$EC 5.000.000</span></div>
+                <div class="option-card" onclick="contratarCinema('Filme Independente')"><b>Indie</b><span>$EC 250.000</span></div>
             </div>
         </div>
     </div>
