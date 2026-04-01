@@ -20,7 +20,7 @@
             <div class="status-pill"><span id="current-activity">Sincronizando...</span></div>
         </header>
 
-        <section id="home-screen" class="app-view active">
+        <main id="home-view" class="app-screen active">
             <div class="glass-card main-stats">
                 <p class="label-small">SALDO EMPIRE COINS</p>
                 <h2 id="artist-saldo">$EC 0</h2>
@@ -46,17 +46,16 @@
                     <div class="nav-text"><b>Projetos Finalizados</b><span>Acervo de Carreira</span></div>
                 </div>
             </div>
-        </section>
+        </main>
 
-        <section id="tour-screen" class="app-view">
+        <main id="tour-view" class="app-screen">
             <div class="view-header">
-                <button class="back-btn" onclick="showScreen('home-screen')">←</button>
+                <button class="back-btn" onclick="showView('home-view')">←</button>
                 <h2>Tour Management</h2>
             </div>
-
-            <div id="tour-content">
+            <div id="tour-dynamic-content">
                 </div>
-        </section>
+        </main>
 
     </div>
 
@@ -66,7 +65,7 @@
             <div class="fortuna-badge-hub"><p>PATRIMÔNIO LÍQUIDO</p><h4 id="hub-fortuna">$0</h4></div>
             <div class="hub-grid">
                 <div class="hub-btn" onclick="openModal('modal-tour-compra')">🎤<span>Tour</span></div>
-                <div class="hub-btn" onclick="alert('Em breve')">🎬<span>Cinema</span></div>
+                <div class="hub-btn" onclick="alert('Em breve!')">🎬<span>Cinema</span></div>
                 <div class="hub-btn">🏢<span>Empresas</span></div>
                 <div class="hub-btn">🛒<span>Market</span></div>
             </div>
@@ -76,7 +75,7 @@
     <div id="modal-tour-compra" class="modal-overlay sub-modal">
         <div class="modal-content">
             <div class="modal-header"><h3>Contratar Logística</h3><button class="close-btn" onclick="closeModal('modal-tour-compra')">✕</button></div>
-            <div class="input-field"><label>NOME DA TOUR</label><input type="text" id="tour-nome" placeholder="Ex: Renaissance Tour"></div>
+            <div class="input-field"><label>NOME DA TOUR *</label><input type="text" id="tour-nome" placeholder="Ex: Renaissance"></div>
             <div class="option-list">
                 <div class="option-card" onclick="contratarTour('Tour de Estádios')"><b>Estádios</b><span>$EC 15M</span></div>
                 <div class="option-card" onclick="contratarTour('Tour de Clubs')"><b>Clubs</b><span>$EC 100k</span></div>
