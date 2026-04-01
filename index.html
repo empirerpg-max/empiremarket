@@ -31,11 +31,11 @@
             </div>
         </div>
 
-        <main id="dynamic-content">
-            
-            <div id="view-home" class="screen active">
+        <main id="view-container">
+
+            <section id="screen-home" class="app-screen active">
                 <div class="main-navigation">
-                    <div class="nav-card" onclick="showScreen('view-hub')">
+                    <div class="nav-card" onclick="showScreen('screen-hub')">
                         <div class="nav-icon-box hub-bg">🏢</div>
                         <div class="nav-text"><b>Empire Hub</b><span>Market & Investimentos</span></div>
                     </div>
@@ -48,16 +48,19 @@
                         <div class="nav-text"><b>Projetos Finalizados</b><span>Acervo de Carreira</span></div>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <div id="view-hub" class="screen">
+            <section id="screen-hub" class="app-screen">
                 <div class="view-header">
-                    <button class="back-btn" onclick="showScreen('view-home')">←</button>
+                    <button class="back-btn" onclick="showScreen('screen-home')">←</button>
                     <h2>Empire Hub</h2>
                 </div>
-                <div class="fortuna-badge-hub"><p>PATRIMÔNIO LÍQUIDO</p><h4 id="hub-fortuna">$0</h4></div>
+                <div class="fortuna-badge-hub">
+                    <p>PATRIMÔNIO LÍQUIDO</p>
+                    <h4 id="hub-fortuna">$0</h4>
+                </div>
                 <div class="main-navigation">
-                    <div class="nav-card" onclick="showScreen('view-buy-tour')">
+                    <div class="nav-card" onclick="showScreen('screen-buy-tour')">
                         <div class="nav-icon-box hub-bg">🎤</div>
                         <div class="nav-text"><b>Contratar Tour</b><span>Logística e Datas</span></div>
                     </div>
@@ -74,40 +77,45 @@
                         <div class="nav-text"><b>Market</b><span>Compras de Luxo</span></div>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <div id="view-buy-tour" class="screen">
+            <section id="screen-buy-tour" class="app-screen">
                 <div class="view-header">
-                    <button class="back-btn" onclick="showScreen('view-hub')">←</button>
+                    <button class="back-btn" onclick="showScreen('screen-hub')">←</button>
                     <h2>Configurar Tour</h2>
                 </div>
-                
                 <div class="form-container">
-                    <div class="input-field"><label>NOME DA TURNÊ</label><input type="text" id="t-nome" placeholder="Ex: World Tour"></div>
-                    <div class="input-field"><label>DATA DE INÍCIO</label><input type="date" id="t-data"></div>
-                    <div class="input-field"><label>QUANTIDADE DE SHOWS</label><input type="number" id="t-qtd" value="10"></div>
+                    <div class="input-field"><label>NOME DA TURNÊ</label><input type="text" id="t-nome" placeholder="Ex: Sabine World Tour"></div>
+                    <div class="input-row" style="display:flex; gap:10px;">
+                        <div class="input-field" style="flex:2;"><label>DATA DE INÍCIO</label><input type="date" id="t-data"></div>
+                        <div class="input-field" style="flex:1;"><label>SHOWS</label><input type="number" id="t-qtd" value="10"></div>
+                    </div>
                 </div>
-
-                <p class="section-label">ESCOLHA O PORTE</p>
+                <p class="section-label">SELECIONE O PORTE</p>
                 <div class="main-navigation">
-                    <div class="nav-card" onclick="processarCompraTour('Tour de Estádios')">
+                    <div class="nav-card" onclick="processarCompraUnificada('Tour de Estádios')">
                         <div class="nav-icon-box gold-bg">🏟️</div>
-                        <div class="nav-text"><b>Estádios</b><span>$EC 15.000.000</span></div>
+                        <div class="nav-text"><b>Tour de Estádios</b><span>$EC 15.000.000</span></div>
                     </div>
-                    <div class="nav-card" onclick="processarCompraTour('Tour de Clubs')">
+                    <div class="nav-card" onclick="processarCompraUnificada('Tour de Arenas')">
+                        <div class="nav-icon-box hub-bg">🏟️</div>
+                        <div class="nav-text"><b>Tour de Arenas</b><span>$EC 2.500.000</span></div>
+                    </div>
+                    <div class="nav-card" onclick="processarCompraUnificada('Tour de Clubs')">
                         <div class="nav-icon-box hub-bg">🎹</div>
-                        <div class="nav-text"><b>Clubs</b><span>$EC 100.000</span></div>
+                        <div class="nav-text"><b>Tour de Clubs</b><span>$EC 100.000</span></div>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <div id="view-mgmt" class="screen">
+            <section id="screen-mgmt" class="app-screen">
                 <div class="view-header">
-                    <button class="back-btn" onclick="showScreen('view-home')">←</button>
+                    <button class="back-btn" onclick="showScreen('screen-home')">←</button>
                     <h2>Gerenciamento</h2>
                 </div>
-                <div id="mgmt-area"></div>
-            </div>
+                <div id="mgmt-content">
+                    </div>
+            </section>
 
         </main>
     </div>
