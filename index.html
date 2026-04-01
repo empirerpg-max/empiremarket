@@ -59,9 +59,9 @@
             </div>
             <div class="hub-grid">
                 <div class="hub-btn" onclick="showScreen('view-buy-tour')">🎤<span>Tour</span></div>
-                <div class="hub-btn" onclick="alert('Cinema em breve')">🎬<span>Cinema</span></div>
-                <div class="hub-btn">🏢<span>Empresas</span></div>
-                <div class="hub-btn">🛒<span>Market</span></div>
+                <div class="hub-btn" onclick="showScreen('view-buy-cinema')">🎬<span>Cinema</span></div>
+                <div class="hub-btn" onclick="alert('Em breve')">🏢<span>Empresas</span></div>
+                <div class="hub-btn" onclick="alert('Em breve')">🛒<span>Market</span></div>
             </div>
         </section>
 
@@ -79,6 +79,10 @@
                     <div class="sel-info"><b>Tour de Estádios</b><span>Logística Global</span></div>
                     <div class="sel-price">$EC 15M</div>
                 </div>
+                <div class="selection-card" onclick="contratarTour('Tour de Arenas')">
+                    <div class="sel-info"><b>Tour de Arenas</b><span>Circuito Nacional</span></div>
+                    <div class="sel-price">$EC 2.5M</div>
+                </div>
                 <div class="selection-card" onclick="contratarTour('Tour de Clubs')">
                     <div class="sel-info"><b>Tour de Clubs</b><span>Circuito Intimista</span></div>
                     <div class="sel-price">$EC 100k</div>
@@ -86,10 +90,31 @@
             </div>
         </section>
 
+        <section id="view-buy-cinema" class="app-screen">
+            <div class="view-header">
+                <button class="back-btn" onclick="showScreen('view-hub')">←</button>
+                <h2>Hollywood Casting</h2>
+            </div>
+            <div class="input-field">
+                <label>TÍTULO DA OBRA *</label>
+                <input type="text" id="cinema-titulo" placeholder="Nome do filme ou série">
+            </div>
+            <div class="selection-list">
+                <div class="selection-card" onclick="contratarCinema('Blockbuster Cinema')">
+                    <div class="sel-info"><b>Blockbuster</b><span>Produção de Alto Orçamento</span></div>
+                    <div class="sel-price">$EC 5M</div>
+                </div>
+                <div class="selection-card" onclick="contratarCinema('Filme Independente')">
+                    <div class="sel-info"><b>Indie Film</b><span>Foco em Crítica e Prêmios</span></div>
+                    <div class="sel-price">$EC 250k</div>
+                </div>
+            </div>
+        </section>
+
         <section id="view-mgmt" class="app-screen">
             <div class="view-header">
                 <button class="back-btn" onclick="showScreen('view-home')">←</button>
-                <h2>Minha Carreira</h2>
+                <h2>Gestão Ativa</h2>
             </div>
             <div id="mgmt-content">
                 </div>
