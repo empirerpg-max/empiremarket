@@ -17,14 +17,21 @@ body {
 h1 { font-size: 1.9em; font-weight: 800; margin: 10px 0 5px 0; text-transform: uppercase; letter-spacing: -1px; }
 .status-pill { background: rgba(188, 19, 254, 0.15); border: 1px solid rgba(188, 19, 254, 0.4); padding: 5px 18px; border-radius: 30px; display: inline-block; font-size: 0.65em; font-weight: 800; color: #bc13fe; text-transform: uppercase; }
 
+/* TAGS DE CATEGORIA (NOVO) */
+.project-tag {
+    display: inline-block; background: rgba(188, 19, 254, 0.15); border: 1px solid #bc13fe;
+    color: #bc13fe; font-size: 0.55em; font-weight: 900; padding: 3px 10px; border-radius: 20px;
+    text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;
+}
+
 /* CARDS FINANCEIROS */
 .glass-card { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 25px; padding: 25px; width: 100%; text-align: center; margin-bottom: 25px; }
 #artist-saldo { color: #ffd700; font-size: 2.3em; font-weight: 800; margin: 5px 0; letter-spacing: -1px; }
 .label-small { font-size: 0.6em; opacity: 0.5; letter-spacing: 1px; text-transform: uppercase; }
 
-/* BARRAS NEON */
+/* BARRAS */
 .stat-info { display: flex; justify-content: space-between; font-size: 0.65em; font-weight: 800; margin-bottom: 6px; }
-.progress-bg { background: rgba(255,255,255,0.08); height: 10px; border-radius: 10px; margin-bottom: 15px; overflow: hidden; }
+.progress-bg { background: rgba(255,255,255,0.08); height: 11px; border-radius: 10px; margin-bottom: 15px; overflow: hidden; }
 .progress { height: 100%; border-radius: 10px; transition: width 1.2s ease; }
 .gold { background: linear-gradient(to right, #bc13fe, #ffd700); }
 .red { background: linear-gradient(to right, #ff4b2b, #ff0000); }
@@ -41,15 +48,6 @@ h1 { font-size: 1.9em; font-weight: 800; margin: 10px 0 5px 0; text-transform: u
 .nav-text b { display: block; font-size: 1em; color: #fff; }
 .nav-text span { font-size: 0.7em; opacity: 0.4; }
 
-/* SUBPÁGINAS */
-.view-header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; width: 100%; }
-.back-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2em; }
-.fortuna-badge-hub { background: linear-gradient(135deg, rgba(255, 215, 0, 0.08), rgba(188, 19, 254, 0.08)); border: 1px solid rgba(255, 215, 0, 0.2); border-radius: 20px; padding: 20px; text-align: center; margin-bottom: 25px; }
-.fortuna-badge-hub h4 { font-size: 1.7em; color: #ffd700; font-weight: 800; }
-
-/* BOTÃO DE DETALHES */
-.btn-detalhes { background: rgba(188, 19, 254, 0.15); border: 1px solid rgba(188, 19, 254, 0.5); color: #e0aaff; padding: 12px; border-radius: 12px; font-size: 0.7em; font-weight: 800; width: 100%; cursor: pointer; margin-top: 15px; text-transform: uppercase; letter-spacing: 1px; }
-
 /* MODAIS */
 .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); display: none; justify-content: center; align-items: flex-end; z-index: 1000; }
 .modal-overlay.active { display: flex; }
@@ -59,12 +57,19 @@ h1 { font-size: 1.9em; font-weight: 800; margin: 10px 0 5px 0; text-transform: u
 .close-btn { background: none; border: none; color: white; font-size: 1.4rem; cursor: pointer; opacity: 0.5; }
 
 /* AGENDA CARDS */
-.agenda-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 18px; padding: 15px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-.tour-stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); }
-.t-stat b { display: block; font-size: 0.55em; opacity: 0.5; text-transform: uppercase; }
-.t-stat span { font-size: 0.9em; font-weight: 700; color: #ffd700; }
+.agenda-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 18px; padding: 18px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.agenda-stats { text-align: right; }
+.agenda-stats b { color: #ffd700; font-size: 0.8em; display: block; }
+.cap-box { font-size: 0.65em; font-weight: 700; color: #fff; opacity: 0.8; margin: 2px 0; display: block; }
+.pct-tag { font-size: 0.6em; background: rgba(0, 255, 136, 0.15); color: #00ff88; padding: 2px 6px; border-radius: 5px; font-weight: 800; }
 
-/* FORMULÁRIO */
+/* INTERFACES */
+.view-header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; width: 100%; }
+.back-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2em; }
+.fortuna-badge-hub { background: linear-gradient(135deg, rgba(255, 215, 0, 0.08), rgba(188, 19, 254, 0.08)); border: 1px solid rgba(255, 215, 0, 0.2); border-radius: 20px; padding: 15px; text-align: center; margin-bottom: 25px; }
+.btn-detalhes { background: rgba(188, 19, 254, 0.15); border: 1px solid rgba(188, 19, 254, 0.5); color: #e0aaff; padding: 12px; border-radius: 12px; font-size: 0.7em; font-weight: 800; width: 100%; cursor: pointer; margin-top: 15px; text-transform: uppercase; }
+
+/* FORMS */
 .input-field { margin-bottom: 15px; text-align: left; width: 100%; }
 .input-field label { display: block; font-size: 0.65em; font-weight: 800; color: #bc13fe; margin-bottom: 5px; text-transform: uppercase; }
 .input-field input { width: 100%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; padding: 15px; color: white; outline: none; font-family: inherit; }
