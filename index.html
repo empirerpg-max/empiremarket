@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Empire Manager</title>
+    <title>Empire Artist Manager</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;800&display=swap" rel="stylesheet">
 </head>
@@ -16,16 +16,12 @@
                 <div id="status-dot" class="status-dot"></div>
             </div>
             <h1 id="artist-name">Carregando...</h1>
-            <div id="activity-banner" class="activity-banner">
-                <span id="current-activity">Sincronizando...</span>
-            </div>
+            <div id="activity-banner" class="activity-banner"><span id="current-activity">Sincronizando...</span></div>
         </header>
 
         <div class="glass-card main-stats">
             <p class="label-small">SALDO DISPONÍVEL</p>
             <h2 id="artist-saldo">$EC 0</h2>
-            <p class="fortuna-label">Patrimônio Líquido: <span id="artist-fortuna">$0</span></p>
-            
             <div class="stats-group">
                 <div class="stat-bar">
                     <div class="stat-info"><span>PRESTÍGIO</span><span id="txt-prestigio">0/1000</span></div>
@@ -38,75 +34,78 @@
             </div>
         </div>
 
-        <h3 class="section-title-main">Empire Hub <small>Market</small></h3>
-        <nav class="actions-grid">
-            <div class="action-btn" onclick="checkTourStatus()">
-                <span class="icon">🎤</span><span>Tour</span>
-            </div>
-            <div class="action-btn" onclick="openCinema()">
-                <span class="icon">🎬</span><span>Cinema</span>
-            </div>
-            <div class="action-btn" onclick="alert('Em breve')">
-                <span class="icon">🏢</span><span>Business</span>
-            </div>
-            <div class="action-btn" onclick="alert('Em breve')">
-                <span class="icon">🛒</span><span>Market</span>
-            </div>
-        </nav>
-
-        <h3 class="section-title-main">Gestão Ativa <small>Projetos</small></h3>
-        <div id="management-area" class="management-container">
-            <p class="empty-msg">Nenhum projeto ativo.</p>
-        </div>
-    </div>
-
-    <div id="modal-cinema" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header"><h3>Hollywood Casting</h3><button class="close-btn" onclick="closeCinema()">✕</button></div>
-            <div class="form-container">
-                <div class="input-field"><label>TÍTULO DA OBRA *</label><input type="text" id="obra-titulo" placeholder="Nome do projeto"></div>
-                <div class="input-row">
-                    <div class="input-field"><label>GÊNERO *</label>
-                        <select id="obra-genero">
-                            <option value="Ação">Ação</option><option value="Drama">Drama</option><option value="Terror">Terror</option><option value="Musical">Musical</option>
-                        </select>
-                    </div>
-                    <div class="input-field"><label>ANO *</label><input type="number" id="obra-ano" value="2026"></div>
+        <div class="main-navigation">
+            <div class="nav-card hub" onclick="openModal('modal-hub')">
+                <div class="nav-content">
+                    <span class="nav-icon">🏢</span>
+                    <div class="nav-text"><b>Empire Hub</b><small>Market & Investimentos</small></div>
                 </div>
             </div>
-            <div class="option-list">
-                <div class="option-card" onclick="contratarFilme('Filme Independente')"><div class="option-info"><b>Indie</b><small>$EC 250k</small></div><span class="badge">+10 P</span></div>
-                <div class="option-card" onclick="contratarFilme('Blockbuster Cinema')"><div class="option-info"><b>Blockbuster</b><small>$EC 5M</small></div><span class="badge">+50 P</span></div>
+            <div class="nav-card mgmt" onclick="openManagement()">
+                <div class="nav-content">
+                    <span class="nav-icon">⚡</span>
+                    <div class="nav-text"><b>Gestão de Projetos</b><small>Acompanhamento Ativo</small></div>
+                </div>
+            </div>
+            <div class="nav-card archive" onclick="alert('Histórico em breve!')">
+                <div class="nav-content">
+                    <span class="nav-icon">📁</span>
+                    <div class="nav-text"><b>Projetos Finalizados</b><small>Acervo de Carreira</small></div>
+                </div>
             </div>
         </div>
     </div>
 
-    <div id="modal-tour" class="modal-overlay">
+    <div id="modal-hub" class="modal-overlay">
         <div class="modal-content">
-            <div class="modal-header"><h3>Logística de Turnê</h3><button class="close-btn" onclick="closeTour()">✕</button></div>
-            <div class="input-field"><label>NOME DA TURNÊ *</label><input type="text" id="tour-nome" placeholder="Ex: World Tour 2026"></div>
-            <div class="option-list">
-                <div class="option-card" onclick="contratarTour('Tour de Clubs')"><div class="option-info"><b>Clubs</b><small>$EC 100k</small></div><span class="badge">LOG +</span></div>
-                <div class="option-card" onclick="contratarTour('Tour de Estádios')"><div class="option-info"><b>Estádios</b><small>$EC 15M</small></div><span class="badge">LOG +++</span></div>
+            <div class="modal-header"><h3>Empire Hub</h3><button class="close-btn" onclick="closeModal('modal-hub')">✕</button></div>
+            <div class="actions-grid">
+                <div class="action-btn" onclick="openModal('modal-tour-compra')">🎤<span>Tour</span></div>
+                <div class="action-btn" onclick="openModal('modal-cinema')">🎬<span>Cinema/TV</span></div>
+                <div class="action-btn" onclick="alert('Em breve')">🏢<span>Empresas</span></div>
+                <div class="action-btn" onclick="alert('Em breve')">🛒<span>Market</span></div>
             </div>
         </div>
     </div>
 
-    <div id="modal-planejar-tour" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header"><h3>Definir Itinerário</h3><button class="close-btn" onclick="closePlanejar()">✕</button></div>
-            <div class="input-row">
-                <div class="input-field"><label>Nº SHOWS *</label><input type="number" id="tour-qtd-datas" value="10"></div>
-                <div class="input-field"><label>DATA INÍCIO *</label><input type="date" id="tour-data-inicio"></div>
-            </div>
-            <button class="main-action-btn" onclick="gerarItinerario()">SINCRONIZAR AGENDA</button>
-        </div>
-    </div>
-
-    <div id="modal-agenda" class="modal-overlay">
+    <div id="modal-mgmt" class="modal-overlay">
         <div class="modal-content" style="height: 85vh;">
-            <div class="modal-header"><h3>Tour Book</h3><button class="close-btn" onclick="closeAgenda()">✕</button></div>
-            <div id="agenda-lista" class="agenda-scroll-area"></div>
+            <div class="modal-header"><h3>Gestão Ativa</h3><button class="close-btn" onclick="closeModal('modal-mgmt')">✕</button></div>
+            <div id="project-list" class="scroll-area">
+                </div>
+        </div>
+    </div>
+
+    <div id="modal-tour-compra" class="modal-overlay sub">
+        <div class="modal-content">
+            <div class="modal-header"><h3>Logística de Tour</h3><button class="close-btn" onclick="closeModal('modal-tour-compra')">✕</button></div>
+            <div class="input-field"><label>NOME DA TOUR *</label><input type="text" id="tour-nome" placeholder="Ex: Renaissance Tour"></div>
+            <div class="option-list">
+                <div class="option-card" onclick="contratarTour('Tour de Clubs')"><b>Clubs</b><span class="badge">$EC 100k</span></div>
+                <div class="option-card" onclick="contratarTour('Tour de Estádios')"><b>Estádios</b><span class="badge">$EC 15M</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-cinema" class="modal-overlay sub">
+        <div class="modal-content">
+            <div class="modal-header"><h3>Hollywood Casting</h3><button class="close-btn" onclick="closeModal('modal-cinema')">✕</button></div>
+            <div class="form-container">
+                <div class="input-field"><label>TÍTULO *</label><input type="text" id="obra-titulo"></div>
+                <div class="input-row">
+                    <div class="input-field"><label>GÊNERO</label><select id="obra-genero"><option value="Ação">Ação</option><option value="Drama">Drama</option></select></div>
+                    <div class="input-field"><label>ANO</label><input type="number" id="obra-ano" value="2026"></div>
+                </div>
+            </div>
+            <div class="option-card" onclick="contratarFilme('Blockbuster Cinema')"><b>Blockbuster</b><span class="badge">$EC 5M</span></div>
+        </div>
+    </div>
+
+    <div id="modal-detalhes-projeto" class="modal-overlay sub">
+        <div class="modal-content" style="height: 80vh;">
+            <div class="modal-header"><h3 id="detalhe-titulo">Projeto</h3><button class="close-btn" onclick="closeModal('modal-detalhes-projeto')">✕</button></div>
+            <div id="detalhe-corpo" class="scroll-area">
+                </div>
         </div>
     </div>
 
