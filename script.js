@@ -1,4 +1,4 @@
-const SCRIPT_URL = "SUA_URL_AQUI"; 
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwxbkUndhZPtFvtK1uIFTkPNN-m6WeiFVMU3IDzuahsC0oQp8Ba2GLQFOAPkWv8eiA3/exec"; 
 
 let ARTISTA_DATA = {};
 
@@ -10,10 +10,10 @@ function openPlanejar() { document.getElementById('modal-planejar-tour').classLi
 function closePlanejar() { document.getElementById('modal-planejar-tour').classList.remove('active'); }
 
 function checkTourStatus() {
-    if (ARTISTA_DATA.status && ARTISTA_DATA.status.includes("Planejamento")) {
+    if (ARTISTA_DATA.status && (ARTISTA_DATA.status.includes("Planejamento") || ARTISTA_DATA.status.includes("Preparando"))) {
         openPlanejar();
     } else if (ARTISTA_DATA.status && ARTISTA_DATA.status !== "Livre") {
-        alert("Você já tem um projeto em andamento!");
+        alert("Já tens um projeto ativo!");
     } else {
         openTour();
     }
@@ -50,30 +50,35 @@ function renderDashboard() {
     container.innerHTML = "";
     let temProjeto = false;
 
-    // CARD DE TURNÊ
-    if (ARTISTA_DATA.status && (ARTISTA_DATA.status.includes("Tour") || ARTISTA_DATA.status.includes("Planejamento"))) {
+    if (ARTISTA_DATA.tour) {
         temProjeto = true;
-        let itinerarioHtml = ARTISTA_DATA.itinerario 
-            ? ARTISTA_DATA.itinerario.split(" → ").map(c => `<span class="city-tag">${c}</span>`).join("")
-            : "<i>Aguardando definição da rota...</i>";
-
+        let tags = ARTISTA_DATA.tour.rota.split(" → ").map(c => `<span class="city-tag">${c}</span>`).join("");
         container.innerHTML += `
             <div class="mgmt-card">
-                <h4>🎤 Central da Turnê</h4>
-                <p class="mgmt-data"><b>Logística:</b> Ativa<br><b>Cidades:</b><br>${itinerarioHtml}</p>
-            </div>
-        `;
+                <h4>🎤 CENTRAL DA TURNÊ</h4>
+                <div class="mgmt-data">
+                    <p><b>Próximo:</b> ${ARTISTA_DATA.tour.proximo}</p>
+                    <p><b>Progresso:</b> Show ${ARTISTA_DATA.tour.showAtual}</p>
+                    <p><b>Arrecadação:</b> $EC ${ARTISTA_DATA.tour.arrecadacao.toLocaleString('pt-BR')}</p>
+                    <div style="margin-top:10px;">${tags}</div>
+                </div>
+            </div>`;
+    } else if (ARTISTA_DATA.status && (ARTISTA_DATA.status.includes("Planejamento") || ARTISTA_DATA.status.includes("Preparando"))) {
+        temProjeto = true;
+        container.innerHTML += `
+            <div class="mgmt-card">
+                <h4>🎤 TURNÊ COMPRADA</h4>
+                <p class="mgmt-data">Logística pronta. Clique no botão <b>Tour</b> acima para gerar seu itinerário!</p>
+            </div>`;
     }
 
-    // CARD DE CINEMA
     if (ARTISTA_DATA.status && ARTISTA_DATA.status.includes("🎬")) {
         temProjeto = true;
         container.innerHTML += `
             <div class="mgmt-card">
-                <h4>🎬 Central de Cinema</h4>
-                <p class="mgmt-data"><b>Projeto:</b> ${ARTISTA_DATA.status.replace("🎬 ", "")}<br><b>Status:</b> Em Gravação (Lançamento em 3 dias)</p>
-            </div>
-        `;
+                <h4>🎬 CENTRAL DE CINEMA</h4>
+                <p class="mgmt-data"><b>Projeto:</b> ${ARTISTA_DATA.status.replace("🎬 ", "")}<br><b>Status:</b> Em Gravação</p>
+            </div>`;
     }
 
     if (!temProjeto) container.innerHTML = '<p class="empty-msg">Nenhum projeto ativo no momento.</p>';
@@ -83,13 +88,13 @@ async function contratarFilme(cat) {
     const t = document.getElementById('obra-titulo').value.trim();
     const g = document.getElementById('obra-genero').value;
     const a = document.getElementById('obra-ano').value;
-    if(!t || !g) return alert("Preencha título e gênero!");
+    if(!t || !g) return alert("Título e Gênero obrigatórios!");
     await enviarAcao('contratar_filme', { nome: ARTISTA_DATA.nome, tipo: cat, titulo: t, genero: g, ano: a });
 }
 
 async function contratarTour(porte) {
     const t = document.getElementById('tour-nome').value.trim();
-    if(!t) return alert("Dê um nome para a turnê!");
+    if(!t) return alert("Dê um nome à turnê!");
     await enviarAcao('contratar_tour', { nome: ARTISTA_DATA.nome, tipo: porte, titulo: t });
 }
 
