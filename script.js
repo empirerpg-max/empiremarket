@@ -1,15 +1,16 @@
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwxbkUndhZPtFvtK1uIFTkPNN-m6WeiFVMU3IDzuahsC0oQp8Ba2GLQFOAPkWv8eiA3/exec"; // COLOQUE SEU /exec AQUI
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwxbkUndhZPtFvtK1uIFTkPNN-m6WeiFVMU3IDzuahsC0oQp8Ba2GLQFOAPkWv8eiA3/exec"; 
 
 let ARTISTA_DATA = {};
 
-// TROCA DE TELAS (SPA REAL)
-function showScreen(screenId) {
+function showScreen(viewId) {
     document.querySelectorAll('.app-screen').forEach(s => s.classList.remove('active'));
-    document.getElementById(screenId).classList.add('active');
+    document.getElementById(viewId).classList.add('active');
     window.scrollTo(0,0);
 }
 
-// CARREGAMENTO INICIAL
+function openModal(id) { document.getElementById(id).classList.add('active'); }
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
 async function loadData() {
     const params = new URLSearchParams(window.location.search);
     const nome = params.get('nome');
@@ -19,42 +20,28 @@ async function loadData() {
         const response = await fetch(`${SCRIPT_URL}?nome=${nome}`);
         ARTISTA_DATA = await response.json();
         
-        // Atualiza Interface Fixa
         document.getElementById('artist-name').innerText = ARTISTA_DATA.nome;
         document.getElementById('artist-photo').src = ARTISTA_DATA.foto;
         document.getElementById('artist-saldo').innerText = `$EC ${ARTISTA_DATA.saldo.toLocaleString('pt-BR')}`;
         document.getElementById('hub-fortuna').innerText = `$${ARTISTA_DATA.fortuna.toLocaleString('pt-BR')}`;
-        
-        const banner = document.getElementById('current-activity');
-        banner.innerText = (ARTISTA_DATA.status === "Livre") ? "DISPONÍVEL" : ARTISTA_DATA.status.toUpperCase();
+        document.getElementById('current-activity').innerText = (ARTISTA_DATA.status === "Livre") ? "DISPONÍVEL" : ARTISTA_DATA.status.toUpperCase();
 
-        // Barras
         document.getElementById('bar-prestigio').style.width = (ARTISTA_DATA.prestigio / 10) + "%";
         document.getElementById('txt-prestigio').innerText = `${ARTISTA_DATA.prestigio}/1000`;
         document.getElementById('bar-fadiga').style.width = ARTISTA_DATA.fadiga + "%";
         document.getElementById('txt-fadiga').innerText = ARTISTA_DATA.fadiga + "%";
 
-    } catch (e) { console.error("Erro na sincronização", e); }
+    } catch (e) { console.error("Falha no carregamento", e); }
 }
 
-// GESTÃO DE PROJETOS (DASHBOARD)
+// GESTÃO COM LISTA ESCONDIDA
 function checkManagementView() {
     const container = document.getElementById('mgmt-content');
     container.innerHTML = "";
 
     if (ARTISTA_DATA.tour_info) {
-        // TELA COM DASHBOARD DA TOUR ATIVA
         const info = ARTISTA_DATA.tour_info;
-        const agenda = JSON.parse(info.agenda);
-        let agendaHtml = "";
-        agenda.forEach(show => {
-            agendaHtml += `
-                <div class="agenda-card">
-                    <div><small style="color:#bc13fe; font-weight:800; font-size:0.6em;">${show.data}</small><b style="display:block; font-size:0.85em;">${show.local}</b></div>
-                    <div style="text-align:right;"><b style="color:#ffd700; font-size:0.75em;">EC ${show.arrecadado.toLocaleString()}</b></div>
-                </div>`;
-        });
-
+        
         container.innerHTML = `
             <div class="glass-card" style="text-align:left;">
                 <h3 style="font-size:1.3em; margin-bottom:5px;">${info.nomeTour}</h3>
@@ -62,16 +49,32 @@ function checkManagementView() {
                     <div class="t-stat"><b>ARRECADAÇÃO</b><span>$EC ${info.arrecadacao.toLocaleString()}</span></div>
                     <div class="t-stat"><b>PROGRESSO</b><span>Show ${info.showAtual}/${info.totalShows}</span></div>
                 </div>
-            </div>
-            <h3 style="font-size:0.85em; font-weight:800; color:#bc13fe; margin: 15px 0; text-align:left; text-transform:uppercase;">Itinerário</h3>
-            ${agendaHtml}`;
+                <button class="btn-detalhes" onclick="abrirItinerario()">Ver datas, vendas e locais aqui</button>
+            </div>`;
     } else {
         container.innerHTML = "<p style='text-align:center; opacity:0.3; margin-top:50px;'>Nenhum projeto ativo.</p>";
     }
     showScreen('screen-mgmt');
 }
 
-// AÇÃO ÚNICA: COMPRAR E GERAR AGENDA (FIM DO ERRO DE CONEXÃO)
+function abrirItinerario() {
+    const lista = document.getElementById('itinerario-lista');
+    lista.innerHTML = "";
+    
+    if (ARTISTA_DATA.tour_info && ARTISTA_DATA.tour_info.agenda) {
+        const agenda = JSON.parse(ARTISTA_DATA.tour_info.agenda);
+        agenda.forEach(show => {
+            lista.innerHTML += `
+                <div class="agenda-card">
+                    <div><small style="color:#bc13fe; font-weight:800; font-size:0.6em;">${show.data}</small><b style="display:block; font-size:0.85em;">${show.local}</b></div>
+                    <div style="text-align:right;"><b style="color:#ffd700; font-size:0.75em;">EC ${show.arrecadado.toLocaleString()}</b></div>
+                </div>`;
+        });
+        openModal('modal-itinerario');
+    }
+}
+
+// COMPRA UNIFICADA
 async function processarCompraUnificada(porte) {
     const nomeT = document.getElementById('t-nome').value;
     const dataT = document.getElementById('t-data').value;
