@@ -1,116 +1,102 @@
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwxbkUndhZPtFvtK1uIFTkPNN-m6WeiFVMU3IDzuahsC0oQp8Ba2GLQFOAPkWv8eiA3/exec"; 
+const SCRIPT_URL = "SUA_URL_AQUI"; // Substitua pelo seu /exec
 
 let ARTISTA_DATA = {};
 
-// TROCA DE TELA (SPA)
-function showView(viewId) {
+// NAVEGAÇÃO SPA
+function changeView(viewId) {
     document.querySelectorAll('.app-screen').forEach(s => s.classList.remove('active'));
-    const target = document.getElementById(viewId);
-    if(target) target.classList.add('active');
+    document.getElementById(viewId).classList.add('active');
 }
 
 function openModal(id) { document.getElementById(id).classList.add('active'); }
 function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
-// CARREGAMENTO
+// CARREGAMENTO INICIAL
 async function loadData() {
     const params = new URLSearchParams(window.location.search);
     const nome = params.get('nome');
     if(!nome) return;
+
     try {
         const response = await fetch(`${SCRIPT_URL}?nome=${nome}`);
         ARTISTA_DATA = await response.json();
         
+        // UI BÁSICA
         document.getElementById('artist-name').innerText = ARTISTA_DATA.nome;
         document.getElementById('artist-photo').src = ARTISTA_DATA.foto;
         document.getElementById('artist-saldo').innerText = `$EC ${ARTISTA_DATA.saldo.toLocaleString('pt-BR')}`;
         document.getElementById('hub-fortuna').innerText = `$${ARTISTA_DATA.fortuna.toLocaleString('pt-BR')}`;
-        document.getElementById('current-activity').innerText = (ARTISTA_DATA.status === "Livre") ? "DISPONÍVEL" : ARTISTA_DATA.status.toUpperCase();
         
+        const banner = document.getElementById('current-activity');
+        banner.innerText = (ARTISTA_DATA.status === "Livre") ? "DISPONÍVEL" : ARTISTA_DATA.status.toUpperCase();
+
+        // BARRAS
         document.getElementById('bar-prestigio').style.width = (ARTISTA_DATA.prestigio / 10) + "%";
         document.getElementById('txt-prestigio').innerText = `${ARTISTA_DATA.prestigio}/1000`;
         document.getElementById('bar-fadiga').style.width = ARTISTA_DATA.fadiga + "%";
         document.getElementById('txt-fadiga').innerText = ARTISTA_DATA.fadiga + "%";
-    } catch (e) { console.error(e); }
+
+    } catch (e) { console.error("Erro ao carregar dados", e); }
 }
 
-// GESTÃO: LISTA DE PROJETOS
-function openManagementScreen() {
-    const list = document.getElementById('mgmt-list-content');
-    list.innerHTML = "";
-    let temAlgo = false;
+// CENTRAL DE GESTÃO
+function openManagement() {
+    const container = document.getElementById('mgmt-container');
+    container.innerHTML = "";
+    let temProjeto = false;
 
     if (ARTISTA_DATA.tour_info || (ARTISTA_DATA.status && ARTISTA_DATA.status.includes("Preparando"))) {
-        temAlgo = true;
+        temProjeto = true;
         const card = document.createElement('div');
-        card.className = "project-item-card";
-        card.innerHTML = `<h4>🎤 PROJETO DE TURNÊ</h4><p>Status: ${ARTISTA_DATA.tour_info ? 'Em Rota' : 'Aguardando Setup'}</p>`;
-        card.onclick = () => openTourDetails();
-        list.appendChild(card);
+        card.className = "mgmt-project-card";
+        card.innerHTML = `<h4>🎤 PROJETO DE TURNÊ</h4><p>Status: ${ARTISTA_DATA.tour_info ? 'Em Rota Ativa' : 'Aguardando Itinerário'}</p>`;
+        card.onclick = () => renderTourDetails();
+        container.appendChild(card);
     }
 
-    if (ARTISTA_DATA.status && ARTISTA_DATA.status.includes("🎬")) {
-        temAlgo = true;
-        const card = document.createElement('div');
-        card.className = "project-item-card"; card.style.borderLeftColor = "#0096ff";
-        card.innerHTML = `<h4>🎬 PRODUÇÃO DE CINEMA</h4><p>Status: Em Gravação</p>`;
-        card.onclick = () => openCinemaDetails();
-        list.appendChild(card);
+    if (!temProjeto) {
+        container.innerHTML = "<p style='text-align:center; opacity:0.3; margin-top:50px;'>Nenhum projeto ativo.</p>";
     }
-
-    if (!temAlgo) list.innerHTML = "<p style='text-align:center; opacity:0.3; margin-top:40px;'>Nenhum projeto ativo.</p>";
-    showView('mgmt-screen');
+    changeView('mgmt-view');
 }
 
-// DETALHES TOUR
-function openTourDetails() {
-    const container = document.getElementById('tour-details-content');
+// DETALHES DA TOUR (INTERNO)
+function renderTourDetails() {
+    const container = document.getElementById('mgmt-container');
     container.innerHTML = "";
 
-    if (ARTISTA_DATA.status.includes("Preparando")) {
+    if (!ARTISTA_DATA.tour_info) {
         container.innerHTML = `
             <div class="glass-card">
-                <h3>Configurar Itinerário</h3>
-                <div class="input-field"><label>DATA DE INÍCIO</label><input type="date" id="t-start"></div>
-                <div class="input-field"><label>QTD SHOWS</label><input type="number" id="t-qtd" value="10"></div>
-                <button class="main-action-btn" onclick="gerarItinerario()">Gerar Datas Agora</button>
+                <h3 style="margin-bottom:15px; font-size:1.1em;">Setup do Itinerário</h3>
+                <input type="date" id="t-start" style="width:100%; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); padding:15px; border-radius:12px; color:white; margin-bottom:12px;">
+                <input type="number" id="t-qtd" value="10" style="width:100%; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); padding:15px; border-radius:12px; color:white; margin-bottom:12px;">
+                <button onclick="gerarItinerario()" style="width:100%; background:linear-gradient(45deg, #bc13fe, #ffd700); border:none; padding:18px; border-radius:15px; color:#0b0118; font-weight:800; text-transform:uppercase;">SINCRONIZAR AGENDA</button>
             </div>`;
     } else {
         const info = ARTISTA_DATA.tour_info;
         const agenda = JSON.parse(info.agenda);
         let agendaHtml = "";
         agenda.forEach(show => {
-            agendaHtml += `<div class="agenda-card"><div><small style="color:#bc13fe; font-weight:800;">${show.data}</small><b style="display:block;">${show.local}</b></div><div style="text-align:right;"><b>EC ${show.arrecadado.toLocaleString()}</b></div></div>`;
+            agendaHtml += `<div class="agenda-card"><div><small style="color:#bc13fe; font-weight:800; font-size:0.6em;">${show.data}</small><b style="display:block; font-size:0.85em;">${show.local}</b></div><div style="text-align:right;"><b style="color:#ffd700; font-size:0.75em;">EC ${show.arrecadado.toLocaleString()}</b></div></div>`;
         });
         container.innerHTML = `
             <div class="glass-card" style="text-align:left;">
                 <h3 style="font-size:1.3em; margin-bottom:5px;">${info.nomeTour}</h3>
-                <div class="tour-stats-grid"><div class="t-stat"><b>ARRECADAÇÃO</b><span>$EC ${info.arrecadacao.toLocaleString()}</span></div><div class="t-stat"><b>PROGRESSO</b><span>Show ${info.showAtual}/${info.totalShows}</span></div></div>
-            </div>${agendaHtml}`;
+                <div class="tour-stats-grid">
+                    <div class="t-stat"><b>ARRECADAÇÃO</b><span>$EC ${info.arrecadacao.toLocaleString()}</span></div>
+                    <div class="t-stat"><b>PROGRESSO</b><span>Show ${info.showAtual}/${info.totalShows}</span></div>
+                </div>
+            </div>
+            ${agendaHtml}`;
     }
-    showView('tour-details-screen');
 }
 
-// DETALHES CINEMA
-function openCinemaDetails() {
-    const container = document.getElementById('cinema-details-content');
-    container.innerHTML = `
-        <div class="glass-card" style="text-align:left;"><h3>${ARTISTA_DATA.status.replace("🎬 ", "") || "Filme em Produção"}</h3><p style="font-size:0.7em; opacity:0.5;">PRODUÇÃO HOLLYWOOD</p></div>
-        <div class="project-item-card" style="border-left-color:#ffd700;"><h4>Etapa 1: Gravações</h4><p>Em andamento</p></div>`;
-    showView('cinema-details-screen');
-}
-
-// BACKEND
+// AÇÕES DE COMPRA E GERAÇÃO
 async function contratarTour(porte) {
     const t = document.getElementById('tour-nome').value;
-    if(!t) return alert("Dê um nome!");
+    if(!t) return alert("Dê um nome à sua Tour!");
     await enviar('contratar_tour', { nome: ARTISTA_DATA.nome, tipo: porte, titulo: t });
-}
-
-async function contratarCinema(porte) {
-    const t = document.getElementById('cinema-titulo').value;
-    if(!t) return alert("Dê um título!");
-    await enviar('contratar_cinema', { nome: ARTISTA_DATA.nome, tipo: porte, titulo: t });
 }
 
 async function gerarItinerario() {
@@ -124,10 +110,12 @@ async function enviar(acao, params) {
     document.body.style.opacity = "0.5";
     let url = `${SCRIPT_URL}?acao=${acao}`;
     for (let k in params) url += `&${k}=${encodeURIComponent(params[k])}`;
-    const res = await fetch(url);
-    const txt = await res.text();
-    alert(txt);
-    location.reload();
+    try {
+        const res = await fetch(url);
+        const txt = await res.text();
+        alert(txt);
+        location.reload();
+    } catch(e) { alert("Erro de conexão"); document.body.style.opacity = "1"; }
 }
 
 window.onload = loadData;
