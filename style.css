@@ -1,49 +1,72 @@
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-body { background: #0b0118; color: white; font-family: 'Inter', sans-serif; display: flex; justify-content: center; min-height: 100vh; }
-.app-container { width: 100%; max-width: 420px; padding: 30px 20px; }
+body {
+    background: #0b0118; background-image: radial-gradient(circle at top, #1a023a, #0b0118);
+    color: white; font-family: 'Inter', sans-serif; display: flex; justify-content: center; min-height: 100vh;
+}
+.app-container { width: 100%; max-width: 420px; padding: 40px 25px; display: flex; flex-direction: column; align-items: center; }
 
-/* Header e Mini Status */
-.profile-header { text-align: center; margin-bottom: 20px; }
-.avatar { width: 90px; height: 90px; border-radius: 50%; border: 3px solid #bc13fe; object-fit: cover; }
-.status-dot { position: absolute; bottom: 5px; right: 5px; width: 15px; height: 15px; border-radius: 50%; border: 3px solid #0b0118; background: #00ff88; }
-.avatar-wrapper { position: relative; display: inline-block; }
-h1 { font-size: 1.6em; font-weight: 800; margin: 5px 0; }
-.activity-banner { background: rgba(188, 19, 254, 0.15); padding: 4px 12px; border-radius: 20px; font-size: 0.65em; color: #e0aaff; font-weight: bold; }
+/* Header Estiloso */
+.profile-header { text-align: center; margin-bottom: 30px; width: 100%; }
+.avatar-wrapper { position: relative; display: inline-block; margin-bottom: 15px; }
+.avatar { width: 115px; height: 115px; border-radius: 50%; border: 3px solid #bc13fe; box-shadow: 0 0 25px rgba(188, 19, 254, 0.5); object-fit: cover; background: #222; }
+.status-dot { position: absolute; bottom: 8px; right: 8px; width: 18px; height: 18px; border-radius: 50%; border: 3px solid #0b0118; }
+h1 { font-size: 2em; letter-spacing: -1px; font-weight: 800; margin-bottom: 10px; }
+.activity-banner { background: rgba(188, 19, 254, 0.15); border: 1px solid rgba(188, 19, 254, 0.4); padding: 6px 16px; border-radius: 30px; font-size: 0.75em; color: #e0aaff; font-weight: bold; text-transform: uppercase; }
 
-.main-stats { background: rgba(255,255,255,0.05); border-radius: 20px; padding: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 25px; }
-#artist-saldo { color: #ffd700; font-size: 2em; margin-bottom: 15px; }
-.stats-group-mini { display: flex; gap: 15px; }
-.mini-bar { flex: 1; font-size: 0.6em; font-weight: 800; }
-.p-bg { background: rgba(255,255,255,0.1); height: 6px; border-radius: 10px; margin-top: 4px; }
-.p-fill { height: 100%; border-radius: 10px; transition: 1s width; }
-.gold { background: #ffd700; } .red { background: #ff4b2b; }
+/* Cards de Vidro */
+.glass-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 25px; padding: 25px; text-align: center; width: 100%; }
+#artist-saldo { color: #ffd700; font-size: 2.3em; margin: 8px 0; font-weight: 800; }
+.label-small { font-size: 0.65em; opacity: 0.5; letter-spacing: 2px; }
 
-/* Seções */
-.section-title-main { font-size: 0.9em; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #bc13fe; margin: 20px 0 10px 0; display: flex; align-items: center; gap: 10px; }
+/* Progress Barras Cubic */
+.stats-group { width: 100%; margin-top: 25px; }
+.stat-bar { margin-bottom: 20px; }
+.stat-info { display: flex; justify-content: space-between; font-size: 0.75em; font-weight: 800; margin-bottom: 8px; }
+.progress-bg { background: rgba(255,255,255,0.08); height: 12px; border-radius: 10px; }
+.progress { height: 100%; border-radius: 10px; transition: width 1s cubic-bezier(0.1, 0.5, 0.1, 1); }
+.gold { background: linear-gradient(to right, #bc13fe, #ffd700); box-shadow: 0 0 10px rgba(255, 215, 0, 0.4); }
+.red { background: linear-gradient(to right, #ff4b2b, #ff0000); box-shadow: 0 0 10px rgba(255, 75, 43, 0.4); }
+
+/* Títulos das Etapas (Neon Roxo) */
+.section-title-main { font-size: 0.9em; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #bc13fe; margin: 25px 0 10px 0; display: flex; align-items: center; gap: 10px; }
 .section-title-main small { opacity: 0.4; font-weight: 400; text-transform: none; }
 
-/* Grid de Compras */
-.actions-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 25px; }
-.action-btn { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); padding: 15px 5px; border-radius: 15px; display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; }
-.action-btn span { font-size: 0.6em; font-weight: 800; text-transform: uppercase; }
-.icon { font-size: 1.2em; }
+/* Grid de Compras (2x2 Profissional) */
+.actions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 25px; width: 100%; }
+.action-btn { background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); padding: 22px; border-radius: 22px; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; transition: 0.3s; }
+.action-btn:active { transform: scale(0.92); background: rgba(188, 19, 254, 0.15); }
+.icon { font-size: 1.6em; }
 
-/* Central de Gestão (Cards Dinâmicos) */
-.management-container { display: flex; flex-direction: column; gap: 12px; }
-.mgmt-card { background: linear-gradient(135deg, rgba(188, 19, 254, 0.1), rgba(255, 255, 255, 0.05)); border: 1px solid rgba(188, 19, 254, 0.3); border-radius: 20px; padding: 20px; position: relative; overflow: hidden; }
-.mgmt-card h4 { font-size: 0.85em; font-weight: 800; margin-bottom: 10px; color: #e0aaff; }
+/* CENTRAL DE GESTÃO (Cards de Vidro) */
+.management-container { display: flex; flex-direction: column; gap: 12px; width: 100%; margin-top: 15px; }
+.mgmt-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid rgba(188, 19, 254, 0.3); border-radius: 20px; padding: 20px; text-align: left; transition: 0.3s; }
+.mgmt-card h4 { font-size: 0.85em; font-weight: 800; margin-bottom: 8px; color: #e0aaff; text-transform: uppercase; }
 .mgmt-data { font-size: 0.75em; line-height: 1.4; color: rgba(255,255,255,0.8); }
-.empty-msg { font-size: 0.8em; opacity: 0.3; text-align: center; padding: 20px; border: 2px dashed rgba(255,255,255,0.05); border-radius: 20px; }
+.empty-msg { font-size: 0.8em; opacity: 0.3; text-align: center; padding: 25px; border: 2px dashed rgba(255,255,255,0.08); border-radius: 20px; width: 100%; }
 
-/* Modais */
-.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: flex-end; z-index: 10000; }
+/* MODAIS GAVETA PRETAS */
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: flex-end; z-index: 10000; }
 .modal-overlay.active { display: flex; }
-.modal-content { width: 100%; max-width: 420px; background: #0f0221; border-top: 2px solid #bc13fe; border-radius: 30px 30px 0 0; padding: 20px 25px 40px 25px; transform: translateY(100%); transition: 0.4s transform; }
+.modal-content { width: 100%; max-width: 420px; background: #0f0221; border-top: 2px solid #bc13fe; border-radius: 30px 30px 0 0; padding: 20px 25px 40px 25px; transform: translateY(100%); transition: transform 0.4s ease; }
 .modal-overlay.active .modal-content { transform: translateY(0); }
-.close-btn { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
-.input-field { margin-bottom: 15px; }
-.input-field label { display: block; font-size: 0.6em; font-weight: 800; color: #bc13fe; margin-bottom: 5px; }
-.input-field input, .custom-select-wrapper select { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 12px; color: white; outline: none; font-family: inherit; }
-.option-card { background: rgba(255,255,255,0.04); padding: 15px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; cursor: pointer; }
-.badge { background: #bc13fe; padding: 4px 10px; border-radius: 8px; font-size: 0.6em; font-weight: 800; }
-.main-action-btn { width: 100%; background: linear-gradient(45deg, #bc13fe, #ffd700); border: none; padding: 15px; border-radius: 12px; color: #0b0118; font-weight: 800; text-transform: uppercase; cursor: pointer; margin-top: 10px; }
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+.close-btn { background: none; border: none; color: white; font-size: 1.6rem; cursor: pointer; }
+
+/* Form e Inputs (Com Fonte Inter e Fundo Escuro) */
+.input-field { margin-bottom: 18px; text-align: left; }
+.input-field label { display: block; font-size: 0.7em; font-weight: 800; color: #bc13fe; margin-bottom: 8px; letter-spacing: 1px; }
+.input-field input, .custom-select-wrapper select { width: 100%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); border-radius: 15px; padding: 14px; color: white; font-family: 'Inter', sans-serif; font-size: 1em; outline: none; appearance: none; -webkit-appearance: none; }
+.custom-select-wrapper { position: relative; width: 100%; flex: 1.5; }
+.custom-select-wrapper select { cursor: pointer; padding-right: 35px; }
+.custom-select-wrapper::after { content: '▼'; font-size: 0.7em; color: #bc13fe; position: absolute; right: 15px; top: 50%; transform: translateY(-50%); pointer-events: none; }
+.custom-select-wrapper select option { background: #0f0221; color: white; }
+
+/* Option Cards (Layout Reto e Espaçado) */
+.option-list { display: flex; flex-direction: column; gap: 10px; }
+.option-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); padding: 18px 20px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.3s; }
+.option-card:active { background: rgba(188, 19, 254, 0.2); }
+.option-info { display: flex; flex-direction: column; gap: 3px; }
+.opt-name { font-weight: 700; font-size: 1em; }
+.opt-val { color: #ffd700; font-size: 0.85em; font-weight: 400; }
+.badge { background: #bc13fe; padding: 5px 12px; border-radius: 10px; font-size: 0.75em; font-weight: 800; }
+.main-action-btn { width: 100%; background: linear-gradient(45deg, #bc13fe, #ffd700); border: none; padding: 18px; border-radius: 15px; color: #0b0118; font-weight: 800; text-transform: uppercase; cursor: pointer; margin-top: 10px; }
