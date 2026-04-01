@@ -20,7 +20,7 @@
             <div class="status-pill"><span id="current-activity">Sincronizando...</span></div>
         </header>
 
-        <main id="home-view" class="app-screen active">
+        <section id="home-screen" class="app-view active">
             <div class="glass-card main-stats">
                 <p class="label-small">SALDO EMPIRE COINS</p>
                 <h2 id="artist-saldo">$EC 0</h2>
@@ -33,11 +33,11 @@
             </div>
 
             <div class="main-navigation">
-                <div class="nav-card" onclick="openModal('modal-hub')">
+                <div class="nav-card" onclick="showScreen('hub-screen')">
                     <div class="nav-icon-box hub-bg">🏢</div>
                     <div class="nav-text"><b>Empire Hub</b><span>Market & Investimentos</span></div>
                 </div>
-                <div class="nav-card" onclick="checkManagement()">
+                <div class="nav-card" onclick="checkManagementTransition()">
                     <div class="nav-icon-box mgmt-bg">⚡</div>
                     <div class="nav-text"><b>Gestão de Projetos</b><span>Acompanhamento Ativo</span></div>
                 </div>
@@ -46,39 +46,43 @@
                     <div class="nav-text"><b>Projetos Finalizados</b><span>Acervo de Carreira</span></div>
                 </div>
             </div>
-        </main>
+        </section>
 
-        <main id="tour-view" class="app-screen">
+        <section id="hub-screen" class="app-view">
             <div class="view-header">
-                <button class="back-btn" onclick="showView('home-view')">←</button>
-                <h2>Tour Management</h2>
+                <button class="back-btn" onclick="showScreen('home-screen')">←</button>
+                <h2>Empire Hub</h2>
             </div>
-            <div id="tour-dynamic-content">
-                </div>
-        </main>
-
-    </div>
-
-    <div id="modal-hub" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header"><h3>Empire Hub</h3><button class="close-btn" onclick="closeModal('modal-hub')">✕</button></div>
-            <div class="fortuna-badge-hub"><p>PATRIMÔNIO LÍQUIDO</p><h4 id="hub-fortuna">$0</h4></div>
+            <div class="fortuna-badge-hub">
+                <p>PATRIMÔNIO LÍQUIDO</p>
+                <h4 id="hub-fortuna">$0</h4>
+            </div>
             <div class="hub-grid">
                 <div class="hub-btn" onclick="openModal('modal-tour-compra')">🎤<span>Tour</span></div>
-                <div class="hub-btn" onclick="alert('Em breve!')">🎬<span>Cinema</span></div>
+                <div class="hub-btn" onclick="alert('Cinema em breve')">🎬<span>Cinema</span></div>
                 <div class="hub-btn">🏢<span>Empresas</span></div>
                 <div class="hub-btn">🛒<span>Market</span></div>
             </div>
-        </div>
+        </section>
+
+        <section id="mgmt-screen" class="app-view">
+            <div class="view-header">
+                <button class="back-btn" onclick="showScreen('home-screen')">←</button>
+                <h2 id="mgmt-view-title">Gestão Ativa</h2>
+            </div>
+            <div id="mgmt-dynamic-content">
+                </div>
+        </section>
+
     </div>
 
-    <div id="modal-tour-compra" class="modal-overlay sub-modal">
+    <div id="modal-tour-compra" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header"><h3>Contratar Logística</h3><button class="close-btn" onclick="closeModal('modal-tour-compra')">✕</button></div>
-            <div class="input-field"><label>NOME DA TOUR *</label><input type="text" id="tour-nome" placeholder="Ex: Renaissance"></div>
+            <div class="input-field"><label>NOME DA TURNÊ *</label><input type="text" id="tour-nome" placeholder="Ex: Renaissance"></div>
             <div class="option-list">
-                <div class="option-card" onclick="contratarTour('Tour de Estádios')"><b>Estádios</b><span>$EC 15M</span></div>
-                <div class="option-card" onclick="contratarTour('Tour de Clubs')"><b>Clubs</b><span>$EC 100k</span></div>
+                <div class="option-card" onclick="contratarTour('Tour de Estádios')"><b>Tour de Estádios</b><span>$EC 15M</span></div>
+                <div class="option-card" onclick="contratarTour('Tour de Clubs')"><b>Tour de Clubs</b><span>$EC 100k</span></div>
             </div>
         </div>
     </div>
