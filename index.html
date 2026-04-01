@@ -15,39 +15,48 @@
                 <img src="" id="artist-photo" class="avatar">
                 <div id="status-dot" class="status-dot"></div>
             </div>
-            <h1 id="artist-name">Carregando...</h1>
-            <div id="activity-banner" class="status-pill">
-                <span id="current-activity">Sincronizando...</span>
+            <h1 id="artist-name">SABINE</h1>
+            <div class="status-pill">
+                <span id="current-activity">DISPONÍVEL</span>
             </div>
         </header>
 
         <div class="glass-card main-stats">
             <p class="label-small">SALDO EMPIRE COINS</p>
             <h2 id="artist-saldo">$EC 0</h2>
+            
             <div class="stats-group">
-                <div class="stat-bar">
-                    <div class="stat-info"><span>PRESTÍGIO</span><span id="txt-prestigio">0/1000</span></div>
-                    <div class="progress-bg"><div id="bar-prestigio" class="progress gold"></div></div>
-                </div>
-                <div class="stat-bar">
-                    <div class="stat-info"><span>FADIGA</span><span id="txt-fadiga">0%</span></div>
-                    <div class="progress-bg"><div id="bar-fadiga" class="progress red"></div></div>
-                </div>
+                <div class="stat-info"><span>PRESTÍGIO</span><span id="txt-prestigio">0/1000</span></div>
+                <div class="progress-bg"><div id="bar-prestigio" class="progress gold"></div></div>
+                
+                <div class="stat-info"><span>FADIGA</span><span id="txt-fadiga">0%</span></div>
+                <div class="progress-bg"><div id="bar-fadiga" class="progress red"></div></div>
             </div>
         </div>
 
         <div class="main-navigation">
             <div class="nav-card" onclick="openModal('modal-hub')">
                 <div class="nav-icon-box hub-bg">🏢</div>
-                <div class="nav-text"><b>Empire Hub</b><span>Market & Investimentos</span></div>
+                <div class="nav-text">
+                    <b>Empire Hub</b>
+                    <span>Market & Investimentos</span>
+                </div>
             </div>
+
             <div class="nav-card" onclick="openManagement()">
                 <div class="nav-icon-box mgmt-bg">⚡</div>
-                <div class="nav-text"><b>Gestão de Projetos</b><span>Acompanhamento Ativo</span></div>
+                <div class="nav-text">
+                    <b>Gestão de Projetos</b>
+                    <span>Acompanhamento Ativo</span>
+                </div>
             </div>
+
             <div class="nav-card" onclick="alert('Acervo em breve!')">
                 <div class="nav-icon-box archive-bg">📁</div>
-                <div class="nav-text"><b>Projetos Finalizados</b><span>Acervo de Carreira</span></div>
+                <div class="nav-text">
+                    <b>Projetos Finalizados</b>
+                    <span>Acervo de Carreira</span>
+                </div>
             </div>
         </div>
     </div>
@@ -57,7 +66,7 @@
             <div class="modal-header"><h3>Empire Hub</h3><button class="close-btn" onclick="closeModal('modal-hub')">✕</button></div>
             
             <div class="fortuna-badge-hub">
-                <p>PATRIMÔNIO LÍQUIDO TOTAL</p>
+                <p>PATRIMÔNIO LÍQUIDO</p>
                 <h4 id="hub-fortuna">$0</h4>
             </div>
 
@@ -71,17 +80,19 @@
     </div>
 
     <div id="modal-mgmt" class="modal-overlay">
-        <div class="modal-content"><div class="modal-header"><h3>Gestão Ativa</h3><button class="close-btn" onclick="closeModal('modal-mgmt')">✕</button></div>
-            <div id="active-projects-list" class="scroll-area"></div>
+        <div class="modal-content">
+            <div class="modal-header"><h3>Gestão Ativa</h3><button class="close-btn" onclick="closeModal('modal-mgmt')">✕</button></div>
+            <div id="active-projects-list" class="scroll-area">
+                </div>
         </div>
     </div>
 
     <div id="modal-tour-compra" class="modal-overlay sub-modal">
         <div class="modal-content">
-            <div class="modal-header"><h3>Contratar Logística</h3><button class="close-btn" onclick="closeModal('modal-tour-compra')">✕</button></div>
-            <div class="input-field"><label>NOME DA TOUR</label><input type="text" id="tour-nome" placeholder="Ex: Renaissance"></div>
+            <div class="modal-header"><h3>Nova Tour</h3><button class="close-btn" onclick="closeModal('modal-tour-compra')">✕</button></div>
+            <div class="input-field"><label>NOME DA TOUR</label><input type="text" id="tour-nome"></div>
             <div class="option-list">
-                <div class="option-card" onclick="contratarTour('Tour de Estádios')"><b>Estádios</b><span>$EC 15M</span></div>
+                <div class="option-card" onclick="contratarTour('Tour de Estádios')"><b>Tour de Estádios</b><span>$EC 15M</span></div>
             </div>
         </div>
     </div>
