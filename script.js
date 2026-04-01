@@ -34,7 +34,7 @@ async function loadData() {
     } catch (e) { console.error("Falha no carregamento", e); }
 }
 
-// GESTÃO COM LISTA ESCONDIDA
+// GESTÃO COM TAG DE PROJETO
 function checkManagementView() {
     const container = document.getElementById('mgmt-content');
     container.innerHTML = "";
@@ -44,6 +44,7 @@ function checkManagementView() {
         
         container.innerHTML = `
             <div class="glass-card" style="text-align:left;">
+                <div class="project-tag">Tour</div>
                 <h3 style="font-size:1.3em; margin-bottom:5px;">${info.nomeTour}</h3>
                 <div class="tour-stats-grid">
                     <div class="t-stat"><b>ARRECADAÇÃO</b><span>$EC ${info.arrecadacao.toLocaleString()}</span></div>
@@ -52,11 +53,12 @@ function checkManagementView() {
                 <button class="btn-detalhes" onclick="abrirItinerario()">Ver datas, vendas e locais aqui</button>
             </div>`;
     } else {
-        container.innerHTML = "<p style='text-align:center; opacity:0.3; margin-top:50px;'>Nenhum projeto ativo.</p>";
+        container.innerHTML = "<p style='text-align:center; opacity:0.3; margin-top:50px;'>Nenhum projeto ativo no momento.</p>";
     }
     showScreen('screen-mgmt');
 }
 
+// MODAL COM MÉTRICAS E TAG
 function abrirItinerario() {
     const lista = document.getElementById('itinerario-lista');
     lista.innerHTML = "";
@@ -64,10 +66,20 @@ function abrirItinerario() {
     if (ARTISTA_DATA.tour_info && ARTISTA_DATA.tour_info.agenda) {
         const agenda = JSON.parse(ARTISTA_DATA.tour_info.agenda);
         agenda.forEach(show => {
+            const pct = Math.round((show.vendidos / show.capacidade) * 100);
             lista.innerHTML += `
                 <div class="agenda-card">
-                    <div><small style="color:#bc13fe; font-weight:800; font-size:0.6em;">${show.data}</small><b style="display:block; font-size:0.85em;">${show.local}</b></div>
-                    <div style="text-align:right;"><b style="color:#ffd700; font-size:0.75em;">EC ${show.arrecadado.toLocaleString()}</b></div>
+                    <div class="info">
+                        <small>Data do Show</small>
+                        <b>${show.data}</b>
+                        <small style="margin-top:5px; display:block;">Local</small>
+                        <b style="font-size:0.75em; opacity:0.7;">${show.local}</b>
+                    </div>
+                    <div class="agenda-stats">
+                        <b>EC ${show.arrecadado.toLocaleString()}</b>
+                        <span class="cap-box">${show.vendidos.toLocaleString()} / ${show.capacidade.toLocaleString()}</span>
+                        <span class="pct-tag">${pct}% OCUPADO</span>
+                    </div>
                 </div>`;
         });
         openModal('modal-itinerario');
@@ -91,7 +103,7 @@ async function processarCompraUnificada(porte) {
         alert(txt);
         location.reload();
     } catch(e) { 
-        alert("Erro de conexão. Verifique o console."); 
+        alert("Erro de conexão."); 
         document.body.style.opacity = "1";
     }
 }
