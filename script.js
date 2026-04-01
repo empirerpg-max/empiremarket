@@ -1,15 +1,13 @@
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwxbkUndhZPtFvtK1uIFTkPNN-m6WeiFVMU3IDzuahsC0oQp8Ba2GLQFOAPkWv8eiA3/exec"; // Substitua pelo seu /exec do Google
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwxbkUndhZPtFvtK1uIFTkPNN-m6WeiFVMU3IDzuahsC0oQp8Ba2GLQFOAPkWv8eiA3/exec"; 
 
 let ARTISTA_DATA = {};
 
-// TROCA DE TELAS (SPA REAL)
 function showScreen(viewId) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById(viewId).classList.add('active');
     window.scrollTo(0,0);
 }
 
-// CARREGAMENTO INICIAL
 async function loadData() {
     const params = new URLSearchParams(window.location.search);
     const nome = params.get('nome');
@@ -19,16 +17,12 @@ async function loadData() {
         const response = await fetch(`${SCRIPT_URL}?nome=${nome}`);
         ARTISTA_DATA = await response.json();
         
-        // Atualiza UI Fixa
         document.getElementById('artist-name').innerText = ARTISTA_DATA.nome;
         document.getElementById('artist-photo').src = ARTISTA_DATA.foto;
         document.getElementById('artist-saldo').innerText = `$EC ${ARTISTA_DATA.saldo.toLocaleString('pt-BR')}`;
         document.getElementById('hub-fortuna').innerText = `$${ARTISTA_DATA.fortuna.toLocaleString('pt-BR')}`;
-        
-        const banner = document.getElementById('current-activity');
-        banner.innerText = (ARTISTA_DATA.status === "Livre") ? "DISPONÍVEL" : ARTISTA_DATA.status.toUpperCase();
+        document.getElementById('current-activity').innerText = (ARTISTA_DATA.status === "Livre") ? "DISPONÍVEL" : ARTISTA_DATA.status.toUpperCase();
 
-        // Barras
         document.getElementById('bar-prestigio').style.width = (ARTISTA_DATA.prestigio / 10) + "%";
         document.getElementById('txt-prestigio').innerText = `${ARTISTA_DATA.prestigio}/1000`;
         document.getElementById('bar-fadiga').style.width = ARTISTA_DATA.fadiga + "%";
@@ -37,27 +31,21 @@ async function loadData() {
     } catch (e) { console.error("Falha no carregamento", e); }
 }
 
-// GESTÃO DE PROJETOS
+// GESTÃO DIRETA
 function checkManagementView() {
     const container = document.getElementById('mgmt-area');
     container.innerHTML = "";
 
-    if (ARTISTA_DATA.status && ARTISTA_DATA.status.includes("Preparando")) {
-        // TELA DE SETUP (DATA E SHOWS)
-        container.innerHTML = `
-            <div class="glass-card">
-                <h3 style="margin-bottom:15px; font-size:1.1em;">Finalizar Logística</h3>
-                <div class="input-field"><label>DATA DE INÍCIO</label><input type="date" id="t-start"></div>
-                <div class="input-field"><label>QUANTIDADE DE SHOWS</label><input type="number" id="t-qtd" value="10"></div>
-                <button onclick="gerarItinerario()" class="main-action-btn">GERAR TOUR BOOK</button>
-            </div>`;
-    } else if (ARTISTA_DATA.tour_info) {
-        // DASHBOARD DA TOUR
+    if (ARTISTA_DATA.tour_info) {
         const info = ARTISTA_DATA.tour_info;
         const agenda = JSON.parse(info.agenda);
         let agendaHtml = "";
         agenda.forEach(show => {
-            agendaHtml += `<div class="agenda-card"><div><small style="color:#bc13fe; font-weight:800; font-size:0.6em;">${show.data}</small><b style="display:block; font-size:0.85em;">${show.local}</b></div><div style="text-align:right;"><b style="color:#ffd700; font-size:0.75em;">EC ${show.arrecadado.toLocaleString()}</b></div></div>`;
+            agendaHtml += `
+                <div class="agenda-card">
+                    <div><small style="color:#bc13fe; font-weight:800; font-size:0.6em;">${show.data}</small><b style="display:block; font-size:0.85em;">${show.local}</b></div>
+                    <div style="text-align:right;"><b style="color:#ffd700; font-size:0.75em;">EC ${show.arrecadado.toLocaleString()}</b></div>
+                </div>`;
         });
 
         container.innerHTML = `
@@ -69,36 +57,34 @@ function checkManagementView() {
                 </div>
             </div>
             ${agendaHtml}`;
+    } else if (ARTISTA_DATA.status && ARTISTA_DATA.status.includes("Preparando")) {
+        container.innerHTML = "<p style='text-align:center; opacity:0.3; margin-top:50px;'>Logística comprada, mas sem agenda. Isso não deveria ocorrer com o novo sistema!</p>";
     } else {
         container.innerHTML = "<p style='text-align:center; opacity:0.3; margin-top:50px;'>Nenhum projeto ativo.</p>";
     }
     showScreen('view-mgmt');
 }
 
-// AÇÕES
-async function contratarTour(porte) {
-    const t = document.getElementById('tour-nome').value;
-    if(!t) return alert("Dê um nome à turnê!");
-    await enviar('contratar_tour', { nome: ARTISTA_DATA.nome, tipo: porte, titulo: t });
-}
+// COMPRA UNIFICADA (AÇÃO ÚNICA)
+async function processarCompraTour(porte) {
+    const nomeT = document.getElementById('t-nome').value;
+    const dataT = document.getElementById('t-data').value;
+    const qtdT = document.getElementById('t-qtd').value;
 
-async function gerarItinerario() {
-    const q = document.getElementById('t-qtd').value;
-    const d = document.getElementById('t-start').value;
-    if(!d) return alert("Escolha a data!");
-    await enviar('gerar_itinerario', { nome: ARTISTA_DATA.nome, qtd: q, dataInicio: d });
-}
+    if(!nomeT || !dataT) return alert("Preencha o nome e a data da tour!");
 
-async function enviar(acao, params) {
     document.body.style.opacity = "0.5";
-    let url = `${SCRIPT_URL}?acao=${acao}`;
-    for (let k in params) url += `&${k}=${encodeURIComponent(params[k])}`;
+    const url = `${SCRIPT_URL}?acao=compra_unificada_tour&nome=${encodeURIComponent(ARTISTA_DATA.nome)}&tipo=${encodeURIComponent(porte)}&titulo=${encodeURIComponent(nomeT)}&dataInicio=${dataT}&qtd=${qtdT}`;
+
     try {
         const res = await fetch(url);
         const txt = await res.text();
         alert(txt);
         location.reload();
-    } catch(e) { alert("Erro de conexão"); document.body.style.opacity = "1"; }
+    } catch(e) { 
+        alert("Erro de conexão. Verifique o console."); 
+        document.body.style.opacity = "1";
+    }
 }
 
 window.onload = loadData;
