@@ -1,4 +1,4 @@
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwxbkUndhZPtFvtK1uIFTkPNN-m6WeiFVMU3IDzuahsC0oQp8Ba2GLQFOAPkWv8eiA3/exec"; 
+const SCRIPT_URL = "SUA_URL_AQUI"; 
 
 let ARTISTA_DATA = {};
 
@@ -13,7 +13,7 @@ function checkTourStatus() {
     if (ARTISTA_DATA.status && ARTISTA_DATA.status.includes("Planejamento")) {
         openPlanejar();
     } else if (ARTISTA_DATA.status && ARTISTA_DATA.status !== "Livre") {
-        alert("Já tens um projeto ativo!");
+        alert("Você já tem um projeto em andamento!");
     } else {
         openTour();
     }
@@ -41,62 +41,55 @@ async function loadData() {
         document.getElementById('bar-fadiga').style.width = ARTISTA_DATA.fadiga + "%";
         document.getElementById('txt-fadiga').innerText = ARTISTA_DATA.fadiga + "%";
 
-        // RENDERIZA GESTÃO ATIVA NO PÉ
-        renderManagement();
+        renderDashboard();
     } catch (e) { console.error(e); }
 }
 
-function renderManagement() {
+function renderDashboard() {
     const container = document.getElementById('management-area');
     container.innerHTML = "";
-    let temAlgo = false;
+    let temProjeto = false;
 
-    // Caso 1: Turnê com Rota Gerada
-    if (ARTISTA_DATA.itinerario) {
-        temAlgo = true;
+    // CARD DE TURNÊ
+    if (ARTISTA_DATA.status && (ARTISTA_DATA.status.includes("Tour") || ARTISTA_DATA.status.includes("Planejamento"))) {
+        temProjeto = true;
+        let itinerarioHtml = ARTISTA_DATA.itinerario 
+            ? ARTISTA_DATA.itinerario.split(" → ").map(c => `<span class="city-tag">${c}</span>`).join("")
+            : "<i>Aguardando definição da rota...</i>";
+
         container.innerHTML += `
             <div class="mgmt-card">
-                <h4>🎤 ROTA DA TURNÊ ATIVA</h4>
-                <p class="mgmt-data">${ARTISTA_DATA.itinerario}</p>
-            </div>
-        `;
-    } 
-    // Caso 2: Turnê Comprada, mas sem Rota ainda
-    else if (ARTISTA_DATA.status && ARTISTA_DATA.status.includes("Planejamento")) {
-        temAlgo = true;
-        container.innerHTML += `
-            <div class="mgmt-card">
-                <h4>🎤 TURNÊ EM PLANEJAMENTO</h4>
-                <p class="mgmt-data">Logística contratada! Clique no botão <b>Tour</b> acima para gerar seu itinerário.</p>
+                <h4>🎤 Central da Turnê</h4>
+                <p class="mgmt-data"><b>Logística:</b> Ativa<br><b>Cidades:</b><br>${itinerarioHtml}</p>
             </div>
         `;
     }
 
-    // Caso 3: Cinema
+    // CARD DE CINEMA
     if (ARTISTA_DATA.status && ARTISTA_DATA.status.includes("🎬")) {
-        temAlgo = true;
+        temProjeto = true;
         container.innerHTML += `
             <div class="mgmt-card">
-                <h4>🎬 PRODUÇÃO DE CINEMA</h4>
-                <p class="mgmt-data">Projeto em andamento: ${ARTISTA_DATA.status.replace("🎬 ", "")}</p>
+                <h4>🎬 Central de Cinema</h4>
+                <p class="mgmt-data"><b>Projeto:</b> ${ARTISTA_DATA.status.replace("🎬 ", "")}<br><b>Status:</b> Em Gravação (Lançamento em 3 dias)</p>
             </div>
         `;
     }
 
-    if (!temAlgo) container.innerHTML = '<p class="empty-msg">Nenhum projeto ativo.</p>';
+    if (!temProjeto) container.innerHTML = '<p class="empty-msg">Nenhum projeto ativo no momento.</p>';
 }
 
 async function contratarFilme(cat) {
     const t = document.getElementById('obra-titulo').value.trim();
     const g = document.getElementById('obra-genero').value;
     const a = document.getElementById('obra-ano').value;
-    if(!t) return alert("Título obrigatório!");
+    if(!t || !g) return alert("Preencha título e gênero!");
     await enviarAcao('contratar_filme', { nome: ARTISTA_DATA.nome, tipo: cat, titulo: t, genero: g, ano: a });
 }
 
 async function contratarTour(porte) {
     const t = document.getElementById('tour-nome').value.trim();
-    if(!t) return alert("Dê um nome à turnê!");
+    if(!t) return alert("Dê um nome para a turnê!");
     await enviarAcao('contratar_tour', { nome: ARTISTA_DATA.nome, tipo: porte, titulo: t });
 }
 
