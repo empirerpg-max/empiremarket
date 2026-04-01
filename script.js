@@ -1,17 +1,16 @@
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwxbkUndhZPtFvtK1uIFTkPNN-m6WeiFVMU3IDzuahsC0oQp8Ba2GLQFOAPkWv8eiA3/exec"; // Substituir pelo seu link /exec
+const SCRIPT_URL = "SUA_URL_AQUI"; 
 
 let ARTISTA_DATA = {};
 
-// NAVEGAÇÃO ENTRE TELAS
-function showScreen(id) {
-    document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
+// FUNÇÃO CHAVE: TROCA DE TELA
+function showView(viewId) {
+    document.querySelectorAll('.app-screen').forEach(screen => screen.classList.remove('active'));
+    document.getElementById(viewId).classList.add('active');
 }
 
 function openModal(id) { document.getElementById(id).classList.add('active'); }
 function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
-// CARREGAMENTO DE DADOS
 async function loadData() {
     const params = new URLSearchParams(window.location.search);
     const nome = params.get('nome');
@@ -31,30 +30,30 @@ async function loadData() {
         document.getElementById('txt-prestigio').innerText = `${ARTISTA_DATA.prestigio}/1000`;
         document.getElementById('bar-fadiga').style.width = ARTISTA_DATA.fadiga + "%";
         document.getElementById('txt-fadiga').innerText = ARTISTA_DATA.fadiga + "%";
-    } catch (e) { console.error("Erro ao carregar dados", e); }
+    } catch (e) { console.error("Erro no loadData", e); }
 }
 
-// GESTÃO DE PROJETOS: DECIDE O QUE MOSTRAR NA TELA DE TOUR
+// LOGICA: CLICOU EM GESTÃO DE PROJETOS
 function checkManagement() {
-    const content = document.getElementById('tour-content');
-    content.innerHTML = "";
+    const container = document.getElementById('tour-dynamic-content');
+    container.innerHTML = "";
 
     if (ARTISTA_DATA.status && ARTISTA_DATA.status.includes("Preparando")) {
-        // TELA PARA GERAR ITINERÁRIO
-        content.innerHTML = `
+        // TELA DE SETUP (GERAR DATAS)
+        container.innerHTML = `
             <div class="glass-card">
-                <h3 style="margin-bottom:15px; font-size:1.1em;">Configurar Itinerário</h3>
-                <div class="input-field"><label>DATA DE INÍCIO</label><input type="date" id="tour-start-date"></div>
-                <div class="input-field"><label>QUANTIDADE DE SHOWS</label><input type="number" id="tour-qtd" value="10"></div>
-                <button class="main-action-btn" onclick="gerarItinerario()">Sincronizar Agenda</button>
+                <h3 style="margin-bottom:15px;">Setup do Itinerário</h3>
+                <div class="input-field"><label>DATA DE INÍCIO</label><input type="date" id="tour-start"></div>
+                <div class="input-field"><label>QTD DE SHOWS</label><input type="number" id="tour-qtd" value="10"></div>
+                <button class="main-action-btn" onclick="gerarItinerario()">Gerar Datas Agora</button>
             </div>`;
-        showScreen('tour-screen');
+        showView('tour-view');
     } else if (ARTISTA_DATA.tour_info) {
-        // TELA COM O DASHBOARD DA TOUR ATIVA
-        renderTourDashboard(content);
-        showScreen('tour-screen');
+        // DASHBOARD DA TOUR ATIVA
+        renderTourDashboard(container);
+        showView('tour-view');
     } else {
-        alert("Nenhum projeto ativo. Visite o Empire Hub para começar!");
+        alert("Nenhum projeto ativo. Contrate no Empire Hub!");
     }
 }
 
@@ -82,21 +81,20 @@ function renderTourDashboard(container) {
                 <div class="t-stat"><b>PROGRESSO</b><span>Show ${info.showAtual} de ${info.totalShows}</span></div>
             </div>
         </div>
-        <h3 style="font-size:0.85em; font-weight:800; text-transform:uppercase; color:#bc13fe; margin-bottom:15px; text-align:left;">Itinerário de Shows</h3>
+        <h3 style="font-size:0.85em; font-weight:800; text-transform:uppercase; color:#bc13fe; margin-bottom:15px; text-align:left;">Próximas Datas</h3>
         <div class="agenda-container">${agendaHtml}</div>`;
 }
 
-// AÇÕES BACKEND
 async function contratarTour(porte) {
     const t = document.getElementById('tour-nome').value;
-    if(!t) return alert("Dê um nome à turnê!");
+    if(!t) return alert("Dê um nome!");
     await enviar('contratar_tour', { nome: ARTISTA_DATA.nome, tipo: porte, titulo: t });
 }
 
 async function gerarItinerario() {
     const q = document.getElementById('tour-qtd').value;
-    const d = document.getElementById('tour-start-date').value;
-    if(!d) return alert("Escolha a data de início!");
+    const d = document.getElementById('tour-start').value;
+    if(!d) return alert("Escolha a data!");
     await enviar('gerar_itinerario', { nome: ARTISTA_DATA.nome, qtd: q, dataInicio: d });
 }
 
