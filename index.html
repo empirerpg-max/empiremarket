@@ -63,7 +63,15 @@
                     </div>
                     <div class="nav-card" onclick="alert('Em breve')">
                         <div class="nav-icon-box hub-bg">🎬</div>
-                        <div class="nav-text"><b>Cinema & TV</b><span>Contratos de Atuação</span></div>
+                        <div class="nav-text"><b>Cinema & TV</b><span>Hollywood Casting</span></div>
+                    </div>
+                    <div class="nav-card" onclick="alert('Em breve')">
+                        <div class="nav-icon-box hub-bg">🏢</div>
+                        <div class="nav-text"><b>Empresas</b><span>Business & Brand</span></div>
+                    </div>
+                    <div class="nav-card" onclick="alert('Em breve')">
+                        <div class="nav-icon-box hub-bg">🛒</div>
+                        <div class="nav-text"><b>Market</b><span>Compras de Luxo</span></div>
                     </div>
                 </div>
             </div>
@@ -71,20 +79,24 @@
             <div id="view-buy-tour" class="screen">
                 <div class="view-header">
                     <button class="back-btn" onclick="showScreen('view-hub')">←</button>
-                    <h2>Nova Turnê</h2>
+                    <h2>Configurar Tour</h2>
                 </div>
-                <div class="input-field">
-                    <label>NOME DA TURNÊ *</label>
-                    <input type="text" id="tour-nome" placeholder="Ex: Renaissance Tour">
+                
+                <div class="form-container">
+                    <div class="input-field"><label>NOME DA TURNÊ</label><input type="text" id="t-nome" placeholder="Ex: World Tour"></div>
+                    <div class="input-field"><label>DATA DE INÍCIO</label><input type="date" id="t-data"></div>
+                    <div class="input-field"><label>QUANTIDADE DE SHOWS</label><input type="number" id="t-qtd" value="10"></div>
                 </div>
+
+                <p class="section-label">ESCOLHA O PORTE</p>
                 <div class="main-navigation">
-                    <div class="nav-card" onclick="contratarTour('Tour de Estádios')">
+                    <div class="nav-card" onclick="processarCompraTour('Tour de Estádios')">
                         <div class="nav-icon-box gold-bg">🏟️</div>
-                        <div class="nav-text"><b>Tour de Estádios</b><span>$EC 15.000.000</span></div>
+                        <div class="nav-text"><b>Estádios</b><span>$EC 15.000.000</span></div>
                     </div>
-                    <div class="nav-card" onclick="contratarTour('Tour de Clubs')">
+                    <div class="nav-card" onclick="processarCompraTour('Tour de Clubs')">
                         <div class="nav-icon-box hub-bg">🎹</div>
-                        <div class="nav-text"><b>Tour de Clubs</b><span>$EC 100.000</span></div>
+                        <div class="nav-text"><b>Clubs</b><span>$EC 100.000</span></div>
                     </div>
                 </div>
             </div>
@@ -92,7 +104,7 @@
             <div id="view-mgmt" class="screen">
                 <div class="view-header">
                     <button class="back-btn" onclick="showScreen('view-home')">←</button>
-                    <h2 id="mgmt-title">Gestão</h2>
+                    <h2>Gerenciamento</h2>
                 </div>
                 <div id="mgmt-area"></div>
             </div>
