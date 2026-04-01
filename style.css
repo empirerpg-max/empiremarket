@@ -3,55 +3,58 @@ body {
     background: #0b0118; background-image: radial-gradient(circle at top, #1a023a, #0b0118);
     color: white; font-family: 'Inter', sans-serif; display: flex; justify-content: center; min-height: 100vh;
 }
-.app-container { width: 100%; max-width: 420px; padding: 30px 25px; display: flex; flex-direction: column; align-items: center; }
+.app-container { width: 100%; max-width: 420px; padding: 30px 20px; display: flex; flex-direction: column; align-items: center; }
 
-/* Cabeçalho */
+/* Header & Glass Card */
 .avatar { width: 105px; height: 105px; border-radius: 50%; border: 3px solid #bc13fe; box-shadow: 0 0 25px rgba(188, 19, 254, 0.5); object-fit: cover; }
-.status-dot { position: absolute; bottom: 5px; right: 5px; width: 18px; height: 18px; border-radius: 50%; border: 3px solid #0b0118; background: #00ff88; }
 .avatar-wrapper { position: relative; display: inline-block; margin-bottom: 10px; }
-h1 { font-size: 1.8em; letter-spacing: -1px; font-weight: 800; margin: 10px 0; text-transform: uppercase; }
-.activity-banner { background: rgba(188, 19, 254, 0.15); border: 1px solid rgba(188, 19, 254, 0.3); padding: 5px 15px; border-radius: 20px; font-size: 0.65em; color: #e0aaff; font-weight: 800; text-transform: uppercase; }
+.status-dot { position: absolute; bottom: 5px; right: 5px; width: 18px; height: 18px; border-radius: 50%; border: 3px solid #0b0118; background: #00ff88; }
+h1 { font-size: 1.8em; font-weight: 800; margin: 10px 0; text-transform: uppercase; letter-spacing: -1px; }
+.activity-banner { background: rgba(188, 19, 254, 0.15); border: 1px solid rgba(188, 19, 254, 0.3); padding: 5px 15px; border-radius: 20px; font-size: 0.65em; color: #e0aaff; font-weight: 800; }
 
-/* Card Principal */
-.glass-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 25px; padding: 25px; width: 100%; margin-bottom: 20px; text-align: center; }
+.glass-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 25px; padding: 25px; width: 100%; text-align: center; margin-bottom: 25px; }
 #artist-saldo { color: #ffd700; font-size: 2.2em; margin: 5px 0; font-weight: 800; letter-spacing: -1px; }
-.fortuna-label { font-size: 0.75em; opacity: 0.5; margin-bottom: 15px; }
 
-/* Progress Neon */
+/* Barras */
 .stat-info { display: flex; justify-content: space-between; font-size: 0.7em; font-weight: 800; margin-bottom: 6px; letter-spacing: 1px; }
 .progress-bg { background: rgba(255,255,255,0.08); height: 11px; border-radius: 10px; margin-bottom: 15px; overflow: hidden; }
 .progress { height: 100%; border-radius: 10px; transition: width 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 .gold { background: linear-gradient(to right, #bc13fe, #ffd700); box-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
 .red { background: linear-gradient(to right, #ff4b2b, #ff0000); box-shadow: 0 0 10px rgba(255, 75, 43, 0.3); }
 
-/* Hub & Grid */
-.section-title-main { font-size: 0.85em; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: #bc13fe; margin: 25px 0 15px 0; width: 100%; text-align: left; }
-.actions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; }
-.action-btn { background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); padding: 20px; border-radius: 20px; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; transition: 0.3s; }
-.action-btn:active { transform: scale(0.92); background: rgba(188, 19, 254, 0.1); }
+/* Menu de Navegação Principal */
+.main-navigation { width: 100%; display: flex; flex-direction: column; gap: 15px; }
+.nav-card { background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.1); padding: 25px; border-radius: 25px; cursor: pointer; transition: 0.3s; }
+.nav-card:active { transform: scale(0.96); background: rgba(188, 19, 254, 0.1); }
+.nav-content { display: flex; align-items: center; gap: 20px; }
+.nav-icon { font-size: 2em; }
+.nav-text b { display: block; font-size: 1.1em; color: #fff; }
+.nav-text small { font-size: 0.75em; opacity: 0.5; }
 
-/* Gestão Ativa Card */
-.mgmt-card { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(188, 19, 254, 0.3); border-radius: 22px; padding: 22px; text-align: left; width: 100%; position: relative; }
-.mgmt-card h4 { font-size: 0.8em; font-weight: 800; color: #bc13fe; margin-bottom: 12px; text-transform: uppercase; }
-.mgmt-data p { font-size: 0.75em; margin-bottom: 8px; color: rgba(255,255,255,0.9); }
-.btn-open-agenda { background: #bc13fe; border: none; color: white; padding: 12px; border-radius: 12px; font-size: 0.7em; font-weight: 800; margin-top: 10px; cursor: pointer; width: 100%; text-transform: uppercase; }
-
-/* Agenda Full List */
-.agenda-scroll-area { height: 100%; overflow-y: auto; padding: 5px; }
-.agenda-row { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; padding: 18px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
-.agenda-info b { font-size: 0.9em; display: block; margin-top: 2px; }
-.agenda-info small { font-size: 0.6em; color: #bc13fe; font-weight: 800; text-transform: uppercase; }
-.agenda-stats { text-align: right; }
-.agenda-stats span { font-size: 0.8em; color: #ffd700; font-weight: 800; display: block; }
-.agenda-stats small { font-size: 0.65em; opacity: 0.5; }
-
-/* Modais */
-.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(10px); display: none; justify-content: center; align-items: flex-end; z-index: 10000; }
+/* Modais Gaveta */
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); display: none; justify-content: center; align-items: flex-end; z-index: 10000; }
 .modal-overlay.active { display: flex; }
 .modal-content { width: 100%; max-width: 420px; background: #0f0221; border-top: 2px solid #bc13fe; border-radius: 30px 30px 0 0; padding: 25px; transform: translateY(100%); transition: 0.4s transform ease; }
 .modal-overlay.active .modal-content { transform: translateY(0); }
-.input-field { margin-bottom: 15px; text-align: left; }
-.input-field label { font-size: 0.65em; font-weight: 800; color: #bc13fe; display: block; margin-bottom: 5px; }
-.input-field input, select { width: 100%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; padding: 14px; color: white; outline: none; font-family: inherit; }
+.scroll-area { height: 100%; overflow-y: auto; padding-bottom: 40px; }
+
+/* Grid Interna do Hub */
+.actions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
+.action-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 25px; border-radius: 20px; text-align: center; font-size: 1.5em; display: flex; flex-direction: column; gap: 10px; cursor: pointer; }
+.action-btn span { font-size: 0.5em; font-weight: 800; text-transform: uppercase; color: #bc13fe; }
+
+/* Cards de Gestão */
+.mgmt-item { background: rgba(255,255,255,0.05); border: 1px solid rgba(188, 19, 254, 0.3); border-radius: 20px; padding: 20px; margin-bottom: 15px; cursor: pointer; }
+.mgmt-item h4 { font-size: 0.9em; margin-bottom: 5px; color: #bc13fe; }
+.mgmt-item p { font-size: 0.7em; opacity: 0.6; }
+
+/* Forms */
+.input-field { margin-bottom: 15px; }
+.input-field label { font-size: 0.6em; font-weight: 800; color: #bc13fe; display: block; margin-bottom: 5px; }
+.input-field input, select { width: 100%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; padding: 14px; color: white; outline: none; }
 .main-action-btn { width: 100%; background: linear-gradient(45deg, #bc13fe, #ffd700); border: none; padding: 18px; border-radius: 15px; color: #0b0118; font-weight: 800; text-transform: uppercase; margin-top: 10px; cursor: pointer; }
-.option-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); padding: 18px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; cursor: pointer; }
+
+/* Agenda List */
+.agenda-row { background: rgba(255,255,255,0.03); border-bottom: 1px solid rgba(255,255,255,0.05); padding: 15px 0; display: flex; justify-content: space-between; align-items: center; }
+.agenda-row b { font-size: 0.85em; }
+.agenda-row small { font-size: 0.6em; color: #ffd700; }
