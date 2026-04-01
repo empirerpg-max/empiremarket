@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Empire Manager</title>
+    <title>Empire Dashboard</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;800&display=swap" rel="stylesheet">
 </head>
@@ -15,16 +15,17 @@
                 <img src="" id="artist-photo" class="avatar">
                 <div id="status-dot" class="status-dot"></div>
             </div>
-            <h1 id="artist-name">SABINE</h1>
+            <h1 id="artist-name">Carregando...</h1>
             <div id="activity-banner" class="activity-banner">
-                <span id="current-activity">Disponível para Projetos</span>
+                <span id="current-activity">Sincronizando...</span>
             </div>
         </header>
 
         <div class="glass-card main-stats">
-            <p class="label-small">SALDO DISPONÍVEL</p>
+            <p class="label-small">SALDO EMPIRE COINS</p>
             <h2 id="artist-saldo">$EC 0</h2>
             <p class="fortuna-label">Patrimônio Líquido: <span id="artist-fortuna">$0</span></p>
+            
             <div class="stats-group">
                 <div class="stat-bar">
                     <div class="stat-info"><span>PRESTÍGIO</span><span id="txt-prestigio">0/1000</span></div>
@@ -37,25 +38,25 @@
             </div>
         </div>
 
-        <h3 class="section-title-main">Empire Hub <small>Investimentos</small></h3>
+        <h3 class="section-title-main">Empire Hub <small>Market</small></h3>
         <nav class="actions-grid">
-            <div class="action-btn" id="btn-tour" onclick="checkTourStatus()">
+            <div class="action-btn" id="btn-tour-hub" onclick="checkTourStatus()">
                 <span class="icon">🎤</span><span>Tour</span>
             </div>
             <div class="action-btn" onclick="openCinema()">
                 <span class="icon">🎬</span><span>Cinema</span>
             </div>
-            <div class="action-btn" onclick="alert('Business em breve!')">
+            <div class="action-btn" onclick="alert('Em breve!')">
                 <span class="icon">🏢</span><span>Business</span>
             </div>
-            <div class="action-btn" onclick="alert('Market em breve!')">
+            <div class="action-btn" onclick="alert('Em breve!')">
                 <span class="icon">🛒</span><span>Market</span>
             </div>
         </nav>
 
-        <h3 class="section-title-main">Gestão de Ativos <small>Minha Carreira</small></h3>
+        <h3 class="section-title-main">Gestão de Carreira <small>Atividades</small></h3>
         <div id="management-area" class="management-container">
-            <p class="empty-msg">Nenhum projeto em andamento.</p>
+            <p class="empty-msg">Nenhum projeto ativo no momento.</p>
         </div>
     </div>
 
@@ -64,20 +65,27 @@
             <div class="modal-drag-handle"></div>
             <div class="modal-header"><h3>Hollywood Casting</h3><button class="close-btn" onclick="closeCinema()">✕</button></div>
             <div class="form-container">
-                <div class="input-field"><label>TÍTULO DA OBRA *</label><input type="text" id="obra-titulo" placeholder="Nome do filme"></div>
+                <div class="input-field"><label>TÍTULO DA OBRA *</label><input type="text" id="obra-titulo" placeholder="Nome do projeto"></div>
                 <div class="input-row">
                     <div class="input-field">
                         <label>GÊNERO *</label>
                         <select id="obra-genero">
-                            <option value="Ação">Ação</option><option value="Terror">Terror</option><option value="Musical">Musical</option><option value="Drama">Drama</option>
+                            <option value="Ação">Ação</option><option value="Terror">Terror</option>
+                            <option value="Musical">Musical</option><option value="Drama">Drama</option>
                         </select>
                     </div>
                     <div class="input-field"><label>ANO *</label><input type="number" id="obra-ano" value="2026"></div>
                 </div>
             </div>
             <div class="option-list">
-                <div class="option-card" onclick="contratarFilme('Filme Independente')"><div class="option-info"><b>Indie</b><small>$EC 250k</small></div><span class="badge">+10 P</span></div>
-                <div class="option-card" onclick="contratarFilme('Blockbuster Cinema')"><div class="option-info"><b>Blockbuster</b><small>$EC 5M</small></div><span class="badge">+50 P</span></div>
+                <div class="option-card" onclick="contratarFilme('Filme Independente')">
+                    <div class="option-info"><span class="opt-name">Filme Independente</span><span class="opt-val">$EC 250k</span></div>
+                    <span class="badge">+10 P</span>
+                </div>
+                <div class="option-card" onclick="contratarFilme('Blockbuster Cinema')">
+                    <div class="option-info"><span class="opt-name">Blockbuster Cinema</span><span class="opt-val">$EC 5M</span></div>
+                    <span class="badge">+50 P</span>
+                </div>
             </div>
         </div>
     </div>
@@ -86,11 +94,12 @@
         <div class="modal-content">
             <div class="modal-drag-handle"></div>
             <div class="modal-header"><h3>Logística de Turnê</h3><button class="close-btn" onclick="closeTour()">✕</button></div>
-            <div class="input-field"><label>NOME DA TURNÊ *</label><input type="text" id="tour-nome" placeholder="Ex: Renaissance Tour"></div>
+            <div class="form-container">
+                <div class="input-field"><label>NOME DA TURNÊ *</label><input type="text" id="tour-nome" placeholder="Ex: Renaissance Tour"></div>
+            </div>
             <div class="option-list">
-                <div class="option-card" onclick="contratarTour('Tour de Clubs')"><div class="option-info"><b>Clubs</b><small>$EC 100k</small></div><span class="badge">LOG +</span></div>
-                <div class="option-card" onclick="contratarTour('Tour de Arenas')"><div class="option-info"><b>Arenas</b><small>$EC 2.000.000</small></div><span class="badge">LOG ++</span></div>
-                <div class="option-card" onclick="contratarTour('Tour de Estádios')"><div class="option-info"><b>Estádios</b><small>$EC 15.000.000</small></div><span class="badge">LOG +++</span></div>
+                <div class="option-card" onclick="contratarTour('Tour de Clubs')"><div class="option-info"><b>Tour de Clubs</b><small>$EC 100k</small></div><span class="badge">LOG +</span></div>
+                <div class="option-card" onclick="contratarTour('Tour de Estádios')"><div class="option-info"><b>Tour de Estádios</b><small>$EC 15M</small></div><span class="badge">LOG +++</span></div>
             </div>
         </div>
     </div>
@@ -98,22 +107,22 @@
     <div id="modal-planejar-tour" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-drag-handle"></div>
-            <div class="modal-header"><h3>Definir Itinerário</h3><button class="close-btn" onclick="closePlanejar()">✕</button></div>
+            <div class="modal-header"><h3>Definir Agenda</h3><button class="close-btn" onclick="closePlanejar()">✕</button></div>
             <div class="form-container">
                 <div class="input-row">
-                    <div class="input-field"><label>NÚMERO DE SHOWS *</label><input type="number" id="tour-qtd-datas" value="10"></div>
-                    <div class="input-field"><label>DATA DE INÍCIO *</label><input type="date" id="tour-data-inicio"></div>
+                    <div class="input-field"><label>Nº SHOWS *</label><input type="number" id="tour-qtd-datas" value="10"></div>
+                    <div class="input-field"><label>INÍCIO *</label><input type="date" id="tour-data-inicio"></div>
                 </div>
-                <button class="main-action-btn" onclick="gerarItinerario()">Sincronizar Agenda</button>
+                <button class="main-action-btn" onclick="gerarItinerario()">Gerar Tour Book Agora</button>
             </div>
         </div>
     </div>
 
     <div id="modal-agenda" class="modal-overlay">
-        <div class="modal-content" style="height: 80vh;">
+        <div class="modal-content" style="height: 85vh;">
             <div class="modal-drag-handle"></div>
             <div class="modal-header"><h3>Tour Book</h3><button class="close-btn" onclick="closeAgenda()">✕</button></div>
-            <div id="agenda-lista" class="agenda-scroll">
+            <div id="agenda-lista" class="agenda-scroll-area">
                 </div>
         </div>
     </div>
