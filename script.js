@@ -86,6 +86,7 @@ function checkManagementView() {
     container.innerHTML = "";
     let temProjeto = false;
 
+    // Se tem Tour
     if (ARTISTA_ATUAL.tour_info) {
         temProjeto = true;
         const info = ARTISTA_ATUAL.tour_info;
@@ -101,6 +102,7 @@ function checkManagementView() {
             </div>`;
     } 
     
+    // Se tem Cinema
     if (ARTISTA_ATUAL.status && ARTISTA_ATUAL.status.includes("🎬")) {
         temProjeto = true;
         container.innerHTML += `
