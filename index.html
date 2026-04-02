@@ -10,7 +10,6 @@
 <body>
 
     <div class="app-container">
-        
         <header class="profile-header">
             <div class="avatar-wrapper">
                 <img src="" id="artist-photo" class="avatar">
@@ -32,7 +31,6 @@
         </div>
 
         <main id="view-container">
-
             <section id="screen-home" class="app-screen active">
                 <div class="main-navigation">
                     <div class="nav-card" onclick="showScreen('screen-hub')">
@@ -56,7 +54,7 @@
                     <h2>Empire Hub</h2>
                 </div>
                 <div class="fortuna-badge-hub">
-                    <p>PATRIMÔNIO LÍQUIDO (FORTUNA)</p>
+                    <p>FORTUNA TOTAL (BENS + REAL)</p>
                     <h4 id="hub-fortuna">$0</h4>
                 </div>
                 <div class="main-navigation">
@@ -64,13 +62,13 @@
                         <div class="nav-icon-box hub-bg">🎤</div>
                         <div class="nav-text"><b>Contratar Tour</b><span>Logística e Datas</span></div>
                     </div>
-                    <div class="nav-card" onclick="alert('Em breve')">
+                    <div class="nav-card" onclick="alert('Casting em breve')">
                         <div class="nav-icon-box hub-bg">🎬</div>
                         <div class="nav-text"><b>Cinema & TV</b><span>Hollywood Casting</span></div>
                     </div>
-                    <div class="nav-card" onclick="alert('Em breve')">
-                        <div class="nav-icon-box hub-bg">🏢</div>
-                        <div class="nav-text"><b>Empire Market</b><span>Compras e Mural</span></div>
+                    <div class="nav-card" onclick="alert('Market em breve')">
+                        <div class="nav-icon-box hub-bg">🛒</div>
+                        <div class="nav-text"><b>Empire Market</b><span>Mural e Compras</span></div>
                     </div>
                 </div>
             </section>
@@ -78,7 +76,7 @@
             <section id="screen-buy-tour" class="app-screen">
                 <div class="view-header">
                     <button class="back-btn" onclick="showScreen('screen-hub')">←</button>
-                    <h2>Configurar Tour</h2>
+                    <h2>Nova Turnê</h2>
                 </div>
                 <div class="form-container">
                     <div class="input-field"><label>NOME DA TURNÊ</label><input type="text" id="t-nome" placeholder="Ex: World Tour"></div>
@@ -87,15 +85,15 @@
                         <div class="input-field" style="flex:1;"><label>SHOWS</label><input type="number" id="t-qtd" value="10"></div>
                     </div>
                     <div class="input-field">
-                        <label>CONTINENTES</label>
+                        <label>CONTINENTE ALVO</label>
                         <select id="t-continente" class="custom-select">
-                            <option value="Global">Global (Todos)</option>
+                            <option value="Global">Mundial (Todos)</option>
                             <option value="América">Américas</option>
                             <option value="Europa">Europa</option>
                         </select>
                     </div>
                 </div>
-                <p class="section-label">SELECIONE O PORTE DA LOGÍSTICA</p>
+                <p class="section-label">SELECIONE O PORTE</p>
                 <div class="main-navigation">
                     <div class="nav-card" onclick="processarCompraUnificada('Tour de Estádios')">
                         <div class="nav-icon-box gold-bg">🏟️</div>
@@ -119,7 +117,6 @@
                 </div>
                 <div id="mgmt-content"></div>
             </section>
-
         </main>
     </div>
 
