@@ -31,52 +31,43 @@ async function loadData() {
         document.getElementById('bar-fadiga').style.width = ARTISTA_DATA.fadiga + "%";
         document.getElementById('txt-fadiga').innerText = ARTISTA_DATA.fadiga + "%";
 
-    } catch (e) { console.error("Falha no carregamento", e); }
+    } catch (e) { console.error("Falha no carregamento Império", e); }
 }
 
-// GESTÃO COM TAG DE PROJETO
 function checkManagementView() {
     const container = document.getElementById('mgmt-content');
     container.innerHTML = "";
 
     if (ARTISTA_DATA.tour_info) {
         const info = ARTISTA_DATA.tour_info;
-        
         container.innerHTML = `
             <div class="glass-card" style="text-align:left;">
                 <div class="project-tag">Tour</div>
                 <h3 style="font-size:1.3em; margin-bottom:5px;">${info.nomeTour}</h3>
-                <div class="tour-stats-grid">
-                    <div class="t-stat"><b>ARRECADAÇÃO</b><span>$EC ${info.arrecadacao.toLocaleString()}</span></div>
-                    <div class="t-stat"><b>PROGRESSO</b><span>Show ${info.showAtual}/${info.totalShows}</span></div>
+                <div class="tour-stats-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:15px; border-top:1px solid rgba(255,255,255,0.1); padding-top:15px;">
+                    <div><b style="display:block; font-size:0.55em; opacity:0.5; text-transform:uppercase;">Arrecadação</b><span style="font-size:0.9em; font-weight:700; color:#ffd700;">$EC ${info.arrecadacao.toLocaleString()}</span></div>
+                    <div><b style="display:block; font-size:0.55em; opacity:0.5; text-transform:uppercase;">Progresso</b><span style="font-size:0.9em; font-weight:700; color:#ffd700;">Show ${info.showAtual}/${info.totalShows}</span></div>
                 </div>
                 <button class="btn-detalhes" onclick="abrirItinerario()">Ver datas, vendas e locais aqui</button>
             </div>`;
     } else {
-        container.innerHTML = "<p style='text-align:center; opacity:0.3; margin-top:50px;'>Nenhum projeto ativo no momento.</p>";
+        container.innerHTML = "<p style='text-align:center; opacity:0.3; margin-top:50px;'>Nenhum projeto ativo.</p>";
     }
     showScreen('screen-mgmt');
 }
 
-// MODAL COM MÉTRICAS E TAG
 function abrirItinerario() {
     const lista = document.getElementById('itinerario-lista');
     lista.innerHTML = "";
-    
     if (ARTISTA_DATA.tour_info && ARTISTA_DATA.tour_info.agenda) {
         const agenda = JSON.parse(ARTISTA_DATA.tour_info.agenda);
         agenda.forEach(show => {
             const pct = Math.round((show.vendidos / show.capacidade) * 100);
             lista.innerHTML += `
                 <div class="agenda-card">
-                    <div class="info">
-                        <small>Data do Show</small>
-                        <b>${show.data}</b>
-                        <small style="margin-top:5px; display:block;">Local</small>
-                        <b style="font-size:0.75em; opacity:0.7;">${show.local}</b>
-                    </div>
+                    <div class="info"><small>Data: ${show.data}</small><b>${show.local}</b></div>
                     <div class="agenda-stats">
-                        <b>EC ${show.arrecadado.toLocaleString()}</b>
+                        <b style="color:#ffd700;">EC ${show.arrecadado.toLocaleString()}</b>
                         <span class="cap-box">${show.vendidos.toLocaleString()} / ${show.capacidade.toLocaleString()}</span>
                         <span class="pct-tag">${pct}% OCUPADO</span>
                     </div>
@@ -86,26 +77,23 @@ function abrirItinerario() {
     }
 }
 
-// COMPRA UNIFICADA
 async function processarCompraUnificada(porte) {
     const nomeT = document.getElementById('t-nome').value;
     const dataT = document.getElementById('t-data').value;
     const qtdT = document.getElementById('t-qtd').value;
+    const contT = document.getElementById('t-continente').value;
 
-    if(!nomeT || !dataT) return alert("Preencha o nome e a data da tour!");
+    if(!nomeT || !dataT) return alert("Preencha nome e data!");
 
     document.body.style.opacity = "0.5";
-    const url = `${SCRIPT_URL}?acao=compra_unificada_tour&nome=${encodeURIComponent(ARTISTA_DATA.nome)}&tipo=${encodeURIComponent(porte)}&titulo=${encodeURIComponent(nomeT)}&dataInicio=${dataT}&qtd=${qtdT}`;
+    const url = `${SCRIPT_URL}?acao=compra_unificada_tour&nome=${encodeURIComponent(ARTISTA_DATA.nome)}&tipo=${encodeURIComponent(porte)}&titulo=${encodeURIComponent(nomeT)}&dataInicio=${dataT}&qtd=${qtdT}&continente=${contT}`;
 
     try {
         const res = await fetch(url);
         const txt = await res.text();
         alert(txt);
         location.reload();
-    } catch(e) { 
-        alert("Erro de conexão."); 
-        document.body.style.opacity = "1";
-    }
+    } catch(e) { alert("Erro de conexão."); document.body.style.opacity = "1"; }
 }
 
 window.onload = loadData;
