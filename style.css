@@ -69,3 +69,8 @@ h1 { font-size: 1.8em; font-weight: 800; margin: 10px 0 5px 0; text-transform: u
 .input-field label { display: block; font-size: 0.65em; font-weight: 800; color: #bc13fe; margin-bottom: 5px; text-transform: uppercase; }
 .input-field input, .custom-select { width: 100%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; padding: 15px; color: white; outline: none; font-family: inherit; }
 .section-label { font-size: 0.65em; opacity: 0.4; margin: 5px 0 12px 0; font-weight: 800; text-transform: uppercase; }
+
+.artist-list-item { display: flex; align-items: center; gap: 15px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 15px; border-radius: 20px; margin-bottom: 10px; cursor: pointer; }
+.artist-list-item img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid #bc13fe; }
+.artist-list-item .info b { display: block; font-size: 1.1em; color: white; }
+.artist-list-item .info span { font-size: 0.7em; color: #ffd700; font-weight: 800; }
