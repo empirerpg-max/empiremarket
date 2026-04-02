@@ -1,11 +1,20 @@
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwxbkUndhZPtFvtK1uIFTkPNN-m6WeiFVMU3IDzuahsC0oQp8Ba2GLQFOAPkWv8eiA3/exec"; 
-let TG_USER_ID = "000000"; // Fallback para PC
-let ARTISTAS_USUARIO = []; // Array com todos os artistas do jogador
-let ARTISTA_ATUAL = null;  // O artista que está sendo gerenciado na tela
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwxbkUndhZPtFvtK1uIFTkPNN-m6WeiFVMU3IDzuahsC0oQp8Ba2GLQFOAPkWv8eiA3/exec"; // COLOQUE SEU SCRIPT AQUI
 
-// INICIALIZAÇÃO TELEGRAM WEB APP
+let TG_USER_ID = "000000"; 
+let ARTISTAS_USUARIO = []; 
+let ARTISTA_ATUAL = null;  
+
+// INICIALIZAÇÃO (TELEGRAM OU LINK DE TESTE)
 window.onload = () => {
-    if (window.Telegram && window.Telegram.WebApp) {
+    const params = new URLSearchParams(window.location.search);
+    const testeId = params.get('tg_id');
+
+    if (testeId) {
+        // MODO TESTE (No navegador: index.html?tg_id=123)
+        TG_USER_ID = testeId;
+        console.log("Modo de Teste. TG_ID:", TG_USER_ID);
+    } else if (window.Telegram && window.Telegram.WebApp) {
+        // MODO PRODUÇÃO (Dentro do Telegram)
         window.Telegram.WebApp.ready();
         window.Telegram.WebApp.expand();
         if(window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
@@ -23,7 +32,7 @@ function showScreen(viewId) {
 function openModal(id) { document.getElementById(id).classList.add('active'); }
 function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
-// BUSCAR ARTISTAS DO JOGADOR
+// BUSCAR ARTISTAS DO JOGADOR NO BD
 async function loadMyArtists() {
     showScreen('view-artist-list');
     const container = document.getElementById('my-artists-container');
@@ -50,11 +59,11 @@ async function loadMyArtists() {
                 </div>`;
         });
     } catch(e) {
-        container.innerHTML = "<p style='text-align:center; color:red;'>Erro de conexão com o Empire.</p>";
+        container.innerHTML = "<p style='text-align:center; color:red;'>Erro de conexão.</p>";
     }
 }
 
-// ABRIR O DASHBOARD ESPECÍFICO (A TELA DA SABINE)
+// ABRIR O DASHBOARD DE UM ARTISTA ESPECÍFICO
 function openArtistDashboard(index) {
     ARTISTA_ATUAL = ARTISTAS_USUARIO[index];
     
@@ -72,8 +81,9 @@ function openArtistDashboard(index) {
     showScreen('view-artist-dashboard');
 }
 
-// GESTÃO DO ARTISTA ATUAL
+// GESTÃO DE PROJETOS DO ARTISTA
 function checkManagementView() {
+    if(!ARTISTA_ATUAL) return;
     const container = document.getElementById('mgmt-content');
     container.innerHTML = "";
 
@@ -83,14 +93,14 @@ function checkManagementView() {
             <div class="glass-card" style="text-align:left;">
                 <div class="project-tag">Tour</div>
                 <h3 style="font-size:1.3em; margin-bottom:5px;">${info.nomeTour}</h3>
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:15px; border-top:1px solid rgba(255,255,255,0.1); padding-top:15px;">
+                <div class="tour-stats-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:15px; border-top:1px solid rgba(255,255,255,0.1); padding-top:15px;">
                     <div><b style="display:block; font-size:0.55em; opacity:0.5;">ARRECADAÇÃO</b><span style="font-size:0.9em; font-weight:700; color:#ffd700;">$EC ${info.arrecadacao.toLocaleString()}</span></div>
                     <div><b style="display:block; font-size:0.55em; opacity:0.5;">PROGRESSO</b><span style="font-size:0.9em; font-weight:700; color:#ffd700;">Show ${info.showAtual}/${info.totalShows}</span></div>
                 </div>
                 <button class="btn-detalhes" onclick="abrirItinerario()">Ver datas e locais</button>
             </div>`;
     } else {
-        container.innerHTML = "<p style='text-align:center; opacity:0.3; margin-top:50px;'>Nenhum projeto ativo.</p>";
+        container.innerHTML = "<p style='text-align:center; opacity:0.3; margin-top:50px;'>Nenhum projeto ativo no momento.</p>";
     }
     showScreen('view-mgmt');
 }
@@ -104,7 +114,7 @@ function abrirItinerario() {
             const pct = Math.round((show.vendidos / show.capacidade) * 100);
             lista.innerHTML += `
                 <div class="agenda-card">
-                    <div class="info"><small>${show.data}</small><b>${show.local}</b></div>
+                    <div class="info"><small>Data: ${show.data}</small><b>${show.local}</b></div>
                     <div class="agenda-stats">
                         <b style="color:#ffd700;">EC ${show.arrecadado.toLocaleString()}</b>
                         <span class="cap-box">${show.vendidos.toLocaleString()} / ${show.capacidade.toLocaleString()}</span>
@@ -116,7 +126,7 @@ function abrirItinerario() {
     }
 }
 
-// COMPRA DE TOUR PRO ARTISTA ATUAL
+// COMPRA DE TOUR
 async function processarCompraUnificada(porte) {
     if(!ARTISTA_ATUAL) return;
     const nomeT = document.getElementById('t-nome').value;
@@ -133,6 +143,8 @@ async function processarCompraUnificada(porte) {
         const res = await fetch(url);
         const txt = await res.text();
         alert(txt);
-        location.reload(); // Recarrega o mini app
+        // Atualiza a lista do backend para refletir o novo saldo/tour
+        loadMyArtists(); 
+        document.body.style.opacity = "1";
     } catch(e) { alert("Erro de conexão."); document.body.style.opacity = "1"; }
 }
