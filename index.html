@@ -15,15 +15,15 @@
         <section id="view-main-menu" class="app-screen active">
             <div class="profile-header">
                 <h1>EMPIRE</h1>
-                <p style="opacity: 0.5; font-size: 0.8em; text-transform: uppercase;">Music & Entertainment</p>
+                <p style="opacity: 0.5; font-size: 0.8em; text-transform: uppercase; letter-spacing: 2px;">Music & Entertainment</p>
             </div>
 
             <div class="main-navigation" style="margin-top: 30px;">
-                <div class="nav-card" onclick="alert('Feed de atividades em breve!')">
+                <div class="nav-card" onclick="showScreen('view-radar')">
                     <div class="nav-icon-box hub-bg">🌍</div>
                     <div class="nav-text"><b>Radar Empire</b><span>O que os artistas estão fazendo</span></div>
                 </div>
-                <div class="nav-card" onclick="alert('Tutorial em breve!')">
+                <div class="nav-card" onclick="showScreen('view-tutorial')">
                     <div class="nav-icon-box archive-bg">📖</div>
                     <div class="nav-text"><b>Tutorial</b><span>Aprenda a gerenciar seu império</span></div>
                 </div>
@@ -31,10 +31,40 @@
                     <div class="nav-icon-box mgmt-bg">👤</div>
                     <div class="nav-text"><b>Meus Artistas</b><span>Acesse seu portfólio</span></div>
                 </div>
-                <div class="nav-card" onclick="alert('Gravadoras em breve!')">
+                <div class="nav-card" onclick="showScreen('view-labels')">
                     <div class="nav-icon-box gold-bg">🏢</div>
                     <div class="nav-text"><b>Gravadoras</b><span>Ver catálogo de empresas</span></div>
                 </div>
+            </div>
+        </section>
+
+        <section id="view-radar" class="app-screen">
+            <div class="view-header">
+                <button class="back-btn" onclick="showScreen('view-main-menu')">←</button>
+                <h2>Radar Empire</h2>
+            </div>
+            <div class="glass-card"><p style="opacity:0.5;">Carregando feed global...</p></div>
+        </section>
+
+        <section id="view-tutorial" class="app-screen">
+            <div class="view-header">
+                <button class="back-btn" onclick="showScreen('view-main-menu')">←</button>
+                <h2>Como Jogar</h2>
+            </div>
+            <div class="glass-card" style="text-align:left; font-size:0.85em; line-height:1.6;">
+                <b style="color:#bc13fe; text-transform:uppercase;">Bem-vindo ao Império</b><br><br>
+                Aqui você gerencia a carreira dos seus artistas. Acesse seu portfólio, contrate turnês, lance projetos em Hollywood e invista sua fortuna no Market. Suas ações definem seu Prestígio e Fadiga!
+            </div>
+        </section>
+
+        <section id="view-labels" class="app-screen">
+            <div class="view-header">
+                <button class="back-btn" onclick="showScreen('view-main-menu')">←</button>
+                <h2>Gravadoras</h2>
+            </div>
+            <div class="main-navigation">
+                <div class="nav-card"><div class="nav-icon-box gold-bg">👑</div><div class="nav-text"><b>King & Queen</b><span>Ver artistas do selo</span></div></div>
+                <div class="nav-card"><div class="nav-icon-box hub-bg">⭐</div><div class="nav-text"><b>Independent</b><span>Ver artistas solo</span></div></div>
             </div>
         </section>
 
@@ -50,8 +80,8 @@
 
         <section id="view-artist-dashboard" class="app-screen">
             <header class="profile-header">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                    <button class="back-btn" style="width:35px; height:35px;" onclick="showScreen('view-artist-list')">←</button>
+                <div style="display:flex; justify-content:flex-start; align-items:center; margin-bottom:15px;">
+                    <button class="back-btn" style="width:40px; height:40px;" onclick="showScreen('view-artist-list')">←</button>
                 </div>
                 <div class="avatar-wrapper">
                     <img src="" id="artist-photo" class="avatar">
@@ -81,11 +111,19 @@
                     <div class="nav-icon-box mgmt-bg">⚡</div>
                     <div class="nav-text"><b>Gestão de Projetos</b><span>Acompanhamento Ativo</span></div>
                 </div>
-                <div class="nav-card" onclick="alert('Acervo em breve!')">
+                <div class="nav-card" onclick="showScreen('view-archive')">
                     <div class="nav-icon-box archive-bg">📁</div>
                     <div class="nav-text"><b>Projetos Finalizados</b><span>Acervo de Carreira</span></div>
                 </div>
             </div>
+        </section>
+
+        <section id="view-archive" class="app-screen">
+            <div class="view-header">
+                <button class="back-btn" onclick="showScreen('view-artist-dashboard')">←</button>
+                <h2>Acervo</h2>
+            </div>
+            <div class="glass-card"><p style="opacity:0.5;">Nenhum projeto finalizado.</p></div>
         </section>
 
         <section id="view-hub" class="app-screen">
@@ -102,11 +140,11 @@
                     <div class="nav-icon-box hub-bg">🎤</div>
                     <div class="nav-text"><b>Contratar Tour</b><span>Logística e Datas</span></div>
                 </div>
-                <div class="nav-card" onclick="alert('Cinema TV')">
+                <div class="nav-card" onclick="showScreen('view-buy-cinema')">
                     <div class="nav-icon-box hub-bg">🎬</div>
                     <div class="nav-text"><b>Cinema & TV</b><span>Hollywood Casting</span></div>
                 </div>
-                <div class="nav-card" onclick="alert('iFood de Compras em Breve')">
+                <div class="nav-card" onclick="showScreen('view-market')">
                     <div class="nav-icon-box hub-bg">🛒</div>
                     <div class="nav-text"><b>Empire Market</b><span>Mural, Casas e Mais</span></div>
                 </div>
@@ -119,7 +157,7 @@
                 <h2>Configurar Tour</h2>
             </div>
             <div class="form-container">
-                <div class="input-field"><label>NOME DA TURNÊ</label><input type="text" id="t-nome"></div>
+                <div class="input-field"><label>NOME DA TURNÊ</label><input type="text" id="t-nome" placeholder="Ex: The Eras Tour"></div>
                 <div class="input-row" style="display:flex; gap:10px;">
                     <div class="input-field" style="flex:2;"><label>INÍCIO</label><input type="date" id="t-data"></div>
                     <div class="input-field" style="flex:1;"><label>SHOWS</label><input type="number" id="t-qtd" value="10"></div>
@@ -127,7 +165,7 @@
                 <div class="input-field">
                     <label>CONTINENTE ALVO</label>
                     <select id="t-continente" class="custom-select">
-                        <option value="Global">Global</option>
+                        <option value="Global">Global (Todos)</option>
                         <option value="América">Américas</option>
                         <option value="Europa">Europa</option>
                     </select>
@@ -147,6 +185,53 @@
                     <div class="nav-icon-box hub-bg">🎹</div>
                     <div class="nav-text"><b>Clubs</b><span>$EC 100.000</span></div>
                 </div>
+            </div>
+        </section>
+
+        <section id="view-buy-cinema" class="app-screen">
+            <div class="view-header">
+                <button class="back-btn" onclick="showScreen('view-hub')">←</button>
+                <h2>Hollywood Casting</h2>
+            </div>
+            <div class="form-container">
+                <div class="input-field"><label>TÍTULO DA OBRA</label><input type="text" id="c-nome" placeholder="Ex: Caddo Lake"></div>
+                <div class="input-row" style="display:flex; gap:10px;">
+                    <div class="input-field" style="flex:1;">
+                        <label>TIPO</label>
+                        <select id="c-tipo" class="custom-select">
+                            <option value="Filme">Filme (EC 5M)</option>
+                            <option value="Série">Série (EC 3M)</option>
+                            <option value="Reality">Reality (EC 1M)</option>
+                        </select>
+                    </div>
+                    <div class="input-field" style="flex:1;"><label>INÍCIO</label><input type="date" id="c-data"></div>
+                </div>
+                <div class="input-field">
+                    <label>GÊNERO</label>
+                    <select id="c-genero" class="custom-select">
+                        <option value="Ação">Ação</option>
+                        <option value="Comédia">Comédia</option>
+                        <option value="Drama">Drama</option>
+                        <option value="Terror">Terror</option>
+                        <option value="Ficção">Ficção Científica</option>
+                        <option value="Romance">Romance</option>
+                    </select>
+                </div>
+            </div>
+            <button class="main-action-btn" onclick="processarCompraCinema()">ASSINAR CONTRATO DE ATUAÇÃO</button>
+        </section>
+
+        <section id="view-market" class="app-screen">
+            <div class="view-header">
+                <button class="back-btn" onclick="showScreen('view-hub')">←</button>
+                <h2>Empire Market</h2>
+            </div>
+            <div class="hub-grid">
+                <div class="hub-btn">🎵<span>Composições</span></div>
+                <div class="hub-btn">🤝<span>Filantropia</span></div>
+                <div class="hub-btn">🏠<span>Imobiliária</span></div>
+                <div class="hub-btn">📄<span>Rescisões</span></div>
+                <div class="hub-btn" style="grid-column: span 2;">🔨<span>Leilão de Luxo</span></div>
             </div>
         </section>
 
