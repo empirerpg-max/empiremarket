@@ -23,15 +23,17 @@ async function loadData() {
         document.getElementById('artist-name').innerText = ARTISTA_DATA.nome;
         document.getElementById('artist-photo').src = ARTISTA_DATA.foto;
         document.getElementById('artist-saldo').innerText = `$EC ${ARTISTA_DATA.saldo.toLocaleString('pt-BR')}`;
-        document.getElementById('hub-fortuna').innerText = `$${ARTISTA_DATA.fortuna.toLocaleString('pt-BR')}`;
-        document.getElementById('current-activity').innerText = (ARTISTA_DATA.status === "Livre") ? "DISPONÍVEL" : ARTISTA_DATA.status.toUpperCase();
+        document.getElementById('hub-fortuna').innerText = `$${ARTISTA_DATA.fortunaTotal.toLocaleString('pt-BR')}`;
+        
+        const banner = document.getElementById('current-activity');
+        banner.innerText = (ARTISTA_DATA.status === "Livre") ? "DISPONÍVEL" : ARTISTA_DATA.status.toUpperCase();
 
         document.getElementById('bar-prestigio').style.width = (ARTISTA_DATA.prestigio / 10) + "%";
         document.getElementById('txt-prestigio').innerText = `${ARTISTA_DATA.prestigio}/1000`;
         document.getElementById('bar-fadiga').style.width = ARTISTA_DATA.fadiga + "%";
         document.getElementById('txt-fadiga').innerText = ARTISTA_DATA.fadiga + "%";
 
-    } catch (e) { console.error("Falha no carregamento Império", e); }
+    } catch (e) { console.error("Falha no carregamento", e); }
 }
 
 function checkManagementView() {
