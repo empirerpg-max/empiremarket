@@ -18,12 +18,10 @@ body {
 h1 { font-size: 1.9em; font-weight: 800; margin: 10px 0 5px 0; text-transform: uppercase; letter-spacing: -1px; }
 .status-pill { background: rgba(188, 19, 254, 0.15); border: 1px solid rgba(188, 19, 254, 0.4); padding: 5px 18px; border-radius: 30px; display: inline-block; font-size: 0.65em; font-weight: 800; color: #bc13fe; text-transform: uppercase; }
 
-/* FINANCEIRO */
+/* FINANCEIRO E BARRAS */
 .glass-card { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 25px; padding: 25px; width: 100%; text-align: center; margin-bottom: 25px; }
 #artist-saldo { color: #ffd700; font-size: 2.3em; font-weight: 800; margin: 5px 0; letter-spacing: -1px; }
 .label-small { font-size: 0.6em; opacity: 0.5; letter-spacing: 1px; text-transform: uppercase; }
-
-/* BARRAS */
 .stat-info { display: flex; justify-content: space-between; font-size: 0.65em; font-weight: 800; margin-bottom: 6px; }
 .progress-bg { background: rgba(255,255,255,0.08); height: 10px; border-radius: 10px; margin-bottom: 15px; overflow: hidden; }
 .progress { height: 100%; border-radius: 10px; transition: width 1.2s ease; }
@@ -42,6 +40,12 @@ h1 { font-size: 1.9em; font-weight: 800; margin: 10px 0 5px 0; text-transform: u
 .nav-text b { display: block; font-size: 1em; color: #fff; }
 .nav-text span { font-size: 0.7em; opacity: 0.4; }
 
+/* MARKET GRID (ESTILO APP) */
+.hub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.hub-btn { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); padding: 25px 10px; border-radius: 22px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; cursor: pointer; transition: 0.2s; font-size: 1.5em; }
+.hub-btn:active { background: rgba(188, 19, 254, 0.1); }
+.hub-btn span { font-size: 0.45em; font-weight: 800; text-transform: uppercase; color: #bc13fe; }
+
 /* LISTA DE ARTISTAS */
 .artist-list-item { display: flex; align-items: center; gap: 15px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 15px; border-radius: 20px; margin-bottom: 10px; cursor: pointer; }
 .artist-list-item img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid #bc13fe; }
@@ -50,7 +54,7 @@ h1 { font-size: 1.9em; font-weight: 800; margin: 10px 0 5px 0; text-transform: u
 
 /* SUBPÁGINAS HEADER */
 .view-header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; width: 100%; }
-.back-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2em; }
+.back-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2em; flex-shrink: 0; }
 .fortuna-badge-hub { background: linear-gradient(135deg, rgba(255, 215, 0, 0.08), rgba(188, 19, 254, 0.08)); border: 1px solid rgba(255, 215, 0, 0.2); border-radius: 20px; padding: 20px; text-align: center; margin-bottom: 25px; }
 .fortuna-badge-hub h4 { font-size: 1.7em; color: #ffd700; font-weight: 800; }
 .project-tag { display: inline-block; background: rgba(188, 19, 254, 0.15); border: 1px solid #bc13fe; color: #bc13fe; font-size: 0.55em; font-weight: 900; padding: 3px 10px; border-radius: 20px; text-transform: uppercase; margin-bottom: 8px; }
@@ -73,4 +77,5 @@ h1 { font-size: 1.9em; font-weight: 800; margin: 10px 0 5px 0; text-transform: u
 .input-field { margin-bottom: 15px; text-align: left; width: 100%; }
 .input-field label { display: block; font-size: 0.65em; font-weight: 800; color: #bc13fe; margin-bottom: 5px; text-transform: uppercase; }
 .input-field input, .custom-select { width: 100%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; padding: 15px; color: white; outline: none; font-family: inherit; }
+.main-action-btn { width: 100%; background: linear-gradient(45deg, #bc13fe, #ffd700); border: none; padding: 18px; border-radius: 15px; color: #0b0118; font-weight: 800; text-transform: uppercase; margin-top: 15px; cursor: pointer; }
 .section-label { font-size: 0.65em; opacity: 0.4; margin: 5px 0 12px 0; font-weight: 800; text-transform: uppercase; }
