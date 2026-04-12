@@ -1,260 +1,1712 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Empire Manager</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;800&display=swap" rel="stylesheet">
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Empire Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root {
+  --bg: #08010f;
+  --surface: rgba(255,255,255,0.04);
+  --surface2: rgba(255,255,255,0.07);
+  --border: rgba(255,255,255,0.09);
+  --gold: #f5c842;
+  --gold2: #e8a820;
+  --purple: #bc13fe;
+  --purple2: #8a00d4;
+  --neon: #00ffd4;
+  --red: #ff3b5c;
+  --green: #00e87a;
+  --text: #f0e8ff;
+  --muted: rgba(240,232,255,0.4);
+  --radius: 20px;
+  --radius-sm: 12px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; overflow-x: hidden; }
+
+/* ── NOISE TEXTURE ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 0; opacity: 0.6;
+}
+
+/* ── AMBIENT GLOW ── */
+.ambient {
+  position: fixed; border-radius: 50%; filter: blur(80px); pointer-events: none; z-index: 0;
+}
+.amb1 { width: 350px; height: 350px; top: -100px; left: -80px; background: radial-gradient(circle, rgba(188,19,254,0.18) 0%, transparent 70%); }
+.amb2 { width: 280px; height: 280px; bottom: 80px; right: -60px; background: radial-gradient(circle, rgba(245,200,66,0.12) 0%, transparent 70%); }
+.amb3 { width: 200px; height: 200px; top: 40%; left: 50%; transform: translateX(-50%); background: radial-gradient(circle, rgba(0,255,212,0.07) 0%, transparent 70%); }
+
+/* ── APP SHELL ── */
+#app { position: relative; z-index: 1; min-height: 100vh; display: flex; flex-direction: column; }
+.screen { display: none; flex-direction: column; min-height: 100vh; padding: 20px 18px 100px; animation: fadeUp 0.32s ease; }
+.screen.active { display: flex; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ── BOTTOM NAV ── */
+#bottom-nav {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(8,1,15,0.92); backdrop-filter: blur(20px);
+  border-top: 1px solid var(--border);
+  display: flex; justify-content: space-around; padding: 10px 0 max(10px, env(safe-area-inset-bottom));
+}
+.nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; padding: 4px 12px; opacity: 0.4; transition: opacity 0.2s; }
+.nav-item.active { opacity: 1; }
+.nav-item .nav-icon { font-size: 18px; }
+.nav-item .nav-label { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; }
+.nav-item.active .nav-label { color: var(--purple); }
+
+/* ── LOADING ── */
+#loading-screen {
+  position: fixed; inset: 0; background: var(--bg); z-index: 999;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px;
+}
+.loader-logo { font-family: 'Bebas Neue', cursive; font-size: 4.5em; letter-spacing: 6px; background: linear-gradient(135deg, var(--gold), var(--purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: pulse 1.5s ease infinite; }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+.loader-bar { width: 120px; height: 2px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.loader-fill { height: 100%; background: linear-gradient(90deg, var(--purple), var(--gold)); animation: load 1.8s ease forwards; }
+@keyframes load { from { width: 0; } to { width: 100%; } }
+.loader-text { font-size: 0.7em; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; }
+
+/* ── COMMON COMPONENTS ── */
+.page-header { margin-bottom: 28px; }
+.page-title { font-family: 'Bebas Neue', cursive; font-size: 2.6em; letter-spacing: 2px; line-height: 1; }
+.page-subtitle { font-size: 0.72em; color: var(--muted); text-transform: uppercase; letter-spacing: 1.5px; margin-top: 4px; }
+.back-row { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; }
+.back-btn { width: 40px; height: 40px; border-radius: 50%; background: var(--surface); border: 1px solid var(--border); color: var(--text); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.1em; flex-shrink: 0; transition: background 0.2s; }
+.back-btn:active { background: var(--surface2); }
+
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
+.card-sm { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px; }
+
+.pill { display: inline-block; padding: 4px 14px; border-radius: 30px; font-size: 0.6em; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+.pill-purple { background: rgba(188,19,254,0.15); border: 1px solid rgba(188,19,254,0.4); color: var(--purple); }
+.pill-gold { background: rgba(245,200,66,0.15); border: 1px solid rgba(245,200,66,0.4); color: var(--gold); }
+.pill-green { background: rgba(0,232,122,0.15); border: 1px solid rgba(0,232,122,0.35); color: var(--green); }
+.pill-red { background: rgba(255,59,92,0.15); border: 1px solid rgba(255,59,92,0.35); color: var(--red); }
+
+.badge-label { font-size: 0.58em; color: var(--muted); letter-spacing: 1.2px; text-transform: uppercase; display: block; margin-bottom: 3px; }
+.badge-value { font-family: 'Bebas Neue', cursive; font-size: 1.6em; letter-spacing: 1px; }
+
+.progress-track { background: rgba(255,255,255,0.07); height: 8px; border-radius: 8px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 8px; transition: width 1.2s cubic-bezier(0.16,1,0.3,1); }
+.pf-gold { background: linear-gradient(90deg, var(--purple), var(--gold)); }
+.pf-red { background: linear-gradient(90deg, #ff3b5c, #ff0000); }
+.pf-green { background: linear-gradient(90deg, #00b85a, #00e87a); }
+
+.divider { height: 1px; background: var(--border); margin: 18px 0; }
+
+.input-group { margin-bottom: 16px; }
+.input-group label { display: block; font-size: 0.62em; font-weight: 700; color: var(--purple); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 7px; }
+.input-group input, .input-group select, .input-group textarea {
+  width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12);
+  border-radius: var(--radius-sm); padding: 14px 16px; color: var(--text); font-family: 'DM Sans', sans-serif;
+  font-size: 0.88em; outline: none; appearance: none;
+}
+.input-group select option { background: #1a0040; }
+.input-group input:focus, .input-group select:focus { border-color: rgba(188,19,254,0.5); }
+
+.btn-main { width: 100%; padding: 16px; border-radius: var(--radius-sm); border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 0.85em; letter-spacing: 1px; text-transform: uppercase; background: linear-gradient(135deg, var(--purple2), var(--purple)); color: white; transition: opacity 0.2s; }
+.btn-main:active { opacity: 0.8; }
+.btn-gold { background: linear-gradient(135deg, var(--gold2), var(--gold)); color: #1a0040; }
+.btn-outline { background: transparent; border: 1px solid var(--purple); color: var(--purple); }
+
+/* ── HOME SCREEN ── */
+#screen-home {
+  background: radial-gradient(ellipse 120% 80% at 50% 0%, rgba(188,19,254,0.12) 0%, transparent 60%);
+}
+.home-logo-wrap { text-align: center; padding: 32px 0 8px; position: relative; }
+.home-logo { font-family: 'Bebas Neue', cursive; font-size: 4em; letter-spacing: 8px; background: linear-gradient(135deg, #fff 0%, var(--gold) 60%, var(--purple) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.home-tagline { font-size: 0.65em; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-top: -4px; }
+
+.user-pill { margin: 20px 0; display: flex; align-items: center; justify-content: center; }
+.user-pill-inner { display: flex; align-items: center; gap: 10px; background: var(--surface); border: 1px solid var(--border); padding: 8px 18px 8px 10px; border-radius: 40px; }
+.user-avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--purple2), var(--gold)); display: flex; align-items: center; justify-content: center; font-size: 0.9em; font-weight: 700; }
+.user-name { font-size: 0.8em; font-weight: 500; }
+
+.home-nav { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+.home-nav-card {
+  display: flex; align-items: center; gap: 16px; padding: 18px; cursor: pointer;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  transition: border-color 0.2s, background 0.2s; position: relative; overflow: hidden;
+}
+.home-nav-card::before { content: ''; position: absolute; inset: 0; background: var(--card-accent); opacity: 0; transition: opacity 0.2s; }
+.home-nav-card:active::before { opacity: 1; }
+.home-nav-icon { width: 52px; height: 52px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1.5em; flex-shrink: 0; }
+.icon-radar { background: rgba(0,255,212,0.1); border: 1px solid rgba(0,255,212,0.3); }
+.icon-artists { background: rgba(188,19,254,0.1); border: 1px solid rgba(188,19,254,0.3); }
+.icon-labels { background: rgba(245,200,66,0.1); border: 1px solid rgba(245,200,66,0.3); }
+.icon-charts { background: rgba(0,232,122,0.1); border: 1px solid rgba(0,232,122,0.3); }
+.icon-duel { background: rgba(255,59,92,0.1); border: 1px solid rgba(255,59,92,0.3); }
+.icon-tutorial { background: rgba(255,255,255,0.05); border: 1px solid var(--border); }
+.nav-text-wrap { flex: 1; }
+.nav-title { font-weight: 700; font-size: 0.95em; display: block; }
+.nav-desc { font-size: 0.68em; color: var(--muted); display: block; margin-top: 2px; }
+.nav-arrow { color: var(--muted); font-size: 0.9em; }
+
+/* ── ARTIST PROFILE ── */
+.artist-hero { position: relative; text-align: center; padding: 16px 0 28px; }
+.artist-avatar-ring {
+  position: relative; display: inline-block; margin-bottom: 16px;
+}
+.artist-avatar-ring::before {
+  content: ''; position: absolute; inset: -4px; border-radius: 50%;
+  background: conic-gradient(var(--purple), var(--gold), var(--purple));
+  animation: spin 4s linear infinite; z-index: -1;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.artist-avatar {
+  width: 110px; height: 110px; border-radius: 50%; object-fit: cover;
+  background: var(--surface2); border: 3px solid var(--bg); display: block;
+}
+.artist-name { font-family: 'Bebas Neue', cursive; font-size: 2.4em; letter-spacing: 3px; margin-bottom: 6px; }
+.artist-status-wrap { display: flex; align-items: center; justify-content: center; gap: 8px; }
+.status-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.status-free .status-dot { background: var(--green); box-shadow: 0 0 8px var(--green); }
+.status-busy .status-dot { background: var(--red); box-shadow: 0 0 8px var(--red); }
+.status-text { font-size: 0.72em; color: var(--muted); }
+
+.stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; }
+.stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px; text-align: center; }
+.stat-value { font-family: 'Bebas Neue', cursive; font-size: 1.5em; letter-spacing: 1px; }
+.stat-label { font-size: 0.58em; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+.stat-gold { color: var(--gold); }
+.stat-purple { color: var(--purple); }
+.stat-neon { color: var(--neon); }
+.stat-red { color: var(--red); }
+
+.progress-row { margin-bottom: 12px; }
+.progress-meta { display: flex; justify-content: space-between; font-size: 0.65em; font-weight: 700; margin-bottom: 6px; }
+
+.artist-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+.artist-menu-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 20px 10px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); cursor: pointer; transition: border-color 0.2s; }
+.artist-menu-btn:active { border-color: var(--purple); background: rgba(188,19,254,0.06); }
+.menu-btn-icon { font-size: 1.6em; }
+.menu-btn-label { font-size: 0.62em; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--purple); text-align: center; }
+
+/* ── CHARTS / DUELO ── */
+.chart-selector { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+.chart-pill { padding: 8px 16px; border-radius: 30px; font-size: 0.7em; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; background: var(--surface); border: 1px solid var(--border); cursor: pointer; transition: all 0.2s; }
+.chart-pill.selected { background: rgba(188,19,254,0.2); border-color: var(--purple); color: var(--purple); }
+
+.chart-entry { display: flex; align-items: center; gap: 14px; padding: 14px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); margin-bottom: 10px; }
+.chart-pos { font-family: 'Bebas Neue', cursive; font-size: 1.4em; width: 36px; flex-shrink: 0; color: var(--gold); }
+.chart-cover { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; background: var(--surface2); flex-shrink: 0; }
+.chart-info { flex: 1; min-width: 0; }
+.chart-song { font-weight: 700; font-size: 0.88em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chart-artist { font-size: 0.68em; color: var(--muted); margin-top: 2px; }
+.chart-points { text-align: right; }
+.chart-pts-val { font-family: 'Bebas Neue', cursive; font-size: 1.1em; color: var(--neon); }
+.chart-pts-label { font-size: 0.6em; color: var(--muted); }
+.change-up { color: var(--green); font-size: 0.65em; }
+.change-down { color: var(--red); font-size: 0.65em; }
+.change-same { color: var(--muted); font-size: 0.65em; }
+
+/* ── DUEL ── */
+.duel-arena { position: relative; display: flex; justify-content: space-between; align-items: center; margin: 24px 0; }
+.duel-fighter { text-align: center; width: 42%; }
+.duel-fighter-img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; background: var(--surface2); margin: 0 auto 8px; border: 2px solid var(--border); }
+.duel-hp { background: var(--surface); border-radius: 4px; height: 8px; overflow: hidden; margin-top: 6px; }
+.duel-hp-fill { height: 100%; border-radius: 4px; transition: width 0.8s ease; }
+.duel-hp-a .duel-hp-fill { background: linear-gradient(90deg, var(--purple), var(--neon)); }
+.duel-hp-b .duel-hp-fill { background: linear-gradient(90deg, var(--gold2), var(--gold)); }
+.vs-badge { font-family: 'Bebas Neue', cursive; font-size: 2em; color: var(--red); letter-spacing: 2px; animation: vsGlow 1.5s ease infinite; }
+@keyframes vsGlow { 0%,100% { text-shadow: 0 0 10px var(--red); } 50% { text-shadow: 0 0 25px var(--red), 0 0 50px var(--red); } }
+
+.duel-stat-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); }
+.duel-val-a { font-family: 'Bebas Neue', cursive; font-size: 1.2em; color: var(--neon); }
+.duel-val-b { font-family: 'Bebas Neue', cursive; font-size: 1.2em; color: var(--gold); }
+.duel-stat-name { font-size: 0.7em; color: var(--muted); text-align: center; text-transform: uppercase; letter-spacing: 0.8px; }
+
+/* ── LABELS ── */
+.label-card { display: flex; align-items: center; gap: 16px; padding: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 12px; cursor: pointer; transition: border-color 0.2s; }
+.label-card:active { border-color: var(--gold); }
+.label-icon { width: 60px; height: 60px; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 1.8em; }
+.kq-bg { background: linear-gradient(135deg, rgba(245,200,66,0.15), rgba(188,19,254,0.15)); border: 1px solid rgba(245,200,66,0.3); }
+.crown-bg { background: linear-gradient(135deg, rgba(0,255,212,0.1), rgba(0,100,255,0.1)); border: 1px solid rgba(0,255,212,0.3); }
+.indie-bg { background: rgba(255,255,255,0.05); border: 1px solid var(--border); }
+.label-name { font-family: 'Bebas Neue', cursive; font-size: 1.3em; letter-spacing: 2px; }
+.label-count { font-size: 0.68em; color: var(--muted); margin-top: 2px; }
+.label-total { margin-left: auto; text-align: right; }
+.label-total-val { font-family: 'Bebas Neue', cursive; font-size: 1em; color: var(--gold); }
+
+/* ── MARKET ── */
+.market-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.market-item { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px 14px; display: flex; flex-direction: column; align-items: center; gap: 10px; cursor: pointer; transition: border-color 0.2s; text-align: center; }
+.market-item:active { border-color: var(--purple); background: rgba(188,19,254,0.05); }
+.market-item-icon { font-size: 2em; }
+.market-item-name { font-size: 0.7em; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--purple); }
+.market-item-desc { font-size: 0.62em; color: var(--muted); }
+
+/* ── MODALS ── */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(16px); z-index: 500; display: none; align-items: flex-end; justify-content: center; }
+.modal-overlay.open { display: flex; }
+.modal-sheet { width: 100%; max-width: 440px; background: #120020; border-top: 1px solid rgba(188,19,254,0.4); border-radius: 28px 28px 0 0; padding: 12px 20px 40px; max-height: 90vh; overflow-y: auto; animation: slideUp 0.35s cubic-bezier(0.16,1,0.3,1); }
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.modal-handle { width: 40px; height: 4px; background: var(--border); border-radius: 4px; margin: 0 auto 20px; }
+.modal-title { font-family: 'Bebas Neue', cursive; font-size: 1.8em; letter-spacing: 2px; margin-bottom: 4px; }
+.modal-subtitle { font-size: 0.68em; color: var(--muted); margin-bottom: 22px; }
+.modal-close { position: absolute; right: 20px; top: 20px; background: var(--surface); border: 1px solid var(--border); color: var(--text); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 1em; }
+
+/* ── ARTIST LIST ── */
+.artist-list-item { display: flex; align-items: center; gap: 14px; padding: 14px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); margin-bottom: 10px; cursor: pointer; transition: border-color 0.2s; }
+.artist-list-item:active { border-color: var(--purple); }
+.artist-list-thumb { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; background: var(--surface2); border: 2px solid var(--border); }
+.artist-list-name { font-weight: 700; font-size: 0.9em; }
+.artist-list-meta { font-size: 0.68em; color: var(--gold); font-weight: 700; margin-top: 2px; }
+.artist-list-label { font-size: 0.62em; color: var(--muted); margin-top: 2px; }
+
+/* ── EMPTY / LOADING STATES ── */
+.empty-state { text-align: center; padding: 50px 20px; }
+.empty-icon { font-size: 2.5em; margin-bottom: 14px; opacity: 0.4; }
+.empty-text { font-size: 0.8em; color: var(--muted); }
+.skeleton { background: linear-gradient(90deg, var(--surface) 25%, var(--surface2) 50%, var(--surface) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: var(--radius-sm); }
+@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+/* ── TOAST ── */
+#toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--surface2); border: 1px solid var(--border); border-radius: 30px; padding: 12px 22px; font-size: 0.78em; font-weight: 600; z-index: 999; opacity: 0; transition: all 0.3s; pointer-events: none; white-space: nowrap; }
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+#toast.success { border-color: rgba(0,232,122,0.5); color: var(--green); }
+#toast.error { border-color: rgba(255,59,92,0.5); color: var(--red); }
+
+/* ── RADAR FEED ── */
+.radar-item { display: flex; gap: 14px; padding: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); margin-bottom: 10px; }
+.radar-avatar { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; background: var(--surface2); flex-shrink: 0; }
+.radar-content { flex: 1; }
+.radar-name { font-weight: 700; font-size: 0.85em; }
+.radar-action { font-size: 0.75em; color: var(--muted); margin-top: 3px; line-height: 1.4; }
+.radar-time { font-size: 0.6em; color: var(--muted); opacity: 0.6; margin-top: 6px; }
+
+/* ── ALBUM CARD ── */
+.album-card { display: flex; gap: 14px; padding: 14px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); margin-bottom: 10px; }
+.album-cover { width: 60px; height: 60px; border-radius: 10px; object-fit: cover; background: var(--surface2); flex-shrink: 0; }
+.album-info { flex: 1; }
+.album-pos { font-family: 'Bebas Neue', cursive; font-size: 1.3em; color: var(--gold); }
+.album-title { font-weight: 700; font-size: 0.85em; margin-bottom: 2px; }
+.album-artist { font-size: 0.7em; color: var(--muted); }
+.album-sales { font-size: 0.68em; color: var(--neon); font-weight: 700; margin-top: 4px; }
+
+/* ── ANIMATIONS STICKER-STYLE ── */
+.sticker { display: inline-block; animation: float 3s ease-in-out infinite; }
+.sticker-spin { animation: stickSpin 8s linear infinite; }
+.sticker-bounce { animation: stickBounce 2s ease infinite; }
+@keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+@keyframes stickSpin { to { transform: rotate(360deg); } }
+@keyframes stickBounce { 0%,100% { transform: scaleY(1); } 45% { transform: scaleY(0.9) scaleX(1.05); } 50% { transform: scaleY(1.1) scaleX(0.95); } }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 0; }
+
+/* ── SECTION HEADER ── */
+.section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.section-title { font-family: 'Bebas Neue', cursive; font-size: 1.2em; letter-spacing: 2px; }
+.section-link { font-size: 0.68em; color: var(--purple); }
+
+/* ── TUTORIAL ── */
+.tutorial-step { display: flex; gap: 14px; margin-bottom: 22px; }
+.tut-num { width: 36px; height: 36px; border-radius: 50%; background: rgba(188,19,254,0.2); border: 1px solid rgba(188,19,254,0.4); display: flex; align-items: center; justify-content: center; font-family: 'Bebas Neue', cursive; font-size: 1.1em; flex-shrink: 0; color: var(--purple); }
+.tut-content {}
+.tut-title { font-weight: 700; font-size: 0.9em; margin-bottom: 4px; }
+.tut-text { font-size: 0.78em; color: var(--muted); line-height: 1.6; }
+</style>
 </head>
 <body>
 
-    <div class="app-container">
-        
-        <section id="view-main-menu" class="app-screen active">
-            <div class="profile-header">
-                <h1>EMPIRE</h1>
-                <p style="opacity: 0.5; font-size: 0.8em; text-transform: uppercase; letter-spacing: 2px;">Music & Entertainment</p>
-            </div>
+<!-- AMBIENT GLOWS -->
+<div class="ambient amb1"></div>
+<div class="ambient amb2"></div>
+<div class="ambient amb3"></div>
 
-            <div class="main-navigation" style="margin-top: 30px;">
-                <div class="nav-card" onclick="showScreen('view-radar')">
-                    <div class="nav-icon-box hub-bg">🌍</div>
-                    <div class="nav-text"><b>Radar Empire</b><span>O que os artistas estão fazendo</span></div>
-                </div>
-                <div class="nav-card" onclick="showScreen('view-tutorial')">
-                    <div class="nav-icon-box archive-bg">📖</div>
-                    <div class="nav-text"><b>Tutorial</b><span>Aprenda a gerenciar seu império</span></div>
-                </div>
-                <div class="nav-card" onclick="loadMyArtists()">
-                    <div class="nav-icon-box mgmt-bg">👤</div>
-                    <div class="nav-text"><b>Meus Artistas</b><span>Acesse seu portfólio</span></div>
-                </div>
-                <div class="nav-card" onclick="showScreen('view-labels')">
-                    <div class="nav-icon-box gold-bg">🏢</div>
-                    <div class="nav-text"><b>Gravadoras</b><span>Ver catálogo de empresas</span></div>
-                </div>
-            </div>
-        </section>
+<!-- TOAST -->
+<div id="toast"></div>
 
-        <section id="view-radar" class="app-screen">
-            <div class="view-header">
-                <button class="back-btn" onclick="showScreen('view-main-menu')">←</button>
-                <h2>Radar Empire</h2>
-            </div>
-            <div class="glass-card"><p style="opacity:0.5;">Carregando feed global...</p></div>
-        </section>
+<!-- LOADING -->
+<div id="loading-screen">
+  <div class="loader-logo">EMPIRE</div>
+  <div class="loader-bar"><div class="loader-fill"></div></div>
+  <div class="loader-text">Iniciando Hub...</div>
+</div>
 
-        <section id="view-tutorial" class="app-screen">
-            <div class="view-header">
-                <button class="back-btn" onclick="showScreen('view-main-menu')">←</button>
-                <h2>Como Jogar</h2>
-            </div>
-            <div class="glass-card" style="text-align:left; font-size:0.85em; line-height:1.6;">
-                <b style="color:#bc13fe; text-transform:uppercase;">Bem-vindo ao Império</b><br><br>
-                Aqui você gerencia a carreira dos seus artistas. Acesse seu portfólio, contrate turnês, lance projetos em Hollywood e invista sua fortuna no Market. Suas ações definem seu Prestígio e Fadiga!
-            </div>
-        </section>
+<!-- APP -->
+<div id="app">
 
-        <section id="view-labels" class="app-screen">
-            <div class="view-header">
-                <button class="back-btn" onclick="showScreen('view-main-menu')">←</button>
-                <h2>Gravadoras</h2>
-            </div>
-            <div class="main-navigation">
-                <div class="nav-card"><div class="nav-icon-box gold-bg">👑</div><div class="nav-text"><b>King & Queen</b><span>Ver artistas do selo</span></div></div>
-                <div class="nav-card"><div class="nav-icon-box hub-bg">⭐</div><div class="nav-text"><b>Independent</b><span>Ver artistas solo</span></div></div>
-            </div>
-        </section>
-
-        <section id="view-artist-list" class="app-screen">
-            <div class="view-header">
-                <button class="back-btn" onclick="showScreen('view-main-menu')">←</button>
-                <h2>Seu Portfólio</h2>
-            </div>
-            <div id="my-artists-container" class="main-navigation">
-                <p style='text-align:center; opacity:0.5;'>Buscando seus artistas...</p>
-            </div>
-        </section>
-
-        <section id="view-artist-dashboard" class="app-screen">
-            <header class="profile-header">
-                <div style="display:flex; justify-content:flex-start; align-items:center; margin-bottom:15px;">
-                    <button class="back-btn" style="width:40px; height:40px;" onclick="showScreen('view-artist-list')">←</button>
-                </div>
-                <div class="avatar-wrapper">
-                    <img src="" id="artist-photo" class="avatar">
-                    <div id="status-dot" class="status-dot"></div>
-                </div>
-                <h1 id="artist-name">...</h1>
-                <div class="status-pill"><span id="current-activity">...</span></div>
-            </header>
-
-            <div class="glass-card main-stats">
-                <p class="label-small">SALDO EMPIRE COINS</p>
-                <h2 id="artist-saldo">$EC 0</h2>
-                <div class="stats-group">
-                    <div class="stat-info"><span>PRESTÍGIO</span><span id="txt-prestigio">0/1000</span></div>
-                    <div class="progress-bg"><div id="bar-prestigio" class="progress gold"></div></div>
-                    <div class="stat-info"><span>FADIGA</span><span id="txt-fadiga">0%</span></div>
-                    <div class="progress-bg"><div id="bar-fadiga" class="progress red"></div></div>
-                </div>
-            </div>
-
-            <div class="main-navigation">
-                <div class="nav-card" onclick="showScreen('view-hub')">
-                    <div class="nav-icon-box hub-bg">🏢</div>
-                    <div class="nav-text"><b>Empire Hub</b><span>Market & Investimentos</span></div>
-                </div>
-                <div class="nav-card" onclick="checkManagementView()">
-                    <div class="nav-icon-box mgmt-bg">⚡</div>
-                    <div class="nav-text"><b>Gestão de Projetos</b><span>Acompanhamento Ativo</span></div>
-                </div>
-                <div class="nav-card" onclick="showScreen('view-archive')">
-                    <div class="nav-icon-box archive-bg">📁</div>
-                    <div class="nav-text"><b>Projetos Finalizados</b><span>Acervo de Carreira</span></div>
-                </div>
-            </div>
-        </section>
-
-        <section id="view-archive" class="app-screen">
-            <div class="view-header">
-                <button class="back-btn" onclick="showScreen('view-artist-dashboard')">←</button>
-                <h2>Acervo</h2>
-            </div>
-            <div class="glass-card"><p style="opacity:0.5;">Nenhum projeto finalizado.</p></div>
-        </section>
-
-        <section id="view-hub" class="app-screen">
-            <div class="view-header">
-                <button class="back-btn" onclick="showScreen('view-artist-dashboard')">←</button>
-                <h2>Empire Hub</h2>
-            </div>
-            <div class="fortuna-badge-hub">
-                <p>FORTUNA TOTAL</p>
-                <h4 id="hub-fortuna">$0</h4>
-            </div>
-            <div class="main-navigation">
-                <div class="nav-card" onclick="showScreen('view-buy-tour')">
-                    <div class="nav-icon-box hub-bg">🎤</div>
-                    <div class="nav-text"><b>Contratar Tour</b><span>Logística e Datas</span></div>
-                </div>
-                <div class="nav-card" onclick="showScreen('view-buy-cinema')">
-                    <div class="nav-icon-box hub-bg">🎬</div>
-                    <div class="nav-text"><b>Cinema & TV</b><span>Hollywood Casting</span></div>
-                </div>
-                <div class="nav-card" onclick="showScreen('view-market')">
-                    <div class="nav-icon-box hub-bg">🛒</div>
-                    <div class="nav-text"><b>Empire Market</b><span>Mural, Casas e Mais</span></div>
-                </div>
-            </div>
-        </section>
-
-        <section id="view-buy-tour" class="app-screen">
-            <div class="view-header">
-                <button class="back-btn" onclick="showScreen('view-hub')">←</button>
-                <h2>Configurar Tour</h2>
-            </div>
-            <div class="form-container">
-                <div class="input-field"><label>NOME DA TURNÊ</label><input type="text" id="t-nome" placeholder="Ex: The Eras Tour"></div>
-                <div class="input-row" style="display:flex; gap:10px;">
-                    <div class="input-field" style="flex:2;"><label>INÍCIO</label><input type="date" id="t-data"></div>
-                    <div class="input-field" style="flex:1;"><label>SHOWS</label><input type="number" id="t-qtd" value="10"></div>
-                </div>
-                <div class="input-field">
-                    <label>CONTINENTE ALVO</label>
-                    <select id="t-continente" class="custom-select">
-                        <option value="Global">Global (Todos)</option>
-                        <option value="América">Américas</option>
-                        <option value="Europa">Europa</option>
-                    </select>
-                </div>
-            </div>
-            <p class="section-label">SELECIONE O PORTE</p>
-            <div class="main-navigation">
-                <div class="nav-card" onclick="processarCompraUnificada('Tour de Estádios')">
-                    <div class="nav-icon-box gold-bg">🏟️</div>
-                    <div class="nav-text"><b>Estádios</b><span>$EC 15.000.000</span></div>
-                </div>
-                <div class="nav-card" onclick="processarCompraUnificada('Tour de Arenas')">
-                    <div class="nav-icon-box hub-bg">🏟️</div>
-                    <div class="nav-text"><b>Arenas</b><span>$EC 2.500.000</span></div>
-                </div>
-                <div class="nav-card" onclick="processarCompraUnificada('Tour de Clubs')">
-                    <div class="nav-icon-box hub-bg">🎹</div>
-                    <div class="nav-text"><b>Clubs</b><span>$EC 100.000</span></div>
-                </div>
-            </div>
-        </section>
-
-        <section id="view-buy-cinema" class="app-screen">
-            <div class="view-header">
-                <button class="back-btn" onclick="showScreen('view-hub')">←</button>
-                <h2>Hollywood Casting</h2>
-            </div>
-            <div class="form-container">
-                <div class="input-field"><label>TÍTULO DA OBRA</label><input type="text" id="c-nome" placeholder="Ex: Caddo Lake"></div>
-                <div class="input-row" style="display:flex; gap:10px;">
-                    <div class="input-field" style="flex:1;">
-                        <label>TIPO</label>
-                        <select id="c-tipo" class="custom-select">
-                            <option value="Filme">Filme (EC 5M)</option>
-                            <option value="Série">Série (EC 3M)</option>
-                            <option value="Reality">Reality (EC 1M)</option>
-                        </select>
-                    </div>
-                    <div class="input-field" style="flex:1;"><label>INÍCIO</label><input type="date" id="c-data"></div>
-                </div>
-                <div class="input-field">
-                    <label>GÊNERO</label>
-                    <select id="c-genero" class="custom-select">
-                        <option value="Ação">Ação</option>
-                        <option value="Comédia">Comédia</option>
-                        <option value="Drama">Drama</option>
-                        <option value="Terror">Terror</option>
-                        <option value="Ficção">Ficção Científica</option>
-                        <option value="Romance">Romance</option>
-                    </select>
-                </div>
-            </div>
-            <button class="main-action-btn" onclick="processarCompraCinema()">ASSINAR CONTRATO DE ATUAÇÃO</button>
-        </section>
-
-        <section id="view-market" class="app-screen">
-            <div class="view-header">
-                <button class="back-btn" onclick="showScreen('view-hub')">←</button>
-                <h2>Empire Market</h2>
-            </div>
-            <div class="hub-grid">
-                <div class="hub-btn">🎵<span>Composições</span></div>
-                <div class="hub-btn">🤝<span>Filantropia</span></div>
-                <div class="hub-btn">🏠<span>Imobiliária</span></div>
-                <div class="hub-btn">📄<span>Rescisões</span></div>
-                <div class="hub-btn" style="grid-column: span 2;">🔨<span>Leilão de Luxo</span></div>
-            </div>
-        </section>
-
-        <section id="view-mgmt" class="app-screen">
-            <div class="view-header">
-                <button class="back-btn" onclick="showScreen('view-artist-dashboard')">←</button>
-                <h2>Gerenciamento</h2>
-            </div>
-            <div id="mgmt-content"></div>
-        </section>
-
+  <!-- ═══════════════ HOME ═══════════════ -->
+  <div id="screen-home" class="screen active">
+    <div class="home-logo-wrap">
+      <div class="home-logo">EMPIRE</div>
+      <div class="home-tagline">Music &amp; Entertainment Hub</div>
     </div>
 
-    <div id="modal-itinerario" class="modal-overlay">
-        <div class="modal-content" style="height: 85vh;">
-            <div class="modal-header">
-                <h3>Tour Book</h3>
-                <button class="close-btn" onclick="closeModal('modal-itinerario')">✕</button>
-            </div>
-            <div id="itinerario-lista" class="scroll-area"></div>
+    <div class="user-pill">
+      <div class="user-pill-inner">
+        <div class="user-avatar" id="home-user-avatar">?</div>
+        <span class="user-name" id="home-user-name">Carregando...</span>
+      </div>
+    </div>
+
+    <div class="home-nav">
+      <div class="home-nav-card" onclick="navigate('screen-artists')" style="--card-accent: rgba(188,19,254,0.05)">
+        <div class="home-nav-icon icon-artists">🎤</div>
+        <div class="nav-text-wrap">
+          <span class="nav-title">Meus Artistas</span>
+          <span class="nav-desc">Acesse seu portfólio</span>
         </div>
+        <span class="nav-arrow">›</span>
+      </div>
+
+      <div class="home-nav-card" onclick="navigate('screen-radar')" style="--card-accent: rgba(0,255,212,0.04)">
+        <div class="home-nav-icon icon-radar">🌍</div>
+        <div class="nav-text-wrap">
+          <span class="nav-title">Radar Empire</span>
+          <span class="nav-desc">O que os artistas estão fazendo</span>
+        </div>
+        <span class="nav-arrow">›</span>
+      </div>
+
+      <div class="home-nav-card" onclick="navigate('screen-charts')" style="--card-accent: rgba(0,232,122,0.04)">
+        <div class="home-nav-icon icon-charts">📊</div>
+        <div class="nav-text-wrap">
+          <span class="nav-title">Charts</span>
+          <span class="nav-desc">Billboard, Airplay, Spotify &amp; mais</span>
+        </div>
+        <span class="nav-arrow">›</span>
+      </div>
+
+      <div class="home-nav-card" onclick="navigate('screen-duel')" style="--card-accent: rgba(255,59,92,0.04)">
+        <div class="home-nav-icon icon-duel">⚔️</div>
+        <div class="nav-text-wrap">
+          <span class="nav-title">Duelo</span>
+          <span class="nav-desc">Batalha entre artistas</span>
+        </div>
+        <span class="nav-arrow">›</span>
+      </div>
+
+      <div class="home-nav-card" onclick="navigate('screen-labels')" style="--card-accent: rgba(245,200,66,0.04)">
+        <div class="home-nav-icon icon-labels">🏢</div>
+        <div class="nav-text-wrap">
+          <span class="nav-title">Gravadoras</span>
+          <span class="nav-desc">King &amp; Queen · Crown · Independent</span>
+        </div>
+        <span class="nav-arrow">›</span>
+      </div>
+
+      <div class="home-nav-card" onclick="navigate('screen-tutorial')" style="--card-accent: rgba(255,255,255,0.02)">
+        <div class="home-nav-icon icon-tutorial">📖</div>
+        <div class="nav-text-wrap">
+          <span class="nav-title">Tutorial</span>
+          <span class="nav-desc">Como funciona o Empire</span>
+        </div>
+        <span class="nav-arrow">›</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ MEUS ARTISTAS ═══════════════ -->
+  <div id="screen-artists" class="screen">
+    <div class="back-row">
+      <button class="back-btn" onclick="navigate('screen-home')">←</button>
+      <div>
+        <div class="page-title">Meus Artistas</div>
+        <div class="page-subtitle">Seu portfólio</div>
+      </div>
+    </div>
+    <div id="artists-container">
+      <div class="empty-state"><div class="empty-icon">🎤</div><div class="empty-text">Carregando artistas...</div></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ DASHBOARD DO ARTISTA ═══════════════ -->
+  <div id="screen-artist-dash" class="screen">
+    <div class="back-row">
+      <button class="back-btn" onclick="navigate('screen-artists')">←</button>
     </div>
 
-    <script src="script.js"></script>
+    <div class="artist-hero">
+      <div class="artist-avatar-ring">
+        <img src="" alt="" id="dash-avatar" class="artist-avatar">
+      </div>
+      <div class="artist-name" id="dash-name">—</div>
+      <div class="artist-status-wrap" id="dash-status-wrap">
+        <div class="status-dot" id="dash-status-dot"></div>
+        <span class="status-text" id="dash-status-text">—</span>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px; text-align:center;">
+      <span class="badge-label">EMPIRE COINS</span>
+      <div class="badge-value stat-gold" id="dash-saldo">—</div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-value stat-purple" id="dash-prestigio">—</div>
+        <div class="stat-label">Prestígio</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value stat-red" id="dash-fadiga">—</div>
+        <div class="stat-label">Fadiga</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value stat-gold" id="dash-fortuna">—</div>
+        <div class="stat-label">Fortuna</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value stat-neon" id="dash-gravadora">—</div>
+        <div class="stat-label">Gravadora</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px;">
+      <div class="progress-row">
+        <div class="progress-meta">
+          <span>PRESTÍGIO</span>
+          <span id="dash-pres-val">0/1000</span>
+        </div>
+        <div class="progress-track"><div class="progress-fill pf-gold" id="dash-pres-bar" style="width:0%"></div></div>
+      </div>
+      <div class="progress-row" style="margin-bottom:0">
+        <div class="progress-meta">
+          <span>FADIGA</span>
+          <span id="dash-fad-val">0%</span>
+        </div>
+        <div class="progress-track"><div class="progress-fill pf-red" id="dash-fad-bar" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <div class="artist-menu">
+      <div class="artist-menu-btn" onclick="openHub()">
+        <span class="menu-btn-icon">🏟️</span>
+        <span class="menu-btn-label">Empire Hub</span>
+      </div>
+      <div class="artist-menu-btn" onclick="openMarket()">
+        <span class="menu-btn-icon">🛒</span>
+        <span class="menu-btn-label">Market</span>
+      </div>
+      <div class="artist-menu-btn" onclick="openProjects()">
+        <span class="menu-btn-icon">🎬</span>
+        <span class="menu-btn-label">Projetos</span>
+      </div>
+      <div class="artist-menu-btn" onclick="openCharts()">
+        <span class="menu-btn-icon">📊</span>
+        <span class="menu-btn-label">Charts</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ EMPIRE HUB (AÇÕES) ═══════════════ -->
+  <div id="screen-hub" class="screen">
+    <div class="back-row">
+      <button class="back-btn" onclick="navigate('screen-artist-dash')">←</button>
+      <div>
+        <div class="page-title">Empire Hub</div>
+        <div class="page-subtitle" id="hub-artist-name">—</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:20px; display:flex; align-items:center; justify-content:space-between;">
+      <div>
+        <span class="badge-label">SALDO DISPONÍVEL</span>
+        <div class="badge-value stat-gold" id="hub-saldo">—</div>
+      </div>
+      <div style="font-size: 2em;">💰</div>
+    </div>
+
+    <div class="market-grid">
+      <div class="market-item" onclick="openModal('modal-tour')">
+        <span class="market-item-icon">🏟️</span>
+        <span class="market-item-name">Contratar Tour</span>
+        <span class="market-item-desc">Arenas, Estádios ou Clubs</span>
+      </div>
+      <div class="market-item" onclick="openModal('modal-cinema')">
+        <span class="market-item-icon">🎬</span>
+        <span class="market-item-name">Cinema &amp; TV</span>
+        <span class="market-item-desc">Filmes, Séries, Realities</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ EMPIRE MARKET ═══════════════ -->
+  <div id="screen-market" class="screen">
+    <div class="back-row">
+      <button class="back-btn" onclick="navigate('screen-artist-dash')">←</button>
+      <div>
+        <div class="page-title">Empire Market</div>
+        <div class="page-subtitle">Investimentos &amp; Transações</div>
+      </div>
+    </div>
+
+    <div class="market-grid">
+      <div class="market-item" onclick="openModal('modal-composicao')">
+        <span class="market-item-icon">🎼</span>
+        <span class="market-item-name">Composições</span>
+        <span class="market-item-desc">Comprar e vender</span>
+      </div>
+      <div class="market-item" onclick="openModal('modal-filantropia')">
+        <span class="market-item-icon">❤️</span>
+        <span class="market-item-name">Filantropia</span>
+        <span class="market-item-desc">Causas sociais</span>
+      </div>
+      <div class="market-item" onclick="openModal('modal-imovel')">
+        <span class="market-item-icon">🏠</span>
+        <span class="market-item-name">Imóveis</span>
+        <span class="market-item-desc">Casa ou Apartamento</span>
+      </div>
+      <div class="market-item" onclick="openModal('modal-rescisao')">
+        <span class="market-item-icon">📜</span>
+        <span class="market-item-name">Rescisão</span>
+        <span class="market-item-desc">Contrato com gravadora</span>
+      </div>
+      <div class="market-item" onclick="openModal('modal-viral')">
+        <span class="market-item-icon">🚀</span>
+        <span class="market-item-name">Viralizar</span>
+        <span class="market-item-desc">Impulsionar música</span>
+      </div>
+      <div class="market-item" onclick="openModal('modal-leilao')">
+        <span class="market-item-icon">🔨</span>
+        <span class="market-item-name">Leilão</span>
+        <span class="market-item-desc">Itens à venda</span>
+      </div>
+      <div class="market-item" onclick="openModal('modal-bet')">
+        <span class="market-item-icon">🎰</span>
+        <span class="market-item-name">Empire Bet</span>
+        <span class="market-item-desc">Apostar no Billboard</span>
+      </div>
+      <div class="market-item" onclick="openModal('modal-payola')">
+        <span class="market-item-icon">📻</span>
+        <span class="market-item-name">Payola</span>
+        <span class="market-item-desc">Investir no Airplay</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ PROJETOS ═══════════════ -->
+  <div id="screen-projects" class="screen">
+    <div class="back-row">
+      <button class="back-btn" onclick="navigate('screen-artist-dash')">←</button>
+      <div>
+        <div class="page-title">Projetos</div>
+        <div class="page-subtitle" id="proj-artist-name">—</div>
+      </div>
+    </div>
+    <div id="projects-container">
+      <div class="empty-state"><div class="empty-icon">🎬</div><div class="empty-text">Carregando projetos...</div></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ CHARTS ═══════════════ -->
+  <div id="screen-charts" class="screen">
+    <div class="back-row">
+      <button class="back-btn" onclick="navigate('screen-home')">←</button>
+      <div>
+        <div class="page-title">Charts</div>
+        <div class="page-subtitle">Semana atual</div>
+      </div>
+    </div>
+
+    <div class="chart-selector" id="chart-tabs">
+      <div class="chart-pill selected" onclick="selectChart('AIRPLAY',this)">Airplay</div>
+      <div class="chart-pill" onclick="selectChart('SPOTIFY',this)">Spotify</div>
+      <div class="chart-pill" onclick="selectChart('APPLE MUSIC',this)">Apple Music</div>
+      <div class="chart-pill" onclick="selectChart('YOUTUBE',this)">YouTube</div>
+      <div class="chart-pill" onclick="selectChart('DIGITAL SALES',this)">Digital</div>
+      <div class="chart-pill" onclick="selectChart('BILLBOARD HOT 100',this)">Hot 100</div>
+      <div class="chart-pill" onclick="selectChart('BILLBOARD 200',this)">BB 200</div>
+    </div>
+
+    <div id="chart-container">
+      <div class="empty-state"><div class="empty-icon">📊</div><div class="empty-text">Carregando chart...</div></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ DUELO ═══════════════ -->
+  <div id="screen-duel" class="screen">
+    <div class="back-row">
+      <button class="back-btn" onclick="navigate('screen-home')">←</button>
+      <div>
+        <div class="page-title">Duelo</div>
+        <div class="page-subtitle">Batalha de artistas</div>
+      </div>
+    </div>
+
+    <div id="duel-setup">
+      <div class="card" style="margin-bottom:16px;">
+        <div style="font-family:'Bebas Neue',cursive; letter-spacing:2px; margin-bottom:16px; font-size:1.1em; color:var(--purple)">⚔️ CONFIGURAR DUELO</div>
+        <div class="input-group">
+          <label>Artista A</label>
+          <select id="duel-a" onchange="updateDuelPreview()">
+            <option value="">Selecionar artista...</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label>Artista B</label>
+          <select id="duel-b" onchange="updateDuelPreview()">
+            <option value="">Selecionar artista...</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label>Chart da Batalha</label>
+          <select id="duel-chart">
+            <option value="AIRPLAY">Airplay</option>
+            <option value="SPOTIFY">Spotify</option>
+            <option value="APPLE MUSIC">Apple Music</option>
+            <option value="YOUTUBE">YouTube</option>
+            <option value="DIGITAL SALES">Digital Sales</option>
+            <option value="BILLBOARD HOT 100">Billboard Hot 100</option>
+          </select>
+        </div>
+        <button class="btn-main" onclick="startDuel()">⚔️ INICIAR BATALHA</button>
+      </div>
+    </div>
+
+    <div id="duel-arena-container" style="display:none;">
+      <div class="duel-arena">
+        <div class="duel-fighter" id="duel-fighter-a">
+          <img src="" alt="" class="duel-fighter-img" id="duel-img-a">
+          <div style="font-weight:700; font-size:0.85em;" id="duel-name-a">—</div>
+          <div class="duel-hp duel-hp-a"><div class="duel-hp-fill" id="duel-hp-a" style="width:100%"></div></div>
+        </div>
+        <div class="vs-badge">VS</div>
+        <div class="duel-fighter" id="duel-fighter-b">
+          <img src="" alt="" class="duel-fighter-img" id="duel-img-b">
+          <div style="font-weight:700; font-size:0.85em;" id="duel-name-b">—</div>
+          <div class="duel-hp duel-hp-b"><div class="duel-hp-fill" id="duel-hp-b" style="width:100%"></div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div id="duel-results"></div>
+      </div>
+
+      <div style="margin-top:16px; text-align:center;">
+        <div id="duel-winner" style="font-family:'Bebas Neue',cursive; font-size:2em; color:var(--gold); display:none;"></div>
+      </div>
+
+      <button class="btn-main btn-outline" style="margin-top:16px;" onclick="resetDuel()">↩ NOVO DUELO</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════ GRAVADORAS ═══════════════ -->
+  <div id="screen-labels" class="screen">
+    <div class="back-row">
+      <button class="back-btn" onclick="navigate('screen-home')">←</button>
+      <div>
+        <div class="page-title">Gravadoras</div>
+        <div class="page-subtitle">Catálogo de selos</div>
+      </div>
+    </div>
+
+    <div class="label-card" onclick="loadLabelArtists('King & Queen')">
+      <div class="label-icon kq-bg">👑</div>
+      <div>
+        <div class="label-name">KING &amp; QUEEN</div>
+        <div class="label-count" id="kq-count">Carregando...</div>
+      </div>
+      <div class="label-total">
+        <div class="label-total-val" id="kq-total">—</div>
+        <div style="font-size:0.6em; color:var(--muted)">Total</div>
+      </div>
+    </div>
+
+    <div class="label-card" onclick="loadLabelArtists('Crown')">
+      <div class="label-icon crown-bg">⭐</div>
+      <div>
+        <div class="label-name">CROWN</div>
+        <div class="label-count" id="crown-count">Carregando...</div>
+      </div>
+      <div class="label-total">
+        <div class="label-total-val" id="crown-total">—</div>
+        <div style="font-size:0.6em; color:var(--muted)">Total</div>
+      </div>
+    </div>
+
+    <div class="label-card" onclick="loadLabelArtists('Independent')">
+      <div class="label-icon indie-bg">🎵</div>
+      <div>
+        <div class="label-name">INDEPENDENT</div>
+        <div class="label-count" id="indie-count">Carregando...</div>
+      </div>
+      <div class="label-total">
+        <div class="label-total-val" id="indie-total">—</div>
+        <div style="font-size:0.6em; color:var(--muted)">Total</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ ARTISTAS DE GRAVADORA ═══════════════ -->
+  <div id="screen-label-artists" class="screen">
+    <div class="back-row">
+      <button class="back-btn" onclick="navigate('screen-labels')">←</button>
+      <div>
+        <div class="page-title" id="label-artists-title">—</div>
+        <div class="page-subtitle">Artistas do selo</div>
+      </div>
+    </div>
+    <div id="label-artists-container">
+      <div class="empty-state"><div class="empty-icon">🎤</div><div class="empty-text">Carregando...</div></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ RADAR ═══════════════ -->
+  <div id="screen-radar" class="screen">
+    <div class="back-row">
+      <button class="back-btn" onclick="navigate('screen-home')">←</button>
+      <div>
+        <div class="page-title">Radar Empire</div>
+        <div class="page-subtitle">Atividade recente</div>
+      </div>
+    </div>
+    <div id="radar-container">
+      <div class="empty-state"><div class="empty-icon">🌍</div><div class="empty-text">Carregando feed...</div></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ TUTORIAL ═══════════════ -->
+  <div id="screen-tutorial" class="screen">
+    <div class="back-row">
+      <button class="back-btn" onclick="navigate('screen-home')">←</button>
+      <div>
+        <div class="page-title">Tutorial</div>
+        <div class="page-subtitle">Bem-vindo ao Império</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:20px; text-align:center; padding:30px 20px;">
+      <div style="font-size:2.5em; margin-bottom:12px;" class="sticker sticker-bounce">🎤</div>
+      <div style="font-family:'Bebas Neue',cursive; font-size:1.6em; letter-spacing:2px; margin-bottom:8px;">BEM-VINDO AO EMPIRE</div>
+      <div style="font-size:0.78em; color:var(--muted); line-height:1.7;">Você é um manager de artistas no mundo musical simulado mais épico do Telegram. Gerencie carreiras, invista fortunas e domine os charts!</div>
+    </div>
+
+    <div class="tutorial-step">
+      <div class="tut-num">1</div>
+      <div class="tut-content">
+        <div class="tut-title">🎤 Seus Artistas</div>
+        <div class="tut-text">Cada artista tem Prestígio (0–1000), Fadiga (0–100%), Empire Coins e Fortuna Real. Seu objetivo é gerenciá-los para chegar ao topo dos charts.</div>
+      </div>
+    </div>
+
+    <div class="tutorial-step">
+      <div class="tut-num">2</div>
+      <div class="tut-content">
+        <div class="tut-title">🏟️ Empire Hub</div>
+        <div class="tut-text">Contrate turnês (Clubs, Arenas ou Estádios) e lance projetos em Cinema & TV. Cada ação consome Empire Coins mas aumenta Prestígio e Fortuna.</div>
+      </div>
+    </div>
+
+    <div class="tutorial-step">
+      <div class="tut-num">3</div>
+      <div class="tut-content">
+        <div class="tut-title">🛒 Empire Market</div>
+        <div class="tut-text">Compre composições, faça filantropia, adquira imóveis, rescinda contratos e até aposte no Billboard Hot 100 com o Empire Bet.</div>
+      </div>
+    </div>
+
+    <div class="tutorial-step">
+      <div class="tut-num">4</div>
+      <div class="tut-content">
+        <div class="tut-title">📊 Charts Semanais</div>
+        <div class="tut-text">Acompanhe os resultados em Airplay, Spotify, Apple Music, YouTube, Digital Sales, Billboard Hot 100 e Billboard 200.</div>
+      </div>
+    </div>
+
+    <div class="tutorial-step">
+      <div class="tut-num">5</div>
+      <div class="tut-content">
+        <div class="tut-title">⚔️ Duelo</div>
+        <div class="tut-text">Desafie outros artistas em batalhas de charts! Veja quem está dominando cada plataforma em tempo real.</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end #app -->
+
+<!-- ══════════════════ MODAIS ══════════════════ -->
+
+<!-- MODAL TOUR -->
+<div class="modal-overlay" id="modal-tour">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🏟️ Contratar Tour</div>
+    <div class="modal-subtitle">Configure a turnê do artista</div>
+    <div class="input-group">
+      <label>Nome da Turnê</label>
+      <input type="text" id="t-nome" placeholder="Ex: World Domination Tour">
+    </div>
+    <div class="input-group">
+      <label>Data de Início</label>
+      <input type="date" id="t-data">
+    </div>
+    <div class="input-group">
+      <label>Quantidade de Datas</label>
+      <input type="number" id="t-qtd" placeholder="Ex: 10" min="1" max="100">
+    </div>
+    <div class="input-group">
+      <label>Continentes</label>
+      <select id="t-continente">
+        <option value="America do Norte">América do Norte</option>
+        <option value="America do Sul">América do Sul</option>
+        <option value="Europa">Europa</option>
+        <option value="Asia">Ásia</option>
+        <option value="Oceania">Oceania</option>
+        <option value="Africa">África</option>
+        <option value="Mundial">Mundial (todos)</option>
+      </select>
+    </div>
+    <div class="input-group">
+      <label>Tipo de Venue</label>
+      <select id="t-porte">
+        <option value="Club">🎵 Clubs</option>
+        <option value="Arena">🏟️ Arenas</option>
+        <option value="Estadio">🏟️ Estádios</option>
+      </select>
+    </div>
+    <button class="btn-main" onclick="comprarTour()">✅ CONFIRMAR TOUR</button>
+    <button class="btn-main btn-outline" style="margin-top:10px;" onclick="closeModal('modal-tour')">Cancelar</button>
+  </div>
+</div>
+
+<!-- MODAL CINEMA -->
+<div class="modal-overlay" id="modal-cinema">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🎬 Cinema &amp; TV</div>
+    <div class="modal-subtitle">Lance um projeto audiovisual</div>
+    <div class="input-group">
+      <label>Título do Projeto</label>
+      <input type="text" id="c-nome" placeholder="Ex: The Rise Documentary">
+    </div>
+    <div class="input-group">
+      <label>Tipo</label>
+      <select id="c-tipo">
+        <option value="Filme">🎥 Filme</option>
+        <option value="Serie">📺 Série</option>
+        <option value="Reality">🎙️ Reality Show</option>
+      </select>
+    </div>
+    <div class="input-group">
+      <label>Gênero</label>
+      <select id="c-genero">
+        <option value="Drama">Drama</option>
+        <option value="Acao">Ação</option>
+        <option value="Comedia">Comédia</option>
+        <option value="Musical">Musical</option>
+        <option value="Documental">Documentário</option>
+        <option value="Terror">Terror</option>
+        <option value="Romance">Romance</option>
+      </select>
+    </div>
+    <div class="input-group">
+      <label>Data de Início das Gravações</label>
+      <input type="date" id="c-data">
+    </div>
+    <button class="btn-main" onclick="comprarCinema()">✅ CONFIRMAR PROJETO</button>
+    <button class="btn-main btn-outline" style="margin-top:10px;" onclick="closeModal('modal-cinema')">Cancelar</button>
+  </div>
+</div>
+
+<!-- MODAL COMPOSIÇÃO -->
+<div class="modal-overlay" id="modal-composicao">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🎼 Mural de Composições</div>
+    <div class="modal-subtitle">Compre ou venda composições</div>
+    <div id="mural-list"><div class="empty-state"><div class="empty-icon">🎼</div><div class="empty-text">Carregando composições...</div></div></div>
+    <div class="divider"></div>
+    <div style="font-family:'Bebas Neue',cursive; letter-spacing:2px; font-size:1em; color:var(--purple); margin-bottom:14px;">VENDER COMPOSIÇÃO</div>
+    <div class="input-group">
+      <label>Título da Composição</label>
+      <input type="text" id="comp-titulo" placeholder="Nome da música">
+    </div>
+    <div class="input-group">
+      <label>Valor (EC)</label>
+      <input type="number" id="comp-valor" placeholder="Ex: 500000">
+    </div>
+    <button class="btn-main" onclick="venderComposicao()">📤 PUBLICAR NO MURAL</button>
+    <button class="btn-main btn-outline" style="margin-top:10px;" onclick="closeModal('modal-composicao')">Fechar</button>
+  </div>
+</div>
+
+<!-- MODAL FILANTROPIA -->
+<div class="modal-overlay" id="modal-filantropia">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">❤️ Filantropia</div>
+    <div class="modal-subtitle">Aumente sua reputação</div>
+    <div class="input-group">
+      <label>Causa / Projeto</label>
+      <select id="filant-causa">
+        <option value="Educacao">📚 Educação</option>
+        <option value="Saude">🏥 Saúde</option>
+        <option value="Meio Ambiente">🌿 Meio Ambiente</option>
+        <option value="Combate a Fome">🍽️ Combate à Fome</option>
+        <option value="Direitos Humanos">✊ Direitos Humanos</option>
+      </select>
+    </div>
+    <div class="input-group">
+      <label>Valor da Doação (EC)</label>
+      <input type="number" id="filant-valor" placeholder="Mínimo 100.000 EC">
+    </div>
+    <button class="btn-main btn-gold" onclick="doarFilantropia()">❤️ REALIZAR DOAÇÃO</button>
+    <button class="btn-main btn-outline" style="margin-top:10px;" onclick="closeModal('modal-filantropia')">Cancelar</button>
+  </div>
+</div>
+
+<!-- MODAL IMÓVEL -->
+<div class="modal-overlay" id="modal-imovel">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🏠 Compra de Imóvel</div>
+    <div class="modal-subtitle">Expanda o patrimônio</div>
+    <div class="input-group">
+      <label>Tipo</label>
+      <select id="imovel-tipo">
+        <option value="Casa">🏡 Casa</option>
+        <option value="Apartamento">🏢 Apartamento</option>
+        <option value="Mansao">🏰 Mansão</option>
+        <option value="Penthouse">🌆 Penthouse</option>
+      </select>
+    </div>
+    <div class="input-group">
+      <label>Cidade</label>
+      <input type="text" id="imovel-cidade" placeholder="Ex: Los Angeles, Nova York...">
+    </div>
+    <button class="btn-main btn-gold" onclick="comprarImovel()">🏠 ADQUIRIR IMÓVEL</button>
+    <button class="btn-main btn-outline" style="margin-top:10px;" onclick="closeModal('modal-imovel')">Cancelar</button>
+  </div>
+</div>
+
+<!-- MODAL VIRAL -->
+<div class="modal-overlay" id="modal-viral">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🚀 Viralizar</div>
+    <div class="modal-subtitle">Aumente as chances de uma música viralizar</div>
+    <div class="card" style="margin-bottom:16px; text-align:center;">
+      <div style="font-size:1.8em; margin-bottom:8px;">🔥</div>
+      <div style="font-size:0.8em; color:var(--muted);">Ao contratar este serviço, sua música terá uma chance extra de viralizar na próxima semana, podendo subir posições no chart de forma orgânica.</div>
+    </div>
+    <div class="input-group">
+      <label>Música Alvo</label>
+      <input type="text" id="viral-musica" placeholder="Nome da música">
+    </div>
+    <button class="btn-main" style="background: linear-gradient(135deg, #ff3b5c, #bc13fe);" onclick="comprarViral()">🚀 ATIVAR VIRAL</button>
+    <button class="btn-main btn-outline" style="margin-top:10px;" onclick="closeModal('modal-viral')">Cancelar</button>
+  </div>
+</div>
+
+<!-- MODAL LEILÃO -->
+<div class="modal-overlay" id="modal-leilao">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🔨 Leilão</div>
+    <div class="modal-subtitle">Compre e venda itens raros</div>
+    <div id="leilao-list"><div class="empty-state"><div class="empty-icon">🔨</div><div class="empty-text">Carregando itens...</div></div></div>
+    <div class="divider"></div>
+    <div style="font-family:'Bebas Neue',cursive; letter-spacing:2px; font-size:1em; color:var(--purple); margin-bottom:14px;">COLOCAR ITEM À VENDA</div>
+    <div class="input-group">
+      <label>Descrição do Item</label>
+      <input type="text" id="leilao-item" placeholder="Ex: Coleção de vinil autografada">
+    </div>
+    <div class="input-group">
+      <label>Lance Mínimo (EC)</label>
+      <input type="number" id="leilao-valor" placeholder="Ex: 1.000.000">
+    </div>
+    <button class="btn-main" onclick="publicarLeilao()">🔨 PUBLICAR LANCE</button>
+    <button class="btn-main btn-outline" style="margin-top:10px;" onclick="closeModal('modal-leilao')">Fechar</button>
+  </div>
+</div>
+
+<!-- MODAL BET -->
+<div class="modal-overlay" id="modal-bet">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🎰 Empire Bet</div>
+    <div class="modal-subtitle">Aposte nas posições do Billboard Hot 100</div>
+    <div class="card" style="margin-bottom:16px; background: rgba(188,19,254,0.07); border-color: rgba(188,19,254,0.3);">
+      <div style="font-size:0.78em; color:var(--muted); line-height:1.6;">Preveja as posições finais das músicas. Se acertar, você recebe multiplicadores sobre o valor apostado!</div>
+    </div>
+    <div id="bet-musicas-list"><div class="empty-state"><div class="empty-icon">🎰</div><div class="empty-text">Carregando músicas da semana...</div></div></div>
+    <div class="input-group" style="margin-top:14px;">
+      <label>Valor da Aposta (EC)</label>
+      <input type="number" id="bet-valor" placeholder="Ex: 500.000">
+    </div>
+    <button class="btn-main" style="background:linear-gradient(135deg,#f5c842,#bc13fe);" onclick="enviarBet()">🎰 FAZER APOSTA</button>
+    <button class="btn-main btn-outline" style="margin-top:10px;" onclick="closeModal('modal-bet')">Cancelar</button>
+  </div>
+</div>
+
+<!-- MODAL PAYOLA -->
+<div class="modal-overlay" id="modal-payola">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">📻 Payola</div>
+    <div class="modal-subtitle">Invista no Airplay</div>
+    <div class="card" style="margin-bottom:16px;">
+      <div style="font-size:0.78em; color:var(--muted); line-height:1.6;">Investimentos no Airplay geram porcentagens aleatórias de incremento no resultado final do chart AIRPLAY.</div>
+    </div>
+    <div class="input-group">
+      <label>Música</label>
+      <input type="text" id="payola-musica" placeholder="Nome da música">
+    </div>
+    <div class="input-group">
+      <label>Investimento (EC)</label>
+      <input type="number" id="payola-valor" placeholder="Ex: 250.000">
+    </div>
+    <button class="btn-main btn-gold" onclick="comprarPayola()">📻 INVESTIR NO AIRPLAY</button>
+    <button class="btn-main btn-outline" style="margin-top:10px;" onclick="closeModal('modal-payola')">Cancelar</button>
+  </div>
+</div>
+
+<!-- MODAL RESCISÃO -->
+<div class="modal-overlay" id="modal-rescisao">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">📜 Rescisão de Contrato</div>
+    <div class="modal-subtitle">Informações do contrato atual</div>
+    <div class="card" style="margin-bottom:16px; text-align:center;">
+      <div class="badge-label">GRAVADORA ATUAL</div>
+      <div class="badge-value stat-gold" id="rescisao-gravadora">—</div>
+      <div style="margin-top:12px; font-size:0.78em; color:var(--muted);" id="rescisao-info">Carregando informações do contrato...</div>
+    </div>
+    <div class="input-group">
+      <label>Após rescisão, desejo ir para</label>
+      <select id="rescisao-destino">
+        <option value="Independent">🎵 Ficar Independente</option>
+        <option value="King & Queen">👑 King &amp; Queen</option>
+        <option value="Crown">⭐ Crown</option>
+      </select>
+    </div>
+    <button class="btn-main" style="background:linear-gradient(135deg,#ff3b5c,#8a00d4);" onclick="processarRescisao()">📜 CONFIRMAR RESCISÃO</button>
+    <button class="btn-main btn-outline" style="margin-top:10px;" onclick="closeModal('modal-rescisao')">Cancelar</button>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+//   EMPIRE HUB — CORE
+// ══════════════════════════════════════════════
+
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwxbkUndhZPtFvtK1uIFTkPNN-m6WeiFVMU3IDzuahsC0oQp8Ba2GLQFOAPkWv8eiA3/exec";
+const CHARTS_ID = "1ThRhljmAS41JmVBPkPtYwe0JQHRx9Pih2PQAPT2ebyA";
+const ALBUMS_ID = "1wUoCpi7_VSbXBhu7XGsqs2ZAJBwcPrx_TFmTS0OMyhY";
+const SHEETS_API = "https://sheets.googleapis.com/v4/spreadsheets";
+
+let TG_USER = null;
+let TG_ID = null;
+let ALL_ARTISTS = [];
+let MY_ARTISTS = [];
+let ARTISTA_ATUAL = null;
+let CURRENT_CHART = 'AIRPLAY';
+
+// ── INIT ──
+window.addEventListener('load', () => {
+  try {
+    if (window.Telegram?.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+      const user = Telegram.WebApp.initDataUnsafe?.user;
+      if (user) {
+        TG_USER = user;
+        TG_ID = user.id;
+        const name = user.first_name + (user.last_name ? ' ' + user.last_name : '');
+        document.getElementById('home-user-name').textContent = name;
+        document.getElementById('home-user-avatar').textContent = name.charAt(0).toUpperCase();
+      }
+    }
+  } catch(e) {}
+
+  // Fallback demo ID for testing
+  if (!TG_ID) {
+    TG_ID = 10101010;
+    document.getElementById('home-user-name').textContent = 'Demo User';
+    document.getElementById('home-user-avatar').textContent = 'D';
+  }
+
+  setTimeout(() => {
+    document.getElementById('loading-screen').style.opacity = '0';
+    document.getElementById('loading-screen').style.transition = 'opacity 0.5s';
+    setTimeout(() => document.getElementById('loading-screen').style.display = 'none', 500);
+    loadAllArtists();
+    loadRadar();
+    loadChartData('AIRPLAY');
+  }, 1800);
+});
+
+// ── NAVIGATION ──
+function navigate(screenId) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(screenId).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function openHub() { navigate('screen-hub'); if(ARTISTA_ATUAL) { document.getElementById('hub-artist-name').textContent = ARTISTA_ATUAL.nome; document.getElementById('hub-saldo').textContent = formatEC(ARTISTA_ATUAL.saldo); } }
+function openMarket() { navigate('screen-market'); loadMuralComposicoes(); }
+function openProjects() { navigate('screen-projects'); loadProjects(); }
+function openCharts() { navigate('screen-charts'); }
+
+// ── TOAST ──
+function showToast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'show ' + type;
+  setTimeout(() => t.className = '', 3000);
+}
+
+// ── FORMAT ──
+function formatEC(v) {
+  if (!v && v !== 0) return '—';
+  const n = parseFloat(v);
+  if (n >= 1e9) return '$EC ' + (n/1e9).toFixed(1) + 'B';
+  if (n >= 1e6) return '$EC ' + (n/1e6).toFixed(1) + 'M';
+  if (n >= 1e3) return '$EC ' + (n/1e3).toFixed(0) + 'K';
+  return '$EC ' + n.toLocaleString('pt-BR');
+}
+function formatMoney(v) {
+  if (!v && v !== 0) return '—';
+  const n = parseFloat(v);
+  if (n >= 1e9) return '$' + (n/1e9).toFixed(1) + 'B';
+  if (n >= 1e6) return '$' + (n/1e6).toFixed(1) + 'M';
+  if (n >= 1e3) return '$' + (n/1e3).toFixed(0) + 'K';
+  return '$' + n.toLocaleString('pt-BR');
+}
+
+// ── LOAD ALL ARTISTS ──
+async function loadAllArtists() {
+  try {
+    const url = `${SCRIPT_URL}?acao=listar_todos`;
+    const res = await fetch(url);
+    const data = await res.json();
+    if (Array.isArray(data)) {
+      ALL_ARTISTS = data;
+      MY_ARTISTS = data.filter(a => String(a.telegram_id) === String(TG_ID));
+      renderArtistList();
+      renderLabelStats();
+      populateDuelSelects();
+    }
+  } catch(e) {
+    // Fallback: load via individual lookup
+    const urlMy = `${SCRIPT_URL}?acao=meus_artistas&telegram_id=${TG_ID}`;
+    try {
+      const res = await fetch(urlMy);
+      const data = await res.json();
+      if (Array.isArray(data)) { MY_ARTISTS = data; renderArtistList(); }
+    } catch(e2) { document.getElementById('artists-container').innerHTML = '<div class="empty-state"><div class="empty-icon">❌</div><div class="empty-text">Erro ao carregar artistas. Verifique a conexão.</div></div>'; }
+  }
+}
+
+function renderArtistList() {
+  const c = document.getElementById('artists-container');
+  if (!MY_ARTISTS.length) { c.innerHTML = '<div class="empty-state"><div class="empty-icon">🎤</div><div class="empty-text">Nenhum artista encontrado para o seu ID do Telegram.</div></div>'; return; }
+  c.innerHTML = MY_ARTISTS.map(a => `
+    <div class="artist-list-item" onclick="openArtist(${JSON.stringify(a).replace(/"/g,'&quot;')})">
+      <img src="${a.foto||''}" alt="" class="artist-list-thumb" onerror="this.src=''">
+      <div>
+        <div class="artist-list-name">${a.nome}</div>
+        <div class="artist-list-meta">${formatEC(a.saldo)}</div>
+        <div class="artist-list-label">${a.gravadora || 'Independent'}</div>
+      </div>
+      <div style="margin-left:auto;">
+        <span class="pill ${a.status==='Livre'?'pill-green':'pill-red'}">${a.status==='Livre'?'Livre':'Ocupado'}</span>
+      </div>
+    </div>`).join('');
+}
+
+function openArtist(a) {
+  if (typeof a === 'string') a = JSON.parse(a);
+  ARTISTA_ATUAL = a;
+  document.getElementById('dash-avatar').src = a.foto || '';
+  document.getElementById('dash-name').textContent = a.nome;
+  const isFree = a.status === 'Livre';
+  const sw = document.getElementById('dash-status-wrap');
+  sw.className = 'artist-status-wrap ' + (isFree ? 'status-free' : 'status-busy');
+  document.getElementById('dash-status-text').textContent = a.status;
+  document.getElementById('dash-saldo').textContent = formatEC(a.saldo);
+  document.getElementById('dash-prestigio').textContent = a.prestigio || 0;
+  document.getElementById('dash-fadiga').textContent = (a.fadiga || 0) + '%';
+  document.getElementById('dash-fortuna').textContent = formatMoney(a.fortuna_total);
+  document.getElementById('dash-gravadora').textContent = a.gravadora || 'INDIE';
+  const pres = Math.min(100, ((a.prestigio || 0) / 1000) * 100);
+  document.getElementById('dash-pres-bar').style.width = pres + '%';
+  document.getElementById('dash-pres-val').textContent = (a.prestigio || 0) + '/1000';
+  document.getElementById('dash-fad-bar').style.width = (a.fadiga || 0) + '%';
+  document.getElementById('dash-fad-val').textContent = (a.fadiga || 0) + '%';
+  navigate('screen-artist-dash');
+}
+
+// ── LABEL STATS ──
+function renderLabelStats() {
+  const labels = { 'King & Queen': [], 'Crown': [], 'Independent': [] };
+  ALL_ARTISTS.forEach(a => {
+    const g = a.gravadora || 'Independent';
+    if (labels[g]) labels[g].push(a);
+    else labels['Independent'].push(a);
+  });
+  setLabelStat('kq', labels['King & Queen']);
+  setLabelStat('crown', labels['Crown']);
+  setLabelStat('indie', labels['Independent']);
+}
+function setLabelStat(id, artists) {
+  const el = document.getElementById(id + '-count');
+  const tel = document.getElementById(id + '-total');
+  if(el) el.textContent = artists.length + ' artistas';
+  if(tel) { const total = artists.reduce((s,a) => s + (parseFloat(a.fortuna_total)||0), 0); tel.textContent = formatMoney(total); }
+}
+
+function loadLabelArtists(label) {
+  document.getElementById('label-artists-title').textContent = label.toUpperCase();
+  const artists = ALL_ARTISTS.filter(a => (a.gravadora || 'Independent') === label || (!a.gravadora && label === 'Independent'));
+  const c = document.getElementById('label-artists-container');
+  if (!artists.length) { c.innerHTML = '<div class="empty-state"><div class="empty-icon">🎤</div><div class="empty-text">Nenhum artista neste selo.</div></div>'; }
+  else c.innerHTML = artists.map(a => `
+    <div class="artist-list-item">
+      <img src="${a.foto||''}" alt="" class="artist-list-thumb" onerror="this.src=''">
+      <div>
+        <div class="artist-list-name">${a.nome}</div>
+        <div class="artist-list-meta">${formatMoney(a.fortuna_total)}</div>
+        <div class="artist-list-label">Prestígio: ${a.prestigio || 0}</div>
+      </div>
+    </div>`).join('');
+  navigate('screen-label-artists');
+}
+
+// ── CHARTS ──
+function selectChart(name, el) {
+  document.querySelectorAll('.chart-pill').forEach(p => p.classList.remove('selected'));
+  el.classList.add('selected');
+  CURRENT_CHART = name;
+  loadChartData(name);
+}
+
+async function loadChartData(chartName) {
+  const c = document.getElementById('chart-container');
+  c.innerHTML = '<div class="skeleton" style="height:80px;margin-bottom:10px;"></div>'.repeat(5);
+  try {
+    const sheetId = chartName === 'BILLBOARD 200' ? ALBUMS_ID : CHARTS_ID;
+    const tab = chartName === 'BILLBOARD 200' ? 'DADOS ÁLBUNS' : chartName;
+    const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(tab)}`;
+    const res = await fetch(url);
+    const txt = await res.text();
+    const json = JSON.parse(txt.substring(txt.indexOf('{'), txt.lastIndexOf('}')+1));
+    const rows = json.table?.rows || [];
+    if (!rows.length) { c.innerHTML = '<div class="empty-state"><div class="empty-icon">📊</div><div class="empty-text">Chart ainda não disponível esta semana.</div></div>'; return; }
+
+    if (chartName === 'BILLBOARD 200') {
+      renderAlbumsChart(rows, c);
+    } else {
+      renderSinglesChart(rows, c);
+    }
+  } catch(e) {
+    c.innerHTML = '<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-text">Não foi possível carregar o chart.<br>Verifique as permissões da planilha.</div></div>';
+  }
+}
+
+function getCell(row, idx) { return row.c?.[idx]?.v ?? row.c?.[idx]?.f ?? ''; }
+
+function renderSinglesChart(rows, container) {
+  // Row structure: CHART, DATA, POSIÇÃO, MÚSICA/ALBUM, PONTOS/VENDAS SEMANA, VENDAS GERAIS, ARTISTA1..5, Status, QTD SUBIDAS, Capa, ÍCONES, MUSIC STYLE
+  const entries = rows.slice(1).filter(r => r.c?.[2]?.v).map(r => ({
+    pos: getCell(r, 2),
+    song: getCell(r, 3),
+    pts: getCell(r, 4),
+    artist: getCell(r, 6) || getCell(r, 7) || getCell(r, 8) || getCell(r, 9) || getCell(r, 10),
+    status: getCell(r, 11),
+    change: getCell(r, 12),
+    cover: getCell(r, 13),
+    style: getCell(r, 15)
+  })).slice(0, 50);
+
+  container.innerHTML = entries.map(e => {
+    let changeIcon = '';
+    const ch = parseInt(e.change) || 0;
+    if (ch > 0) changeIcon = `<span class="change-up">▲${ch}</span>`;
+    else if (ch < 0) changeIcon = `<span class="change-down">▼${Math.abs(ch)}</span>`;
+    else changeIcon = `<span class="change-same">●</span>`;
+
+    const statusIcon = e.status === 'NEW' ? '<span class="pill pill-green" style="padding:2px 8px;font-size:0.55em;">NEW</span>' : (e.status === 'RE-ENTRY' ? '<span class="pill pill-purple" style="padding:2px 8px;font-size:0.55em;">RE</span>' : '');
+
+    return `<div class="chart-entry">
+      <div class="chart-pos">${e.pos}</div>
+      <img src="${e.cover||''}" alt="" class="chart-cover" onerror="this.style.background='var(--surface2)'">
+      <div class="chart-info">
+        <div class="chart-song">${e.song || '—'}</div>
+        <div class="chart-artist">${e.artist || '—'}</div>
+        <div style="margin-top:4px;">${changeIcon} ${statusIcon}</div>
+      </div>
+      <div class="chart-points">
+        <div class="chart-pts-val">${e.pts ? Number(e.pts).toLocaleString('pt-BR') : '—'}</div>
+        <div class="chart-pts-label">pts</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderAlbumsChart(rows, container) {
+  // CHART, DATA, POSIÇÃO, MÚSICA/ALBUM, PONTOS, VENDAS SEMANA, VENDAS GERAIS, STATUS, QTD, ÍCONE, CAPA, GÊNERO, ARTISTA
+  const entries = rows.slice(1).filter(r => r.c?.[2]?.v).map(r => ({
+    pos: getCell(r, 2),
+    album: getCell(r, 3),
+    pts: getCell(r, 4),
+    sales: getCell(r, 5),
+    status: getCell(r, 7),
+    change: getCell(r, 8),
+    cover: getCell(r, 10),
+    genre: getCell(r, 11),
+    artist: getCell(r, 12)
+  })).slice(0, 50);
+
+  container.innerHTML = entries.map(e => {
+    const ch = parseInt(e.change) || 0;
+    let changeStr = ch > 0 ? `<span class="change-up">▲${ch}</span>` : ch < 0 ? `<span class="change-down">▼${Math.abs(ch)}</span>` : '<span class="change-same">●</span>';
+    return `<div class="album-card">
+      <img src="${e.cover||''}" alt="" class="album-cover" onerror="this.style.background='var(--surface2)'">
+      <div class="album-info">
+        <div class="album-pos">#${e.pos}</div>
+        <div class="album-title">${e.album||'—'}</div>
+        <div class="album-artist">${e.artist||'—'} · ${e.genre||''}</div>
+        <div class="album-sales">${e.sales ? Number(e.sales).toLocaleString('pt-BR') + ' vendas' : ''} ${changeStr}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── DUEL ──
+function populateDuelSelects() {
+  const sA = document.getElementById('duel-a');
+  const sB = document.getElementById('duel-b');
+  if (!sA || !sB) return;
+  const opts = ALL_ARTISTS.map(a => `<option value="${a.nome}" data-foto="${a.foto||''}">${a.nome}</option>`).join('');
+  sA.innerHTML = '<option value="">Artista A...</option>' + opts;
+  sB.innerHTML = '<option value="">Artista B...</option>' + opts;
+}
+
+function updateDuelPreview() {}
+
+async function startDuel() {
+  const nameA = document.getElementById('duel-a').value;
+  const nameB = document.getElementById('duel-b').value;
+  const chart = document.getElementById('duel-chart').value;
+  if (!nameA || !nameB) { showToast('Selecione os dois artistas!', 'error'); return; }
+  if (nameA === nameB) { showToast('Escolha artistas diferentes!', 'error'); return; }
+
+  const aData = ALL_ARTISTS.find(a => a.nome === nameA);
+  const bData = ALL_ARTISTS.find(a => a.nome === nameB);
+
+  document.getElementById('duel-name-a').textContent = nameA;
+  document.getElementById('duel-name-b').textContent = nameB;
+  document.getElementById('duel-img-a').src = aData?.foto || '';
+  document.getElementById('duel-img-b').src = bData?.foto || '';
+
+  document.getElementById('duel-setup').style.display = 'none';
+  document.getElementById('duel-arena-container').style.display = 'block';
+  document.getElementById('duel-results').innerHTML = '<div class="empty-state"><div class="empty-icon">⚔️</div><div class="empty-text">Carregando dados do chart...</div></div>';
+  document.getElementById('duel-winner').style.display = 'none';
+
+  try {
+    const sheetId = CHARTS_ID;
+    const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(chart)}`;
+    const res = await fetch(url);
+    const txt = await res.text();
+    const json = JSON.parse(txt.substring(txt.indexOf('{'), txt.lastIndexOf('}')+1));
+    const rows = json.table?.rows || [];
+
+    // Find entries for each artist
+    const findArtist = (name) => rows.slice(1).filter(r => {
+      for (let i = 6; i <= 10; i++) { if (String(getCell(r,i)||'').toLowerCase() === name.toLowerCase()) return true; }
+      return false;
+    }).map(r => ({ pos: parseInt(getCell(r,2))||99, song: getCell(r,3), pts: parseFloat(getCell(r,4))||0 }));
+
+    const tracksA = findArtist(nameA);
+    const tracksB = findArtist(nameB);
+
+    const totalPtsA = tracksA.reduce((s,t) => s+t.pts, 0);
+    const totalPtsB = tracksB.reduce((s,t) => s+t.pts, 0);
+    const bestPosA = tracksA.length ? Math.min(...tracksA.map(t=>t.pos)) : 999;
+    const bestPosB = tracksB.length ? Math.min(...tracksB.map(t=>t.pos)) : 999;
+
+    const scoreA = totalPtsA + (bestPosA < 999 ? (100 - bestPosA) * 100 : 0);
+    const scoreB = totalPtsB + (bestPosB < 999 ? (100 - bestPosB) * 100 : 0);
+    const maxScore = Math.max(scoreA, scoreB, 1);
+
+    document.getElementById('duel-hp-a').style.width = Math.round((scoreA/maxScore)*100) + '%';
+    document.getElementById('duel-hp-b').style.width = Math.round((scoreB/maxScore)*100) + '%';
+
+    let html = `<div class="duel-stat-row"><div class="duel-val-a">${tracksA.length}</div><div class="duel-stat-name">Músicas no Chart</div><div class="duel-val-b">${tracksB.length}</div></div>`;
+    html += `<div class="duel-stat-row"><div class="duel-val-a">${bestPosA < 999 ? '#'+bestPosA : '—'}</div><div class="duel-stat-name">Melhor Posição</div><div class="duel-val-b">${bestPosB < 999 ? '#'+bestPosB : '—'}</div></div>`;
+    html += `<div class="duel-stat-row"><div class="duel-val-a">${totalPtsA.toLocaleString('pt-BR')}</div><div class="duel-stat-name">Total de Pontos</div><div class="duel-val-b">${totalPtsB.toLocaleString('pt-BR')}</div></div>`;
+
+    if (tracksA.length) html += `<div style="margin-top:12px;"><div style="font-size:0.65em;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Músicas de ${nameA}</div>` + tracksA.map(t=>`<div style="font-size:0.78em;padding:6px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;"><span>${t.song}</span><span style="color:var(--neon);">#${t.pos}</span></div>`).join('') + '</div>';
+    if (tracksB.length) html += `<div style="margin-top:12px;"><div style="font-size:0.65em;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Músicas de ${nameB}</div>` + tracksB.map(t=>`<div style="font-size:0.78em;padding:6px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;"><span>${t.song}</span><span style="color:var(--gold);">#${t.pos}</span></div>`).join('') + '</div>';
+
+    document.getElementById('duel-results').innerHTML = html;
+
+    const winner = scoreA > scoreB ? nameA : scoreB > scoreA ? nameB : 'EMPATE';
+    const winEl = document.getElementById('duel-winner');
+    winEl.style.display = 'block';
+    winEl.textContent = winner === 'EMPATE' ? '🤝 EMPATE!' : '🏆 ' + winner + ' VENCE!';
+  } catch(e) {
+    document.getElementById('duel-results').innerHTML = '<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-text">Erro ao carregar dados do duelo.</div></div>';
+  }
+}
+
+function resetDuel() {
+  document.getElementById('duel-setup').style.display = 'block';
+  document.getElementById('duel-arena-container').style.display = 'none';
+  document.getElementById('duel-a').value = '';
+  document.getElementById('duel-b').value = '';
+}
+
+// ── RADAR ──
+async function loadRadar() {
+  try {
+    const url = `${SCRIPT_URL}?acao=radar`;
+    const res = await fetch(url);
+    const data = await res.json();
+    const c = document.getElementById('radar-container');
+    if (!Array.isArray(data) || !data.length) {
+      // Build radar from artists' statuses
+      renderRadarFromArtists();
+      return;
+    }
+    c.innerHTML = data.map(item => `
+      <div class="radar-item">
+        <img src="${item.foto||''}" alt="" class="radar-avatar" onerror="this.style.background='var(--surface2)'">
+        <div class="radar-content">
+          <div class="radar-name">${item.nome}</div>
+          <div class="radar-action">${item.acao}</div>
+          <div class="radar-time">${item.tempo||''}</div>
+        </div>
+      </div>`).join('');
+  } catch(e) { renderRadarFromArtists(); }
+}
+
+function renderRadarFromArtists() {
+  const c = document.getElementById('radar-container');
+  if (!ALL_ARTISTS.length) { setTimeout(renderRadarFromArtists, 2000); return; }
+  const busy = ALL_ARTISTS.filter(a => a.status && a.status !== 'Livre');
+  if (!busy.length) { c.innerHTML = '<div class="empty-state"><div class="empty-icon">🌍</div><div class="empty-text">Nenhuma atividade recente detectada.</div></div>'; return; }
+  c.innerHTML = busy.map(a => `
+    <div class="radar-item">
+      <img src="${a.foto||''}" alt="" class="radar-avatar" onerror="this.style.background='var(--surface2)'">
+      <div class="radar-content">
+        <div class="radar-name">${a.nome}</div>
+        <div class="radar-action">${a.status}</div>
+        <div class="radar-time">${a.gravadora || 'Independent'}</div>
+      </div>
+    </div>`).join('');
+}
+
+// ── PROJECTS ──
+async function loadProjects() {
+  if (!ARTISTA_ATUAL) return;
+  document.getElementById('proj-artist-name').textContent = ARTISTA_ATUAL.nome;
+  const c = document.getElementById('projects-container');
+  c.innerHTML = '<div class="skeleton" style="height:80px;margin-bottom:10px;"></div>'.repeat(3);
+  try {
+    const url = `${SCRIPT_URL}?acao=projetos&nome=${encodeURIComponent(ARTISTA_ATUAL.nome)}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    if (!Array.isArray(data) || !data.length) { c.innerHTML = '<div class="empty-state"><div class="empty-icon">🎬</div><div class="empty-text">Nenhum projeto encontrado.</div></div>'; return; }
+    c.innerHTML = data.map(p => `
+      <div class="card-sm" style="margin-bottom:10px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div>
+            <div style="font-weight:700;font-size:0.9em;">${p.titulo}</div>
+            <div style="font-size:0.7em;color:var(--muted);margin-top:2px;">${p.tipo} · ${p.genero}</div>
+          </div>
+          <span class="pill ${p.status==='Finalizado'?'pill-green':'pill-purple'}">${p.status}</span>
+        </div>
+        ${p.critica ? `<div style="margin-top:10px;"><span class="badge-label">Crítica</span><div style="font-family:'Bebas Neue',cursive;font-size:1.2em;color:var(--gold);">${p.critica}/100</div></div>` : ''}
+      </div>`).join('');
+  } catch(e) { c.innerHTML = '<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-text">Erro ao carregar projetos.</div></div>'; }
+}
+
+// ── MARKET HELPERS ──
+async function loadMuralComposicoes() {
+  const c = document.getElementById('mural-list');
+  try {
+    const url = `${SCRIPT_URL}?acao=mural`;
+    const res = await fetch(url);
+    const data = await res.json();
+    if (!Array.isArray(data) || !data.length) { c.innerHTML = '<div class="empty-state"><div class="empty-icon">🎼</div><div class="empty-text">Nenhuma composição disponível.</div></div>'; return; }
+    c.innerHTML = '<div style="font-family:\'Bebas Neue\',cursive;letter-spacing:2px;font-size:1em;color:var(--purple);margin-bottom:12px;">COMPOSIÇÕES DISPONÍVEIS</div>' +
+      data.map(item => `<div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:8px;">
+        <div><div style="font-weight:700;font-size:0.85em;">${item.titulo||item.descricao}</div><div style="font-size:0.68em;color:var(--muted);">${item.vendedor}</div></div>
+        <div style="text-align:right;"><div style="color:var(--gold);font-weight:700;font-size:0.85em;">${formatEC(item.preco)}</div><button style="background:rgba(188,19,254,0.2);border:1px solid rgba(188,19,254,0.4);color:var(--purple);padding:5px 12px;border-radius:20px;font-size:0.7em;cursor:pointer;margin-top:4px;" onclick="comprarItem('${item.id}','composicao')">Comprar</button></div>
+      </div>`).join('');
+  } catch(e) { c.innerHTML = '<div class="empty-state"><div class="empty-icon">🎼</div><div class="empty-text">Mural de composições indisponível.</div></div>'; }
+}
+
+// ── MODAIS ──
+function openModal(id) {
+  if (id === 'modal-rescisao' && ARTISTA_ATUAL) {
+    document.getElementById('rescisao-gravadora').textContent = ARTISTA_ATUAL.gravadora || 'Independent';
+    document.getElementById('rescisao-info').textContent = 'Ao rescindir, você precisará pagar a multa contratual calculada automaticamente.';
+  }
+  if (id === 'modal-bet') loadBetMusicas();
+  if (id === 'modal-leilao') loadLeilaoItens();
+  document.getElementById(id).classList.add('open');
+}
+
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+});
+
+async function loadBetMusicas() {
+  const c = document.getElementById('bet-musicas-list');
+  try {
+    const url = `https://docs.google.com/spreadsheets/d/${CHARTS_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent('BILLBOARD HOT 100')}`;
+    const res = await fetch(url);
+    const txt = await res.text();
+    const json = JSON.parse(txt.substring(txt.indexOf('{'), txt.lastIndexOf('}')+1));
+    const rows = (json.table?.rows || []).slice(1, 11);
+    c.innerHTML = '<div style="font-size:0.72em;color:var(--muted);margin-bottom:12px;">Aposte nas posições das músicas:</div>' +
+      rows.map((r, i) => `<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
+        <span style="font-family:\'Bebas Neue\',cursive;color:var(--gold);width:28px;">#${getCell(r,2)||i+1}</span>
+        <span style="flex:1;font-size:0.8em;">${getCell(r,3)||'—'}</span>
+        <input type="number" placeholder="Pos." style="width:60px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px;color:var(--text);font-size:0.8em;" id="bet-pos-${i}" min="1" max="100">
+      </div>`).join('');
+  } catch(e) { c.innerHTML = '<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-text">Erro ao carregar músicas.</div></div>'; }
+}
+
+async function loadLeilaoItens() {
+  const c = document.getElementById('leilao-list');
+  try {
+    const url = `${SCRIPT_URL}?acao=leilao`;
+    const res = await fetch(url);
+    const data = await res.json();
+    if (!Array.isArray(data) || !data.length) { c.innerHTML = '<div style="font-size:0.75em;color:var(--muted);margin-bottom:12px;">Nenhum item em leilão no momento.</div>'; return; }
+    c.innerHTML = '<div style="font-family:\'Bebas Neue\',cursive;letter-spacing:2px;font-size:1em;color:var(--purple);margin-bottom:10px;">ITENS DISPONÍVEIS</div>' +
+      data.map(item => `<div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:8px;">
+        <div><div style="font-weight:700;font-size:0.85em;">${item.descricao}</div><div style="font-size:0.68em;color:var(--muted);">${item.vendedor}</div></div>
+        <button style="background:rgba(245,200,66,0.2);border:1px solid var(--gold);color:var(--gold);padding:5px 12px;border-radius:20px;font-size:0.7em;cursor:pointer;" onclick="darLance('${item.id}')">Lance</button>
+      </div>`).join('');
+  } catch(e) { c.innerHTML = ''; }
+}
+
+// ── API CALLS ──
+async function apiCall(params) {
+  try {
+    const qs = new URLSearchParams(params).toString();
+    const res = await fetch(`${SCRIPT_URL}?${qs}`);
+    return await res.text();
+  } catch(e) { return null; }
+}
+
+async function comprarTour() {
+  const nome = document.getElementById('t-nome').value.trim();
+  const data = document.getElementById('t-data').value;
+  const qtd = document.getElementById('t-qtd').value;
+  const cont = document.getElementById('t-continente').value;
+  const porte = document.getElementById('t-porte').value;
+  if (!nome || !data) { showToast('Preencha nome e data!', 'error'); return; }
+  const res = await apiCall({ acao: 'compra_unificada_tour', nome: ARTISTA_ATUAL?.nome, tipo: porte, titulo: nome, dataInicio: data, qtd, continente: cont });
+  closeModal('modal-tour');
+  showToast(res || 'Tour contratada!', 'success');
+  loadAllArtists();
+}
+
+async function comprarCinema() {
+  const nome = document.getElementById('c-nome').value.trim();
+  const tipo = document.getElementById('c-tipo').value;
+  const data = document.getElementById('c-data').value;
+  const gen = document.getElementById('c-genero').value;
+  if (!nome || !data) { showToast('Preencha título e data!', 'error'); return; }
+  const res = await apiCall({ acao: 'compra_cinema', nome: ARTISTA_ATUAL?.nome, titulo: nome, tipo, genero: gen, dataInicio: data });
+  closeModal('modal-cinema');
+  showToast(res || 'Projeto criado!', 'success');
+  loadAllArtists();
+}
+
+async function venderComposicao() {
+  const titulo = document.getElementById('comp-titulo').value.trim();
+  const valor = document.getElementById('comp-valor').value;
+  if (!titulo || !valor) { showToast('Preencha todos os campos!', 'error'); return; }
+  const res = await apiCall({ acao: 'vender_composicao', nome: ARTISTA_ATUAL?.nome, titulo, preco: valor });
+  closeModal('modal-composicao');
+  showToast(res || 'Composição publicada!', 'success');
+}
+
+async function doarFilantropia() {
+  const causa = document.getElementById('filant-causa').value;
+  const valor = document.getElementById('filant-valor').value;
+  if (!valor) { showToast('Informe o valor!', 'error'); return; }
+  const res = await apiCall({ acao: 'filantropia', nome: ARTISTA_ATUAL?.nome, causa, valor });
+  closeModal('modal-filantropia');
+  showToast(res || 'Doação realizada!', 'success');
+  loadAllArtists();
+}
+
+async function comprarImovel() {
+  const tipo = document.getElementById('imovel-tipo').value;
+  const cidade = document.getElementById('imovel-cidade').value.trim();
+  if (!cidade) { showToast('Informe a cidade!', 'error'); return; }
+  const res = await apiCall({ acao: 'comprar_imovel', nome: ARTISTA_ATUAL?.nome, tipo, cidade });
+  closeModal('modal-imovel');
+  showToast(res || 'Imóvel adquirido!', 'success');
+}
+
+async function comprarViral() {
+  const musica = document.getElementById('viral-musica').value.trim();
+  if (!musica) { showToast('Informe a música!', 'error'); return; }
+  const res = await apiCall({ acao: 'viral', nome: ARTISTA_ATUAL?.nome, musica });
+  closeModal('modal-viral');
+  showToast(res || 'Boost ativado!', 'success');
+}
+
+async function publicarLeilao() {
+  const item = document.getElementById('leilao-item').value.trim();
+  const valor = document.getElementById('leilao-valor').value;
+  if (!item || !valor) { showToast('Preencha todos os campos!', 'error'); return; }
+  const res = await apiCall({ acao: 'publicar_leilao', nome: ARTISTA_ATUAL?.nome, descricao: item, lanceMini: valor });
+  closeModal('modal-leilao');
+  showToast(res || 'Item publicado!', 'success');
+}
+
+async function enviarBet() {
+  const valor = document.getElementById('bet-valor').value;
+  if (!valor) { showToast('Informe o valor da aposta!', 'error'); return; }
+  const res = await apiCall({ acao: 'bet', nome: ARTISTA_ATUAL?.nome, valor });
+  closeModal('modal-bet');
+  showToast(res || 'Aposta registrada! Aguarde o resultado.', 'success');
+}
+
+async function comprarPayola() {
+  const musica = document.getElementById('payola-musica').value.trim();
+  const valor = document.getElementById('payola-valor').value;
+  if (!musica || !valor) { showToast('Preencha todos os campos!', 'error'); return; }
+  const res = await apiCall({ acao: 'payola', nome: ARTISTA_ATUAL?.nome, musica, valor });
+  closeModal('modal-payola');
+  showToast(res || 'Investimento registrado!', 'success');
+}
+
+async function processarRescisao() {
+  const destino = document.getElementById('rescisao-destino').value;
+  const res = await apiCall({ acao: 'rescisao', nome: ARTISTA_ATUAL?.nome, destino });
+  closeModal('modal-rescisao');
+  showToast(res || 'Rescisão processada!', 'success');
+  loadAllArtists();
+}
+
+async function comprarItem(id, tipo) {
+  const res = await apiCall({ acao: 'comprar_item', nome: ARTISTA_ATUAL?.nome, itemId: id, tipo });
+  showToast(res || 'Compra realizada!', 'success');
+  loadMuralComposicoes();
+}
+
+async function darLance(id) {
+  const lance = prompt('Valor do seu lance (EC):');
+  if (!lance) return;
+  const res = await apiCall({ acao: 'lance_leilao', nome: ARTISTA_ATUAL?.nome, itemId: id, valor: lance });
+  showToast(res || 'Lance enviado!', 'success');
+}
+</script>
 </body>
 </html>
