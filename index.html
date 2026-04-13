@@ -2,138 +2,184 @@
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <title>Empire Hub</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 :root {
-  --bg:#08010f; --surface:rgba(255,255,255,0.04); --surface2:rgba(255,255,255,0.07);
-  --border:rgba(255,255,255,0.09); --gold:#f5c842; --gold2:#e8a820; --purple:#bc13fe;
-  --purple2:#8a00d4; --neon:#00ffd4; --red:#ff3b5c; --green:#00e87a;
-  --text:#f0e8ff; --muted:rgba(240,232,255,0.4); --radius:20px; --radius-sm:12px;
+  --bg:#08010f;--surface:rgba(255,255,255,0.04);--surface2:rgba(255,255,255,0.08);
+  --border:rgba(255,255,255,0.09);--gold:#f5c842;--gold2:#e8a820;
+  --purple:#bc13fe;--purple2:#8a00d4;--neon:#00ffd4;--red:#ff3b5c;--green:#00e87a;
+  --text:#f0e8ff;--muted:rgba(240,232,255,0.42);--radius:20px;--radius-sm:12px;
+  /* Tier colors */
+  --tier-rookie:#888;--tier-rising:#4fc3f7;--tier-star:#ab47bc;
+  --tier-superstar:#f5c842;--tier-legend:linear-gradient(135deg,#f5c842,#bc13fe,#00ffd4);
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:0.6}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:.6}
 .ambient{position:fixed;border-radius:50%;filter:blur(80px);pointer-events:none;z-index:0}
-.amb1{width:350px;height:350px;top:-100px;left:-80px;background:radial-gradient(circle,rgba(188,19,254,0.18) 0%,transparent 70%)}
-.amb2{width:280px;height:280px;bottom:80px;right:-60px;background:radial-gradient(circle,rgba(245,200,66,0.12) 0%,transparent 70%)}
-.amb3{width:200px;height:200px;top:40%;left:50%;transform:translateX(-50%);background:radial-gradient(circle,rgba(0,255,212,0.07) 0%,transparent 70%)}
+.amb1{width:350px;height:350px;top:-100px;left:-80px;background:radial-gradient(circle,rgba(188,19,254,.18) 0%,transparent 70%)}
+.amb2{width:280px;height:280px;bottom:80px;right:-60px;background:radial-gradient(circle,rgba(245,200,66,.12) 0%,transparent 70%)}
+.amb3{width:200px;height:200px;top:40%;left:50%;transform:translateX(-50%);background:radial-gradient(circle,rgba(0,255,212,.07) 0%,transparent 70%)}
 #app{position:relative;z-index:1;min-height:100vh}
-.screen{display:none;flex-direction:column;min-height:100vh;padding:20px 18px 100px;animation:fadeUp 0.32s ease}
+.screen{display:none;flex-direction:column;min-height:100vh;padding:20px 18px 110px;animation:fadeUp .32s ease}
 .screen.active{display:flex}
 @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-#loading-screen{position:fixed;inset:0;background:var(--bg);z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px}
+
+/* ── LOADING ── */
+#loading-screen{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;transition:opacity .5s}
 .loader-logo{font-family:'Bebas Neue',cursive;font-size:4.5em;letter-spacing:6px;background:linear-gradient(135deg,var(--gold),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:pulse 1.5s ease infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
 .loader-bar{width:120px;height:2px;background:var(--border);border-radius:2px;overflow:hidden}
 .loader-fill{height:100%;background:linear-gradient(90deg,var(--purple),var(--gold));animation:load 1.8s ease forwards}
 @keyframes load{from{width:0}to{width:100%}}
-.loader-text{font-size:0.7em;color:var(--muted);letter-spacing:2px;text-transform:uppercase}
+.loader-text{font-size:.7em;color:var(--muted);letter-spacing:2px;text-transform:uppercase}
+
+/* ── ACHIEVEMENT TOAST ── */
+#achievement-overlay{position:fixed;inset:0;z-index:8000;pointer-events:none;display:flex;align-items:center;justify-content:center}
+.achievement-card{background:linear-gradient(135deg,#1a0040,#0f0118);border:2px solid var(--gold);border-radius:24px;padding:28px 32px;text-align:center;transform:scale(.5);opacity:0;transition:all .5s cubic-bezier(.16,1,.3,1);pointer-events:none;max-width:280px}
+.achievement-card.show{transform:scale(1);opacity:1}
+.ach-icon{font-size:3em;margin-bottom:12px;display:block;animation:ach-bounce .6s ease .5s both}
+@keyframes ach-bounce{0%{transform:scale(0)}60%{transform:scale(1.3)}100%{transform:scale(1)}}
+.ach-label{font-size:.62em;color:var(--gold);text-transform:uppercase;letter-spacing:2px;margin-bottom:6px}
+.ach-title{font-family:'Bebas Neue',cursive;font-size:1.8em;letter-spacing:2px;margin-bottom:4px}
+.ach-desc{font-size:.75em;color:var(--muted)}
+
+/* ── CONFETTI ── */
+.confetti-piece{position:fixed;width:8px;height:8px;border-radius:2px;pointer-events:none;z-index:8001;animation:confetti-fall 2.5s ease forwards}
+@keyframes confetti-fall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}
+
+/* ── BREAKING NEWS ── */
+#news-ticker{position:fixed;top:0;left:0;right:0;z-index:7000;background:linear-gradient(90deg,var(--purple2),var(--purple));padding:8px 20px;display:none;align-items:center;gap:12px;animation:slideDown .4s ease}
+@keyframes slideDown{from{transform:translateY(-100%)}to{transform:translateY(0)}}
+.news-label{font-family:'Bebas Neue',cursive;font-size:.7em;letter-spacing:2px;white-space:nowrap;background:var(--gold);color:#000;padding:3px 10px;border-radius:4px}
+.news-text{font-size:.75em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
+.news-close{opacity:.6;cursor:pointer;font-size:1.1em;flex-shrink:0;background:none;border:none;color:var(--text)}
+
+/* ── COMMON ── */
 .page-title{font-family:'Bebas Neue',cursive;font-size:2.6em;letter-spacing:2px;line-height:1}
-.page-subtitle{font-size:0.72em;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;margin-top:4px}
+.page-subtitle{font-size:.72em;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;margin-top:4px}
 .back-row{display:flex;align-items:center;gap:14px;margin-bottom:24px}
-.back-btn{width:40px;height:40px;border-radius:50%;background:var(--surface);border:1px solid var(--border);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.1em;flex-shrink:0;transition:background 0.2s}
+.back-btn{width:40px;height:40px;border-radius:50%;background:var(--surface);border:1px solid var(--border);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.1em;flex-shrink:0;transition:background .2s}
 .back-btn:active{background:var(--surface2)}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
 .card-sm{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px}
-.pill{display:inline-block;padding:4px 14px;border-radius:30px;font-size:0.6em;font-weight:700;text-transform:uppercase;letter-spacing:1px}
-.pill-purple{background:rgba(188,19,254,0.15);border:1px solid rgba(188,19,254,0.4);color:var(--purple)}
-.pill-gold{background:rgba(245,200,66,0.15);border:1px solid rgba(245,200,66,0.4);color:var(--gold)}
-.pill-green{background:rgba(0,232,122,0.15);border:1px solid rgba(0,232,122,0.35);color:var(--green)}
-.pill-red{background:rgba(255,59,92,0.15);border:1px solid rgba(255,59,92,0.35);color:var(--red)}
-.pill-neon{background:rgba(0,255,212,0.12);border:1px solid rgba(0,255,212,0.35);color:var(--neon)}
-.badge-label{font-size:0.58em;color:var(--muted);letter-spacing:1.2px;text-transform:uppercase;display:block;margin-bottom:3px}
+.pill{display:inline-block;padding:4px 14px;border-radius:30px;font-size:.6em;font-weight:700;text-transform:uppercase;letter-spacing:1px}
+.pill-purple{background:rgba(188,19,254,.15);border:1px solid rgba(188,19,254,.4);color:var(--purple)}
+.pill-gold{background:rgba(245,200,66,.15);border:1px solid rgba(245,200,66,.4);color:var(--gold)}
+.pill-green{background:rgba(0,232,122,.15);border:1px solid rgba(0,232,122,.35);color:var(--green)}
+.pill-red{background:rgba(255,59,92,.15);border:1px solid rgba(255,59,92,.35);color:var(--red)}
+.pill-neon{background:rgba(0,255,212,.12);border:1px solid rgba(0,255,212,.35);color:var(--neon)}
+.badge-label{font-size:.58em;color:var(--muted);letter-spacing:1.2px;text-transform:uppercase;display:block;margin-bottom:3px}
 .badge-value{font-family:'Bebas Neue',cursive;font-size:1.6em;letter-spacing:1px}
-.progress-track{background:rgba(255,255,255,0.07);height:8px;border-radius:8px;overflow:hidden}
-.progress-fill{height:100%;border-radius:8px;transition:width 1.2s cubic-bezier(0.16,1,0.3,1)}
+.progress-track{background:rgba(255,255,255,.07);height:8px;border-radius:8px;overflow:hidden}
+.progress-fill{height:100%;border-radius:8px;transition:width 1.2s cubic-bezier(.16,1,.3,1)}
 .pf-gold{background:linear-gradient(90deg,var(--purple),var(--gold))}
 .pf-red{background:linear-gradient(90deg,#ff3b5c,#ff0000)}
 .pf-green{background:linear-gradient(90deg,#00b85a,#00e87a)}
 .divider{height:1px;background:var(--border);margin:18px 0}
 .input-group{margin-bottom:16px}
-.input-group label{display:block;font-size:0.62em;font-weight:700;color:var(--purple);text-transform:uppercase;letter-spacing:1px;margin-bottom:7px}
-.input-group input,.input-group select,.input-group textarea{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:var(--radius-sm);padding:14px 16px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.88em;outline:none;appearance:none}
+.input-group label{display:block;font-size:.62em;font-weight:700;color:var(--purple);text-transform:uppercase;letter-spacing:1px;margin-bottom:7px}
+.input-group input,.input-group select,.input-group textarea{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:var(--radius-sm);padding:14px 16px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.88em;outline:none;appearance:none}
 .input-group select option{background:#1a0040}
-.input-group input:focus,.input-group select:focus{border-color:rgba(188,19,254,0.5)}
-.btn-main{width:100%;padding:16px;border-radius:var(--radius-sm);border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:700;font-size:0.85em;letter-spacing:1px;text-transform:uppercase;background:linear-gradient(135deg,var(--purple2),var(--purple));color:white;transition:opacity 0.2s;margin-top:8px}
-.btn-main:active{opacity:0.8}
+.input-group input:focus,.input-group select:focus{border-color:rgba(188,19,254,.5)}
+.btn-main{width:100%;padding:16px;border-radius:var(--radius-sm);border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:700;font-size:.85em;letter-spacing:1px;text-transform:uppercase;background:linear-gradient(135deg,var(--purple2),var(--purple));color:#fff;transition:opacity .2s;margin-top:8px}
+.btn-main:active{opacity:.8}
 .btn-gold{background:linear-gradient(135deg,var(--gold2),var(--gold));color:#1a0040}
 .btn-outline{background:transparent;border:1px solid var(--purple);color:var(--purple)}
-.btn-sm{padding:10px 16px;font-size:0.75em;width:auto;margin-top:0}
-/* HOME */
-#screen-home{background:radial-gradient(ellipse 120% 80% at 50% 0%,rgba(188,19,254,0.12) 0%,transparent 60%)}
-.home-logo-wrap{text-align:center;padding:32px 0 8px}
+
+/* ── TIER SYSTEM ── */
+.tier-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:20px;font-size:.6em;font-weight:700;text-transform:uppercase;letter-spacing:1px}
+.tier-rookie{background:rgba(136,136,136,.15);border:1px solid rgba(136,136,136,.4);color:#aaa}
+.tier-rising{background:rgba(79,195,247,.12);border:1px solid rgba(79,195,247,.4);color:#4fc3f7}
+.tier-star{background:rgba(171,71,188,.15);border:1px solid rgba(171,71,188,.4);color:#ce93d8}
+.tier-superstar{background:rgba(245,200,66,.15);border:1px solid rgba(245,200,66,.5);color:var(--gold)}
+.tier-legend{background:linear-gradient(135deg,rgba(245,200,66,.15),rgba(188,19,254,.15),rgba(0,255,212,.1));border:1px solid var(--gold);color:var(--gold);animation:legendGlow 2s ease infinite}
+@keyframes legendGlow{0%,100%{box-shadow:0 0 8px rgba(245,200,66,.3)}50%{box-shadow:0 0 20px rgba(245,200,66,.6),0 0 40px rgba(188,19,254,.2)}}
+
+/* ── AVATAR RING TIERS ── */
+.ring-rookie::before{background:conic-gradient(#888,#aaa,#888)!important}
+.ring-rising::before{background:conic-gradient(#4fc3f7,#0288d1,#4fc3f7)!important}
+.ring-star::before{background:conic-gradient(#ab47bc,#e040fb,#ab47bc)!important}
+.ring-superstar::before{background:conic-gradient(var(--gold),#fff,var(--gold))!important}
+.ring-legend::before{background:conic-gradient(var(--gold),var(--purple),var(--neon),var(--gold))!important}
+
+/* ── HOME ── */
+#screen-home{background:radial-gradient(ellipse 120% 80% at 50% 0%,rgba(188,19,254,.12) 0%,transparent 60%)}
+.home-logo-wrap{text-align:center;padding:36px 0 8px}
 .home-logo{font-family:'Bebas Neue',cursive;font-size:4em;letter-spacing:8px;background:linear-gradient(135deg,#fff 0%,var(--gold) 60%,var(--purple) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.home-tagline{font-size:0.65em;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-top:-4px}
-.user-pill{margin:20px 0;display:flex;align-items:center;justify-content:center}
+.home-tagline{font-size:.65em;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-top:-4px}
+.user-pill{margin:16px 0;display:flex;align-items:center;justify-content:center}
 .user-pill-inner{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);padding:8px 18px 8px 10px;border-radius:40px}
-.user-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--purple2),var(--gold));display:flex;align-items:center;justify-content:center;font-size:0.9em;font-weight:700}
-.user-name{font-size:0.8em;font-weight:500}
+.user-avatar-sm{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--purple2),var(--gold));display:flex;align-items:center;justify-content:center;font-size:.9em;font-weight:700}
 .home-nav{display:flex;flex-direction:column;gap:10px;margin-top:8px}
-.home-nav-card{display:flex;align-items:center;gap:16px;padding:18px;cursor:pointer;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);transition:border-color 0.2s;position:relative;overflow:hidden}
-.home-nav-card::before{content:'';position:absolute;inset:0;background:var(--card-accent);opacity:0;transition:opacity 0.2s}
+.home-nav-card{display:flex;align-items:center;gap:16px;padding:18px;cursor:pointer;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);transition:.2s;position:relative;overflow:hidden}
+.home-nav-card::before{content:'';position:absolute;inset:0;background:var(--ca,transparent);opacity:0;transition:opacity .2s}
 .home-nav-card:active::before{opacity:1}
 .home-nav-icon{width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.5em;flex-shrink:0}
-.icon-radar{background:rgba(0,255,212,0.1);border:1px solid rgba(0,255,212,0.3)}
-.icon-artists{background:rgba(188,19,254,0.1);border:1px solid rgba(188,19,254,0.3)}
-.icon-labels{background:rgba(245,200,66,0.1);border:1px solid rgba(245,200,66,0.3)}
-.icon-charts{background:rgba(0,232,122,0.1);border:1px solid rgba(0,232,122,0.3)}
-.icon-duel{background:rgba(255,59,92,0.1);border:1px solid rgba(255,59,92,0.3)}
-.icon-ranking{background:rgba(245,200,66,0.12);border:1px solid rgba(245,200,66,0.35)}
-.icon-tutorial{background:rgba(255,255,255,0.05);border:1px solid var(--border)}
-.nav-text-wrap{flex:1}
-.nav-title{font-weight:700;font-size:0.95em;display:block}
-.nav-desc{font-size:0.68em;color:var(--muted);display:block;margin-top:2px}
-.nav-arrow{color:var(--muted);font-size:0.9em}
-/* ARTIST */
-.artist-hero{position:relative;text-align:center;padding:16px 0 28px}
-.artist-avatar-ring{position:relative;display:inline-block;margin-bottom:16px}
+.i-artists{background:rgba(188,19,254,.1);border:1px solid rgba(188,19,254,.3)}
+.i-radar{background:rgba(0,255,212,.1);border:1px solid rgba(0,255,212,.3)}
+.i-charts{background:rgba(0,232,122,.1);border:1px solid rgba(0,232,122,.3)}
+.i-duel{background:rgba(255,59,92,.1);border:1px solid rgba(255,59,92,.3)}
+.i-ranking{background:rgba(245,200,66,.12);border:1px solid rgba(245,200,66,.35)}
+.i-labels{background:rgba(245,200,66,.1);border:1px solid rgba(245,200,66,.3)}
+.i-hall{background:rgba(245,200,66,.15);border:1px solid rgba(245,200,66,.4)}
+.i-news{background:rgba(255,59,92,.1);border:1px solid rgba(255,59,92,.3)}
+.i-generic{background:rgba(255,255,255,.05);border:1px solid var(--border)}
+.nav-title{font-weight:700;font-size:.95em;display:block}
+.nav-desc{font-size:.68em;color:var(--muted);display:block;margin-top:2px}
+.nav-arrow{color:var(--muted);font-size:.9em;margin-left:auto}
+
+/* ── ARTIST DASH ── */
+.artist-hero{position:relative;text-align:center;padding:16px 0 24px}
+.artist-avatar-ring{position:relative;display:inline-block;margin-bottom:14px}
 .artist-avatar-ring::before{content:'';position:absolute;inset:-4px;border-radius:50%;background:conic-gradient(var(--purple),var(--gold),var(--purple));animation:spin 4s linear infinite;z-index:-1}
 @keyframes spin{to{transform:rotate(360deg)}}
 .artist-avatar{width:110px;height:110px;border-radius:50%;object-fit:cover;background:var(--surface2);border:3px solid var(--bg);display:block}
 .artist-name{font-family:'Bebas Neue',cursive;font-size:2.4em;letter-spacing:3px;margin-bottom:6px}
-.artist-status-wrap{display:flex;align-items:center;justify-content:center;gap:8px}
+.artist-status-wrap{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap}
 .status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 .status-free .status-dot{background:var(--green);box-shadow:0 0 8px var(--green)}
 .status-busy .status-dot{background:var(--red);box-shadow:0 0 8px var(--red)}
-.status-text{font-size:0.72em;color:var(--muted)}
+.status-text{font-size:.72em;color:var(--muted)}
 .stats-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0}
 .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;text-align:center}
 .stat-value{font-family:'Bebas Neue',cursive;font-size:1.5em;letter-spacing:1px}
-.stat-label{font-size:0.58em;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
-.stat-gold{color:var(--gold)} .stat-purple{color:var(--purple)} .stat-neon{color:var(--neon)} .stat-red{color:var(--red)}
+.stat-label{font-size:.58em;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+.stat-gold{color:var(--gold)}.stat-purple{color:var(--purple)}.stat-neon{color:var(--neon)}.stat-red{color:var(--red)}
 .progress-row{margin-bottom:12px}
-.progress-meta{display:flex;justify-content:space-between;font-size:0.65em;font-weight:700;margin-bottom:6px}
+.progress-meta{display:flex;justify-content:space-between;font-size:.65em;font-weight:700;margin-bottom:6px}
 .artist-menu{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}
-.artist-menu-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:20px 10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:border-color 0.2s}
-.artist-menu-btn:active{border-color:var(--purple);background:rgba(188,19,254,0.06)}
+.artist-menu-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:20px 10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:.2s}
+.artist-menu-btn:active{border-color:var(--purple);background:rgba(188,19,254,.06)}
 .menu-btn-icon{font-size:1.6em}
-.menu-btn-label{font-size:0.62em;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--purple);text-align:center}
-/* CHARTS */
+.menu-btn-label{font-size:.62em;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--purple);text-align:center}
+
+/* ── CHARTS ── */
 .chart-selector{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
-.chart-pill{padding:8px 16px;border-radius:30px;font-size:0.7em;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;background:var(--surface);border:1px solid var(--border);cursor:pointer;transition:all 0.2s}
-.chart-pill.selected{background:rgba(188,19,254,0.2);border-color:var(--purple);color:var(--purple)}
-.chart-entry{display:flex;align-items:center;gap:14px;padding:14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:10px}
-.chart-pos{font-family:'Bebas Neue',cursive;font-size:1.4em;width:36px;flex-shrink:0;color:var(--gold)}
+.chart-pill{padding:8px 16px;border-radius:30px;font-size:.7em;font-weight:700;letter-spacing:.5px;text-transform:uppercase;background:var(--surface);border:1px solid var(--border);cursor:pointer;transition:all .2s;white-space:nowrap}
+.chart-pill.selected{background:rgba(188,19,254,.2);border-color:var(--purple);color:var(--purple)}
+.chart-entry{display:flex;align-items:center;gap:14px;padding:14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:10px;transition:.15s}
+.chart-entry:active{border-color:rgba(188,19,254,.4)}
+.chart-pos{font-family:'Bebas Neue',cursive;font-size:1.4em;width:36px;flex-shrink:0}
 .chart-cover{width:50px;height:50px;border-radius:8px;object-fit:cover;background:var(--surface2);flex-shrink:0}
 .chart-info{flex:1;min-width:0}
-.chart-song{font-weight:700;font-size:0.88em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.chart-artist{font-size:0.68em;color:var(--muted);margin-top:2px}
-.chart-points{text-align:right}
+.chart-song{font-weight:700;font-size:.88em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chart-artist{font-size:.68em;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chart-points{text-align:right;flex-shrink:0}
 .chart-pts-val{font-family:'Bebas Neue',cursive;font-size:1.1em;color:var(--neon)}
-.chart-pts-label{font-size:0.6em;color:var(--muted)}
-.change-up{color:var(--green);font-size:0.65em}
-.change-down{color:var(--red);font-size:0.65em}
-.change-same{color:var(--muted);font-size:0.65em}
-/* DUEL */
-.duel-arena{position:relative;display:flex;justify-content:space-between;align-items:center;margin:24px 0}
+.chart-pts-label{font-size:.6em;color:var(--muted)}
+.change-up{color:var(--green);font-size:.65em}.change-down{color:var(--red);font-size:.65em}.change-same{color:var(--muted);font-size:.65em}
+
+/* ── DUEL ── */
+.duel-arena{display:flex;justify-content:space-between;align-items:center;margin:24px 0}
 .duel-fighter{text-align:center;width:42%}
 .duel-fighter-img{width:80px;height:80px;border-radius:50%;object-fit:cover;background:var(--surface2);margin:0 auto 8px;border:2px solid var(--border);display:block}
 .duel-hp{background:var(--surface);border-radius:4px;height:8px;overflow:hidden;margin-top:6px}
-.duel-hp-fill{height:100%;border-radius:4px;transition:width 0.8s ease}
+.duel-hp-fill{height:100%;border-radius:4px;transition:width .8s ease}
 .duel-hp-a .duel-hp-fill{background:linear-gradient(90deg,var(--purple),var(--neon))}
 .duel-hp-b .duel-hp-fill{background:linear-gradient(90deg,var(--gold2),var(--gold))}
 .vs-badge{font-family:'Bebas Neue',cursive;font-size:2em;color:var(--red);letter-spacing:2px;animation:vsGlow 1.5s ease infinite}
@@ -141,123 +187,136 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .duel-stat-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)}
 .duel-val-a{font-family:'Bebas Neue',cursive;font-size:1.2em;color:var(--neon)}
 .duel-val-b{font-family:'Bebas Neue',cursive;font-size:1.2em;color:var(--gold)}
-.duel-stat-name{font-size:0.7em;color:var(--muted);text-align:center;text-transform:uppercase;letter-spacing:0.8px}
-/* LABELS */
-.label-card{display:flex;align-items:center;gap:16px;padding:20px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:12px;cursor:pointer;transition:border-color 0.2s}
+.duel-stat-name{font-size:.65em;color:var(--muted);text-align:center;text-transform:uppercase;letter-spacing:.8px}
+
+/* ── RANKING ── */
+.rank-item{display:flex;align-items:center;gap:14px;padding:14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:10px}
+.rank-pos{font-family:'Bebas Neue',cursive;font-size:1.6em;width:36px;flex-shrink:0;text-align:center}
+.rp-1{color:var(--gold);text-shadow:0 0 12px rgba(245,200,66,.5)}.rp-2{color:#c0c0c0}.rp-3{color:#cd7f32}.rp-o{color:var(--muted)}
+.rank-thumb{width:46px;height:46px;border-radius:50%;object-fit:cover;background:var(--surface2);flex-shrink:0;border:2px solid var(--border)}
+.rank-info{flex:1;min-width:0}
+.rank-name{font-weight:700;font-size:.9em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rank-sub{font-size:.62em;color:var(--muted);margin-top:2px}
+.rank-value{font-family:'Bebas Neue',cursive;font-size:1.1em;text-align:right;flex-shrink:0}
+
+/* ── LABELS ── */
+.label-card{display:flex;align-items:center;gap:16px;padding:20px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:12px;cursor:pointer;transition:.2s}
 .label-card:active{border-color:var(--gold)}
 .label-icon{width:60px;height:60px;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:1.8em}
-.kq-bg{background:linear-gradient(135deg,rgba(245,200,66,0.15),rgba(188,19,254,0.15));border:1px solid rgba(245,200,66,0.3)}
-.crown-bg{background:linear-gradient(135deg,rgba(0,255,212,0.1),rgba(0,100,255,0.1));border:1px solid rgba(0,255,212,0.3)}
-.indie-bg{background:rgba(255,255,255,0.05);border:1px solid var(--border)}
+.kq-bg{background:linear-gradient(135deg,rgba(245,200,66,.15),rgba(188,19,254,.15));border:1px solid rgba(245,200,66,.3)}
+.crown-bg{background:linear-gradient(135deg,rgba(0,255,212,.1),rgba(0,100,255,.1));border:1px solid rgba(0,255,212,.3)}
+.indie-bg{background:rgba(255,255,255,.05);border:1px solid var(--border)}
 .label-name{font-family:'Bebas Neue',cursive;font-size:1.3em;letter-spacing:2px}
-.label-count{font-size:0.68em;color:var(--muted);margin-top:2px}
+.label-count{font-size:.68em;color:var(--muted);margin-top:2px}
 .label-total{margin-left:auto;text-align:right}
 .label-total-val{font-family:'Bebas Neue',cursive;font-size:1em;color:var(--gold)}
-/* MARKET */
+
+/* ── MARKET ── */
 .market-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.market-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px 14px;display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer;transition:border-color 0.2s;text-align:center}
-.market-item:active{border-color:var(--purple);background:rgba(188,19,254,0.05)}
+.market-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px 14px;display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer;transition:.2s;text-align:center}
+.market-item:active{border-color:var(--purple);background:rgba(188,19,254,.05)}
 .market-item-icon{font-size:2em}
-.market-item-name{font-size:0.7em;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--purple)}
-.market-item-desc{font-size:0.62em;color:var(--muted)}
-/* MODALS */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(16px);z-index:500;display:none;align-items:flex-end;justify-content:center}
+.market-item-name{font-size:.7em;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--purple)}
+.market-item-desc{font-size:.62em;color:var(--muted)}
+
+/* ── MODALS ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.82);backdrop-filter:blur(16px);z-index:500;display:none;align-items:flex-end;justify-content:center}
 .modal-overlay.open{display:flex}
-.modal-sheet{width:100%;max-width:440px;background:#120020;border-top:1px solid rgba(188,19,254,0.4);border-radius:28px 28px 0 0;padding:12px 20px 40px;max-height:90vh;overflow-y:auto;animation:slideUp 0.35s cubic-bezier(0.16,1,0.3,1)}
+.modal-sheet{width:100%;max-width:440px;background:#120020;border-top:1px solid rgba(188,19,254,.4);border-radius:28px 28px 0 0;padding:12px 20px 44px;max-height:90vh;overflow-y:auto;animation:slideUp .35s cubic-bezier(.16,1,.3,1)}
 @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
 .modal-handle{width:40px;height:4px;background:var(--border);border-radius:4px;margin:0 auto 20px}
 .modal-title{font-family:'Bebas Neue',cursive;font-size:1.8em;letter-spacing:2px;margin-bottom:4px}
-.modal-subtitle{font-size:0.68em;color:var(--muted);margin-bottom:22px}
-/* ARTIST LIST */
-.artist-list-item{display:flex;align-items:center;gap:14px;padding:14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:10px;cursor:pointer;transition:border-color 0.2s}
+.modal-subtitle{font-size:.68em;color:var(--muted);margin-bottom:22px}
+
+/* ── ARTIST LIST ── */
+.artist-list-item{display:flex;align-items:center;gap:14px;padding:14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:10px;cursor:pointer;transition:.2s}
 .artist-list-item:active{border-color:var(--purple)}
 .artist-list-thumb{width:52px;height:52px;border-radius:50%;object-fit:cover;background:var(--surface2);border:2px solid var(--border);flex-shrink:0}
-.artist-list-name{font-weight:700;font-size:0.9em}
-.artist-list-meta{font-size:0.68em;color:var(--gold);font-weight:700;margin-top:2px}
-.artist-list-label{font-size:0.62em;color:var(--muted);margin-top:2px}
-/* ALBUM CARD */
+.artist-list-name{font-weight:700;font-size:.9em}
+.artist-list-meta{font-size:.68em;color:var(--gold);font-weight:700;margin-top:2px}
+.artist-list-label{font-size:.62em;color:var(--muted);margin-top:2px}
+
+/* ── ALBUM / SHOW / TX / TROPHY ── */
 .album-card{display:flex;gap:14px;padding:14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:10px}
 .album-cover{width:60px;height:60px;border-radius:10px;object-fit:cover;background:var(--surface2);flex-shrink:0}
-.album-info{flex:1}
-.album-pos{font-family:'Bebas Neue',cursive;font-size:1.3em;color:var(--gold)}
-.album-title{font-weight:700;font-size:0.85em;margin-bottom:2px}
-.album-artist{font-size:0.7em;color:var(--muted)}
-.album-sales{font-size:0.68em;color:var(--neon);font-weight:700;margin-top:4px}
-/* RADAR */
+.album-info{flex:1}.album-pos{font-family:'Bebas Neue',cursive;font-size:1.3em;color:var(--gold)}
+.album-title{font-weight:700;font-size:.85em;margin-bottom:2px}.album-artist{font-size:.7em;color:var(--muted)}
+.album-sales{font-size:.68em;color:var(--neon);font-weight:700;margin-top:4px}
 .radar-item{display:flex;gap:14px;padding:16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:10px}
 .radar-avatar{width:44px;height:44px;border-radius:50%;object-fit:cover;background:var(--surface2);flex-shrink:0}
-.radar-content{flex:1}
-.radar-name{font-weight:700;font-size:0.85em}
-.radar-action{font-size:0.75em;color:var(--muted);margin-top:3px;line-height:1.4}
-.radar-time{font-size:0.6em;color:var(--muted);opacity:0.6;margin-top:6px}
-/* RANKING */
-.rank-item{display:flex;align-items:center;gap:14px;padding:14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:10px}
-.rank-pos{font-family:'Bebas Neue',cursive;font-size:1.6em;width:36px;flex-shrink:0;text-align:center}
-.rank-pos-1{color:var(--gold);text-shadow:0 0 12px rgba(245,200,66,0.5)}
-.rank-pos-2{color:#c0c0c0}
-.rank-pos-3{color:#cd7f32}
-.rank-pos-other{color:var(--muted)}
-.rank-thumb{width:46px;height:46px;border-radius:50%;object-fit:cover;background:var(--surface2);flex-shrink:0;border:2px solid var(--border)}
-.rank-info{flex:1;min-width:0}
-.rank-name{font-weight:700;font-size:0.9em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.rank-label{font-size:0.62em;color:var(--muted);margin-top:2px}
-.rank-value{font-family:'Bebas Neue',cursive;font-size:1.1em;text-align:right}
-/* AGENDA TOUR */
+.radar-content{flex:1}.radar-name{font-weight:700;font-size:.85em}
+.radar-action{font-size:.75em;color:var(--muted);margin-top:3px;line-height:1.4}
+.radar-time{font-size:.6em;color:var(--muted);opacity:.6;margin-top:6px}
 .show-item{display:flex;align-items:center;gap:12px;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:8px}
-.show-date{font-family:'Bebas Neue',cursive;font-size:0.9em;color:var(--purple);width:48px;text-align:center;flex-shrink:0;line-height:1.2}
+.show-date{font-family:'Bebas Neue',cursive;font-size:.9em;color:var(--purple);width:48px;text-align:center;flex-shrink:0;line-height:1.2}
 .show-info{flex:1;min-width:0}
-.show-venue{font-weight:700;font-size:0.82em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.show-capacity{font-size:0.65em;color:var(--muted);margin-top:2px}
-.show-pct{font-size:0.72em;font-weight:700;text-align:right;flex-shrink:0}
-/* FINANCES */
+.show-venue{font-weight:700;font-size:.82em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.show-capacity{font-size:.65em;color:var(--muted);margin-top:2px}
 .tx-item{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)}
 .tx-icon{font-size:1.2em;width:32px;text-align:center;flex-shrink:0}
-.tx-info{flex:1;padding:0 10px}
-.tx-label{font-size:0.82em;font-weight:600}
-.tx-date{font-size:0.62em;color:var(--muted);margin-top:2px}
-.tx-value{font-family:'Bebas Neue',cursive;font-size:1em;text-align:right}
-.tx-value.positive{color:var(--green)}
-.tx-value.negative{color:var(--red)}
-/* HALL DA FAMA */
+.tx-info{flex:1;padding:0 10px}.tx-label{font-size:.82em;font-weight:600}.tx-date{font-size:.62em;color:var(--muted);margin-top:2px}
+.tx-value{font-family:'Bebas Neue',cursive;font-size:1em;text-align:right;flex-shrink:0}
+.tx-value.positive{color:var(--green)}.tx-value.negative{color:var(--red)}
 .trophy-item{display:flex;align-items:center;gap:14px;padding:14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:10px}
-.trophy-icon{font-size:2em;flex-shrink:0}
-.trophy-info{flex:1}
-.trophy-name{font-weight:700;font-size:0.88em}
-.trophy-cat{font-size:0.65em;color:var(--gold);margin-top:2px;text-transform:uppercase;letter-spacing:0.8px}
-.trophy-year{font-size:0.62em;color:var(--muted);margin-top:2px}
-/* EMPTY & SKELETON */
+.trophy-icon{font-size:2em;flex-shrink:0}.trophy-info{flex:1}
+.trophy-name{font-weight:700;font-size:.88em}.trophy-cat{font-size:.65em;color:var(--gold);margin-top:2px;text-transform:uppercase;letter-spacing:.8px}
+.trophy-year{font-size:.62em;color:var(--muted);margin-top:2px}
+
+/* ── NEWS CARD ── */
+.news-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;margin-bottom:12px;position:relative;overflow:hidden}
+.news-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--purple)}
+.news-card.gold::before{background:var(--gold)}
+.news-card.red::before{background:var(--red)}
+.news-card.green::before{background:var(--green)}
+.news-time{font-size:.6em;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.news-headline{font-weight:700;font-size:.88em;line-height:1.4}
+.news-body{font-size:.75em;color:var(--muted);margin-top:6px;line-height:1.5}
+
+/* ── TABS ── */
+.tab-bar{display:flex;gap:8px;margin-bottom:20px;border-bottom:1px solid var(--border);padding-bottom:12px;flex-wrap:wrap}
+.tab-btn{padding:8px 16px;border-radius:30px;font-size:.7em;font-weight:700;text-transform:uppercase;background:transparent;border:1px solid var(--border);color:var(--muted);cursor:pointer;transition:all .2s}
+.tab-btn.active{background:rgba(188,19,254,.2);border-color:var(--purple);color:var(--purple)}
+
+/* ── EMPTY / SKELETON / TOAST ── */
 .empty-state{text-align:center;padding:50px 20px}
-.empty-icon{font-size:2.5em;margin-bottom:14px;opacity:0.4}
-.empty-text{font-size:0.8em;color:var(--muted)}
+.empty-icon{font-size:2.5em;margin-bottom:14px;opacity:.4}
+.empty-text{font-size:.8em;color:var(--muted);line-height:1.6}
 .skeleton{background:linear-gradient(90deg,var(--surface) 25%,var(--surface2) 50%,var(--surface) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:var(--radius-sm)}
 @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
-/* TOAST */
-#toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface2);border:1px solid var(--border);border-radius:30px;padding:12px 22px;font-size:0.78em;font-weight:600;z-index:999;opacity:0;transition:all 0.3s;pointer-events:none;white-space:nowrap;max-width:90vw;text-align:center}
+#toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:rgba(18,0,32,.95);border:1px solid var(--border);border-radius:30px;padding:12px 22px;font-size:.78em;font-weight:600;z-index:900;opacity:0;transition:all .3s;pointer-events:none;max-width:90vw;text-align:center;backdrop-filter:blur(10px)}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-#toast.success{border-color:rgba(0,232,122,0.5);color:var(--green)}
-#toast.error{border-color:rgba(255,59,92,0.5);color:var(--red)}
-/* TABS */
-.tab-bar{display:flex;gap:8px;margin-bottom:20px;border-bottom:1px solid var(--border);padding-bottom:12px}
-.tab-btn{padding:8px 16px;border-radius:30px;font-size:0.7em;font-weight:700;text-transform:uppercase;background:transparent;border:1px solid var(--border);color:var(--muted);cursor:pointer;transition:all 0.2s}
-.tab-btn.active{background:rgba(188,19,254,0.2);border-color:var(--purple);color:var(--purple)}
-/* MISC */
+#toast.success{border-color:rgba(0,232,122,.5);color:var(--green)}
+#toast.error{border-color:rgba(255,59,92,.5);color:var(--red)}
 ::-webkit-scrollbar{width:0}
-.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-.section-title{font-family:'Bebas Neue',cursive;font-size:1.2em;letter-spacing:2px}
-.tutorial-step{display:flex;gap:14px;margin-bottom:22px}
-.tut-num{width:36px;height:36px;border-radius:50%;background:rgba(188,19,254,0.2);border:1px solid rgba(188,19,254,0.4);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',cursive;font-size:1.1em;flex-shrink:0;color:var(--purple)}
-.tut-title{font-weight:700;font-size:0.9em;margin-bottom:4px}
-.tut-text{font-size:0.78em;color:var(--muted);line-height:1.6}
 .sticker{display:inline-block;animation:float 3s ease-in-out infinite}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.tutorial-step{display:flex;gap:14px;margin-bottom:22px}
+.tut-num{width:36px;height:36px;border-radius:50%;background:rgba(188,19,254,.2);border:1px solid rgba(188,19,254,.4);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',cursive;font-size:1.1em;flex-shrink:0;color:var(--purple)}
+.tut-title{font-weight:700;font-size:.9em;margin-bottom:4px}.tut-text{font-size:.78em;color:var(--muted);line-height:1.6}
 </style>
 </head>
 <body>
-<div class="ambient amb1"></div>
-<div class="ambient amb2"></div>
-<div class="ambient amb3"></div>
+<div class="ambient amb1"></div><div class="ambient amb2"></div><div class="ambient amb3"></div>
 <div id="toast"></div>
 
+<!-- ACHIEVEMENT OVERLAY -->
+<div id="achievement-overlay">
+  <div class="achievement-card" id="achievement-card">
+    <span class="ach-icon" id="ach-icon">🏆</span>
+    <div class="ach-label">Conquista Desbloqueada</div>
+    <div class="ach-title" id="ach-title">—</div>
+    <div class="ach-desc" id="ach-desc">—</div>
+  </div>
+</div>
+
+<!-- BREAKING NEWS TICKER -->
+<div id="news-ticker">
+  <span class="news-label">⚡ BREAKING</span>
+  <span class="news-text" id="news-ticker-text">—</span>
+  <button class="news-close" onclick="closeTicker()">✕</button>
+</div>
+
+<!-- LOADING -->
 <div id="loading-screen">
   <div class="loader-logo">EMPIRE</div>
   <div class="loader-bar"><div class="loader-fill"></div></div>
@@ -266,7 +325,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 
 <div id="app">
 
-<!-- ══════ HOME ══════ -->
+<!-- ══ HOME ══ -->
 <div id="screen-home" class="screen active">
   <div class="home-logo-wrap">
     <div class="home-logo">EMPIRE</div>
@@ -274,72 +333,73 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
   </div>
   <div class="user-pill">
     <div class="user-pill-inner">
-      <div class="user-avatar" id="home-user-avatar">?</div>
-      <span class="user-name" id="home-user-name">Carregando...</span>
+      <div class="user-avatar-sm" id="home-avatar">?</div>
+      <span style="font-size:.8em;font-weight:500" id="home-user-name">Carregando...</span>
     </div>
   </div>
   <div class="home-nav">
-    <div class="home-nav-card" onclick="navigate('screen-artists')" style="--card-accent:rgba(188,19,254,0.05)">
-      <div class="home-nav-icon icon-artists">🎤</div>
-      <div class="nav-text-wrap"><span class="nav-title">Meus Artistas</span><span class="nav-desc">Portfólio, finanças e agenda</span></div>
+    <div class="home-nav-card" onclick="navigate('screen-artists')" style="--ca:rgba(188,19,254,.05)">
+      <div class="home-nav-icon i-artists">🎤</div>
+      <div><span class="nav-title">Meus Artistas</span><span class="nav-desc">Portfólio, finanças e agenda</span></div>
       <span class="nav-arrow">›</span>
     </div>
-    <div class="home-nav-card" onclick="navigate('screen-radar')" style="--card-accent:rgba(0,255,212,0.04)">
-      <div class="home-nav-icon icon-radar">🌍</div>
-      <div class="nav-text-wrap"><span class="nav-title">Radar Empire</span><span class="nav-desc">O que os artistas estão fazendo</span></div>
+    <div class="home-nav-card" onclick="navigate('screen-radar')" style="--ca:rgba(0,255,212,.04)">
+      <div class="home-nav-icon i-radar">🌍</div>
+      <div><span class="nav-title">Radar Empire</span><span class="nav-desc">O que os artistas estão fazendo</span></div>
       <span class="nav-arrow">›</span>
     </div>
-    <div class="home-nav-card" onclick="navigate('screen-charts')" style="--card-accent:rgba(0,232,122,0.04)">
-      <div class="home-nav-icon icon-charts">📊</div>
-      <div class="nav-text-wrap"><span class="nav-title">Charts</span><span class="nav-desc">Billboard, Airplay, Spotify e mais</span></div>
+    <div class="home-nav-card" onclick="navigate('screen-charts')" style="--ca:rgba(0,232,122,.04)">
+      <div class="home-nav-icon i-charts">📊</div>
+      <div><span class="nav-title">Charts</span><span class="nav-desc">Billboard, Airplay, Spotify e mais</span></div>
       <span class="nav-arrow">›</span>
     </div>
-    <div class="home-nav-card" onclick="navigate('screen-duel')" style="--card-accent:rgba(255,59,92,0.04)">
-      <div class="home-nav-icon icon-duel">⚔️</div>
-      <div class="nav-text-wrap"><span class="nav-title">Duelo</span><span class="nav-desc">Batalha de artistas nos charts</span></div>
+    <div class="home-nav-card" onclick="navigate('screen-duel')" style="--ca:rgba(255,59,92,.04)">
+      <div class="home-nav-icon i-duel">⚔️</div>
+      <div><span class="nav-title">Duelo</span><span class="nav-desc">Batalha de artistas nos charts</span></div>
       <span class="nav-arrow">›</span>
     </div>
-    <div class="home-nav-card" onclick="navigate('screen-ranking')" style="--card-accent:rgba(245,200,66,0.04)">
-      <div class="home-nav-icon icon-ranking">🏆</div>
-      <div class="nav-text-wrap"><span class="nav-title">Ranking Geral</span><span class="nav-desc">Fortuna, prestígio e charts</span></div>
+    <div class="home-nav-card" onclick="navigate('screen-ranking')" style="--ca:rgba(245,200,66,.04)">
+      <div class="home-nav-icon i-ranking">🏆</div>
+      <div><span class="nav-title">Ranking Geral</span><span class="nav-desc">Fortuna, prestígio e fadiga</span></div>
       <span class="nav-arrow">›</span>
     </div>
-    <div class="home-nav-card" onclick="navigate('screen-labels')" style="--card-accent:rgba(245,200,66,0.04)">
-      <div class="home-nav-icon icon-labels">🏢</div>
-      <div class="nav-text-wrap"><span class="nav-title">Gravadoras</span><span class="nav-desc">King &amp; Queen · Crown · Independent</span></div>
+    <div class="home-nav-card" onclick="navigate('screen-news')" style="--ca:rgba(255,59,92,.04)">
+      <div class="home-nav-icon i-news">📰</div>
+      <div><span class="nav-title">Empire News</span><span class="nav-desc">Manchetes do mundo musical</span></div>
       <span class="nav-arrow">›</span>
     </div>
-    <div class="home-nav-card" onclick="navigate('screen-hall')" style="--card-accent:rgba(245,200,66,0.06)">
-      <div class="home-nav-icon" style="background:rgba(245,200,66,0.15);border:1px solid rgba(245,200,66,0.4)">🏅</div>
-      <div class="nav-text-wrap"><span class="nav-title">Hall da Fama</span><span class="nav-desc">Prêmios e conquistas</span></div>
+    <div class="home-nav-card" onclick="navigate('screen-labels')" style="--ca:rgba(245,200,66,.04)">
+      <div class="home-nav-icon i-labels">🏢</div>
+      <div><span class="nav-title">Gravadoras</span><span class="nav-desc">King &amp; Queen · Crown · Independent</span></div>
       <span class="nav-arrow">›</span>
     </div>
-    <div class="home-nav-card" onclick="navigate('screen-tutorial')" style="--card-accent:rgba(255,255,255,0.02)">
-      <div class="home-nav-icon icon-tutorial">📖</div>
-      <div class="nav-text-wrap"><span class="nav-title">Tutorial</span><span class="nav-desc">Como funciona o Empire</span></div>
+    <div class="home-nav-card" onclick="navigate('screen-hall')" style="--ca:rgba(245,200,66,.06)">
+      <div class="home-nav-icon i-hall">🏅</div>
+      <div><span class="nav-title">Hall da Fama</span><span class="nav-desc">Prêmios e conquistas</span></div>
+      <span class="nav-arrow">›</span>
+    </div>
+    <div class="home-nav-card" onclick="navigate('screen-tutorial')" style="--ca:rgba(255,255,255,.02)">
+      <div class="home-nav-icon i-generic">📖</div>
+      <div><span class="nav-title">Tutorial</span><span class="nav-desc">Como funciona o Empire</span></div>
       <span class="nav-arrow">›</span>
     </div>
   </div>
 </div>
 
-<!-- ══════ MEUS ARTISTAS ══════ -->
+<!-- ══ MEUS ARTISTAS ══ -->
 <div id="screen-artists" class="screen">
   <div class="back-row">
     <button class="back-btn" onclick="navigate('screen-home')">←</button>
     <div><div class="page-title">Meus Artistas</div><div class="page-subtitle">Seu portfólio</div></div>
   </div>
-  <div id="artists-container">
-    <div class="empty-state"><div class="empty-icon">🎤</div><div class="empty-text">Carregando artistas...</div></div>
-  </div>
+  <div id="artists-container"><div class="empty-state"><div class="empty-icon">🎤</div><div class="empty-text">Carregando...</div></div></div>
 </div>
 
-<!-- ══════ DASHBOARD DO ARTISTA ══════ -->
+<!-- ══ DASHBOARD DO ARTISTA ══ -->
 <div id="screen-artist-dash" class="screen">
-  <div class="back-row">
-    <button class="back-btn" onclick="navigate('screen-artists')">←</button>
-  </div>
+  <div class="back-row"><button class="back-btn" onclick="navigate('screen-artists')">←</button></div>
   <div class="artist-hero">
-    <div class="artist-avatar-ring">
+    <div class="artist-avatar-ring" id="dash-ring">
       <img src="" alt="" id="dash-avatar" class="artist-avatar">
     </div>
     <div class="artist-name" id="dash-name">—</div>
@@ -347,6 +407,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
       <div class="status-dot"></div>
       <span class="status-text" id="dash-status-text">—</span>
     </div>
+    <div style="margin-top:10px" id="dash-tier-badge"></div>
   </div>
   <div class="card" style="margin-bottom:16px;text-align:center">
     <span class="badge-label">EMPIRE COINS</span>
@@ -378,7 +439,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
   </div>
 </div>
 
-<!-- ══════ AGENDA DA TOUR ══════ -->
+<!-- ══ AGENDA ══ -->
 <div id="screen-agenda" class="screen">
   <div class="back-row">
     <button class="back-btn" onclick="navigate('screen-artist-dash')">←</button>
@@ -386,17 +447,15 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
   </div>
   <div id="agenda-summary" class="card" style="margin-bottom:20px;display:none">
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;text-align:center">
-      <div><span class="badge-label">Tour</span><div style="font-weight:700;font-size:0.85em" id="ag-nome">—</div></div>
+      <div><span class="badge-label">Tour</span><div style="font-weight:700;font-size:.82em;margin-top:2px" id="ag-nome">—</div></div>
       <div><span class="badge-label">Shows</span><div class="badge-value stat-purple" id="ag-shows">—</div></div>
       <div><span class="badge-label">Arrecadado</span><div class="badge-value stat-gold" id="ag-total">—</div></div>
     </div>
   </div>
-  <div id="agenda-container">
-    <div class="empty-state"><div class="empty-icon">🗓️</div><div class="empty-text">Carregando agenda...</div></div>
-  </div>
+  <div id="agenda-container"><div class="empty-state"><div class="empty-icon">🗓️</div><div class="empty-text">Carregando agenda...</div></div></div>
 </div>
 
-<!-- ══════ FINANÇAS ══════ -->
+<!-- ══ FINANÇAS ══ -->
 <div id="screen-finances" class="screen">
   <div class="back-row">
     <button class="back-btn" onclick="navigate('screen-artist-dash')">←</button>
@@ -415,12 +474,10 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
     <button class="tab-btn" onclick="switchFinTab('cinema',this)">🎬 Cinema</button>
     <button class="tab-btn" onclick="switchFinTab('imoveis',this)">🏠 Imóveis</button>
   </div>
-  <div id="fin-content">
-    <div class="empty-state"><div class="empty-icon">💹</div><div class="empty-text">Selecione uma categoria</div></div>
-  </div>
+  <div id="fin-content"><div class="empty-state"><div class="empty-icon">💹</div><div class="empty-text">Carregando...</div></div></div>
 </div>
 
-<!-- ══════ MINHAS BETS ══════ -->
+<!-- ══ MINHAS BETS ══ -->
 <div id="screen-mybets" class="screen">
   <div class="back-row">
     <button class="back-btn" onclick="navigate('screen-artist-dash')">←</button>
@@ -429,16 +486,14 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
   <div class="card" style="margin-bottom:20px">
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;text-align:center">
       <div><span class="badge-label">Apostas</span><div class="badge-value stat-purple" id="bets-total">0</div></div>
-      <div><span class="badge-label">Retorno</span><div class="badge-value stat-gold" id="bets-retorno">$EC 0</div></div>
+      <div><span class="badge-label">Retorno</span><div class="badge-value stat-gold" id="bets-retorno">—</div></div>
       <div><span class="badge-label">Taxa Acerto</span><div class="badge-value stat-green" id="bets-taxa">0%</div></div>
     </div>
   </div>
-  <div id="mybets-container">
-    <div class="empty-state"><div class="empty-icon">🎰</div><div class="empty-text">Carregando apostas...</div></div>
-  </div>
+  <div id="mybets-container"><div class="empty-state"><div class="empty-icon">🎰</div><div class="empty-text">Carregando apostas...</div></div></div>
 </div>
 
-<!-- ══════ EMPIRE HUB ══════ -->
+<!-- ══ EMPIRE HUB ══ -->
 <div id="screen-hub" class="screen">
   <div class="back-row">
     <button class="back-btn" onclick="navigate('screen-artist-dash')">←</button>
@@ -449,20 +504,12 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
     <div style="font-size:2em">💰</div>
   </div>
   <div class="market-grid">
-    <div class="market-item" onclick="openModal('modal-tour')">
-      <span class="market-item-icon">🏟️</span>
-      <span class="market-item-name">Contratar Tour</span>
-      <span class="market-item-desc">Arenas, Estádios ou Clubs</span>
-    </div>
-    <div class="market-item" onclick="openModal('modal-cinema')">
-      <span class="market-item-icon">🎬</span>
-      <span class="market-item-name">Cinema &amp; TV</span>
-      <span class="market-item-desc">Filmes, Séries, Realities</span>
-    </div>
+    <div class="market-item" onclick="openModal('modal-tour')"><span class="market-item-icon">🏟️</span><span class="market-item-name">Contratar Tour</span><span class="market-item-desc">Arenas, Estádios ou Clubs</span></div>
+    <div class="market-item" onclick="openModal('modal-cinema')"><span class="market-item-icon">🎬</span><span class="market-item-name">Cinema &amp; TV</span><span class="market-item-desc">Filmes, Séries, Realities</span></div>
   </div>
 </div>
 
-<!-- ══════ EMPIRE MARKET ══════ -->
+<!-- ══ EMPIRE MARKET ══ -->
 <div id="screen-market" class="screen">
   <div class="back-row">
     <button class="back-btn" onclick="navigate('screen-artist-dash')">←</button>
@@ -480,22 +527,20 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
   </div>
 </div>
 
-<!-- ══════ PROJETOS ══════ -->
+<!-- ══ PROJETOS ══ -->
 <div id="screen-projects" class="screen">
   <div class="back-row">
     <button class="back-btn" onclick="navigate('screen-artist-dash')">←</button>
     <div><div class="page-title">Projetos</div><div class="page-subtitle" id="proj-artist-name">—</div></div>
   </div>
-  <div id="projects-container">
-    <div class="empty-state"><div class="empty-icon">🎬</div><div class="empty-text">Carregando projetos...</div></div>
-  </div>
+  <div id="projects-container"><div class="empty-state"><div class="empty-icon">🎬</div><div class="empty-text">Carregando...</div></div></div>
 </div>
 
-<!-- ══════ CHARTS ══════ -->
+<!-- ══ CHARTS ══ -->
 <div id="screen-charts" class="screen">
   <div class="back-row">
     <button class="back-btn" onclick="navigate('screen-home')">←</button>
-    <div><div class="page-title">Charts</div><div class="page-subtitle">Semana atual</div></div>
+    <div><div class="page-title">Charts</div><div class="page-subtitle" id="chart-week-label">Semana atual</div></div>
   </div>
   <div class="chart-selector">
     <div class="chart-pill selected" onclick="selectChart('AIRPLAY',this)">Airplay</div>
@@ -506,12 +551,10 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
     <div class="chart-pill" onclick="selectChart('BILLBOARD HOT 100',this)">Hot 100</div>
     <div class="chart-pill" onclick="selectChart('BILLBOARD 200',this)">BB 200</div>
   </div>
-  <div id="chart-container">
-    <div class="empty-state"><div class="empty-icon">📊</div><div class="empty-text">Carregando chart...</div></div>
-  </div>
+  <div id="chart-container"><div class="empty-state"><div class="empty-icon">📊</div><div class="empty-text">Carregando chart...</div></div></div>
 </div>
 
-<!-- ══════ DUELO ══════ -->
+<!-- ══ DUELO ══ -->
 <div id="screen-duel" class="screen">
   <div class="back-row">
     <button class="back-btn" onclick="navigate('screen-home')">←</button>
@@ -520,17 +563,13 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
   <div id="duel-setup">
     <div class="card" style="margin-bottom:16px">
       <div style="font-family:'Bebas Neue',cursive;letter-spacing:2px;margin-bottom:16px;font-size:1.1em;color:var(--purple)">⚔️ CONFIGURAR DUELO</div>
-      <div class="input-group"><label>Artista A</label><select id="duel-a"><option value="">Selecionar artista...</option></select></div>
-      <div class="input-group"><label>Artista B</label><select id="duel-b"><option value="">Selecionar artista...</option></select></div>
-      <div class="input-group">
-        <label>Chart da Batalha</label>
+      <div class="input-group"><label>Artista A</label><select id="duel-a"><option value="">Selecionar...</option></select></div>
+      <div class="input-group"><label>Artista B</label><select id="duel-b"><option value="">Selecionar...</option></select></div>
+      <div class="input-group"><label>Chart da Batalha</label>
         <select id="duel-chart">
-          <option value="AIRPLAY">Airplay</option>
-          <option value="SPOTIFY">Spotify</option>
-          <option value="APPLE MUSIC">Apple Music</option>
-          <option value="YOUTUBE">YouTube</option>
-          <option value="DIGITAL SALES">Digital Sales</option>
-          <option value="BILLBOARD HOT 100">Billboard Hot 100</option>
+          <option value="AIRPLAY">Airplay</option><option value="SPOTIFY">Spotify</option>
+          <option value="APPLE MUSIC">Apple Music</option><option value="YOUTUBE">YouTube</option>
+          <option value="DIGITAL SALES">Digital Sales</option><option value="BILLBOARD HOT 100">Billboard Hot 100</option>
         </select>
       </div>
       <button class="btn-main" onclick="startDuel()">⚔️ INICIAR BATALHA</button>
@@ -540,13 +579,13 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
     <div class="duel-arena">
       <div class="duel-fighter">
         <img src="" alt="" class="duel-fighter-img" id="duel-img-a">
-        <div style="font-weight:700;font-size:0.85em" id="duel-name-a">—</div>
+        <div style="font-weight:700;font-size:.85em" id="duel-name-a">—</div>
         <div class="duel-hp duel-hp-a"><div class="duel-hp-fill" id="duel-hp-a" style="width:100%"></div></div>
       </div>
       <div class="vs-badge">VS</div>
       <div class="duel-fighter">
         <img src="" alt="" class="duel-fighter-img" id="duel-img-b">
-        <div style="font-weight:700;font-size:0.85em" id="duel-name-b">—</div>
+        <div style="font-weight:700;font-size:.85em" id="duel-name-b">—</div>
         <div class="duel-hp duel-hp-b"><div class="duel-hp-fill" id="duel-hp-b" style="width:100%"></div></div>
       </div>
     </div>
@@ -558,7 +597,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
   </div>
 </div>
 
-<!-- ══════ RANKING GERAL ══════ -->
+<!-- ══ RANKING ══ -->
 <div id="screen-ranking" class="screen">
   <div class="back-row">
     <button class="back-btn" onclick="navigate('screen-home')">←</button>
@@ -569,12 +608,19 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
     <button class="tab-btn" onclick="switchRankTab('prestigio',this)">⭐ Prestígio</button>
     <button class="tab-btn" onclick="switchRankTab('fadiga',this)">😴 Fadiga</button>
   </div>
-  <div id="ranking-container">
-    <div class="empty-state"><div class="empty-icon">🏆</div><div class="empty-text">Carregando ranking...</div></div>
-  </div>
+  <div id="ranking-container"><div class="empty-state"><div class="empty-icon">🏆</div><div class="empty-text">Carregando...</div></div></div>
 </div>
 
-<!-- ══════ GRAVADORAS ══════ -->
+<!-- ══ EMPIRE NEWS ══ -->
+<div id="screen-news" class="screen">
+  <div class="back-row">
+    <button class="back-btn" onclick="navigate('screen-home')">←</button>
+    <div><div class="page-title">Empire News</div><div class="page-subtitle">Manchetes do mundo musical</div></div>
+  </div>
+  <div id="news-container"><div class="empty-state"><div class="empty-icon">📰</div><div class="empty-text">Carregando notícias...</div></div></div>
+</div>
+
+<!-- ══ GRAVADORAS ══ -->
 <div id="screen-labels" class="screen">
   <div class="back-row">
     <button class="back-btn" onclick="navigate('screen-home')">←</button>
@@ -582,44 +628,40 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
   </div>
   <div class="label-card" onclick="loadLabelArtists('King & Queen')">
     <div class="label-icon kq-bg">👑</div>
-    <div><div class="label-name">KING &amp; QUEEN</div><div class="label-count" id="kq-count">Carregando...</div></div>
-    <div class="label-total"><div class="label-total-val" id="kq-total">—</div><div style="font-size:0.6em;color:var(--muted)">Total</div></div>
+    <div><div class="label-name">KING &amp; QUEEN</div><div class="label-count" id="kq-count">—</div></div>
+    <div class="label-total"><div class="label-total-val" id="kq-total">—</div><div style="font-size:.6em;color:var(--muted)">Total</div></div>
   </div>
   <div class="label-card" onclick="loadLabelArtists('Crown')">
     <div class="label-icon crown-bg">⭐</div>
-    <div><div class="label-name">CROWN</div><div class="label-count" id="crown-count">Carregando...</div></div>
-    <div class="label-total"><div class="label-total-val" id="crown-total">—</div><div style="font-size:0.6em;color:var(--muted)">Total</div></div>
+    <div><div class="label-name">CROWN</div><div class="label-count" id="crown-count">—</div></div>
+    <div class="label-total"><div class="label-total-val" id="crown-total">—</div><div style="font-size:.6em;color:var(--muted)">Total</div></div>
   </div>
   <div class="label-card" onclick="loadLabelArtists('Independent')">
     <div class="label-icon indie-bg">🎵</div>
-    <div><div class="label-name">INDEPENDENT</div><div class="label-count" id="indie-count">Carregando...</div></div>
-    <div class="label-total"><div class="label-total-val" id="indie-total">—</div><div style="font-size:0.6em;color:var(--muted)">Total</div></div>
+    <div><div class="label-name">INDEPENDENT</div><div class="label-count" id="indie-count">—</div></div>
+    <div class="label-total"><div class="label-total-val" id="indie-total">—</div><div style="font-size:.6em;color:var(--muted)">Total</div></div>
   </div>
 </div>
 
-<!-- ══════ ARTISTAS DA GRAVADORA ══════ -->
+<!-- ══ ARTISTAS DA GRAVADORA ══ -->
 <div id="screen-label-artists" class="screen">
   <div class="back-row">
     <button class="back-btn" onclick="navigate('screen-labels')">←</button>
     <div><div class="page-title" id="label-artists-title">—</div><div class="page-subtitle">Artistas do selo</div></div>
   </div>
-  <div id="label-artists-container">
-    <div class="empty-state"><div class="empty-icon">🎤</div><div class="empty-text">Carregando...</div></div>
-  </div>
+  <div id="label-artists-container"><div class="empty-state"><div class="empty-icon">🎤</div><div class="empty-text">Carregando...</div></div></div>
 </div>
 
-<!-- ══════ RADAR ══════ -->
+<!-- ══ RADAR ══ -->
 <div id="screen-radar" class="screen">
   <div class="back-row">
     <button class="back-btn" onclick="navigate('screen-home')">←</button>
     <div><div class="page-title">Radar Empire</div><div class="page-subtitle">Atividade recente</div></div>
   </div>
-  <div id="radar-container">
-    <div class="empty-state"><div class="empty-icon">🌍</div><div class="empty-text">Carregando feed...</div></div>
-  </div>
+  <div id="radar-container"><div class="empty-state"><div class="empty-icon">🌍</div><div class="empty-text">Carregando feed...</div></div></div>
 </div>
 
-<!-- ══════ HALL DA FAMA ══════ -->
+<!-- ══ HALL DA FAMA ══ -->
 <div id="screen-hall" class="screen">
   <div class="back-row">
     <button class="back-btn" onclick="navigate('screen-home')">←</button>
@@ -631,12 +673,10 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
     <button class="tab-btn" onclick="switchHallTab('cinema',this)">Cinema</button>
     <button class="tab-btn" onclick="switchHallTab('especial',this)">Especial</button>
   </div>
-  <div id="hall-container">
-    <div class="empty-state"><div class="empty-icon">🏅</div><div class="empty-text">Carregando premiações...</div></div>
-  </div>
+  <div id="hall-container"><div class="empty-state"><div class="empty-icon">🏅</div><div class="empty-text">Carregando premiações...</div></div></div>
 </div>
 
-<!-- ══════ TUTORIAL ══════ -->
+<!-- ══ TUTORIAL ══ -->
 <div id="screen-tutorial" class="screen">
   <div class="back-row">
     <button class="back-btn" onclick="navigate('screen-home')">←</button>
@@ -645,21 +685,19 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
   <div class="card" style="margin-bottom:20px;text-align:center;padding:30px 20px">
     <div style="font-size:2.5em;margin-bottom:12px" class="sticker">🎤</div>
     <div style="font-family:'Bebas Neue',cursive;font-size:1.6em;letter-spacing:2px;margin-bottom:8px">BEM-VINDO AO EMPIRE</div>
-    <div style="font-size:0.78em;color:var(--muted);line-height:1.7">Você é um manager de artistas no mundo musical simulado mais épico do Telegram. Gerencie carreiras, invista fortunas e domine os charts!</div>
+    <div style="font-size:.78em;color:var(--muted);line-height:1.7">Você é um manager de artistas no mundo musical simulado mais épico do Telegram. Gerencie carreiras, invista fortunas e domine os charts!</div>
   </div>
-  <div class="tutorial-step"><div class="tut-num">1</div><div><div class="tut-title">🎤 Seus Artistas</div><div class="tut-text">Cada artista tem Prestígio (0–1000), Fadiga (0–100%), Empire Coins e Fortuna Real. O saldo é 5% da sua Fortuna Real.</div></div></div>
-  <div class="tutorial-step"><div class="tut-num">2</div><div><div class="tut-title">🏟️ Empire Hub</div><div class="tut-text">Contrate turnês (Clubs, Arenas ou Estádios) e lance projetos em Cinema &amp; TV. Cada ação consome Empire Coins mas aumenta Prestígio e Fortuna.</div></div></div>
-  <div class="tutorial-step"><div class="tut-num">3</div><div><div class="tut-title">🛒 Empire Market</div><div class="tut-text">Compre composições, faça filantropia, adquira imóveis, rescinda contratos e até aposte no Billboard Hot 100 com o Empire Bet.</div></div></div>
-  <div class="tutorial-step"><div class="tut-num">4</div><div><div class="tut-title">📊 Charts Semanais</div><div class="tut-text">Acompanhe os resultados em Airplay, Spotify, Apple Music, YouTube, Digital Sales, Billboard Hot 100 e Billboard 200. Sempre a semana mais recente.</div></div></div>
-  <div class="tutorial-step"><div class="tut-num">5</div><div><div class="tut-title">⚔️ Duelo</div><div class="tut-text">Desafie outros artistas em batalhas de charts! O score é calculado por peso de posição — #1 vale 100 pontos, #10 vale 50, #100 vale 1.</div></div></div>
-  <div class="tutorial-step"><div class="tut-num">6</div><div><div class="tut-title">🏆 Ranking &amp; Hall da Fama</div><div class="tut-text">Veja quem lidera em fortuna, prestígio e fadiga. Os prêmios do Hall da Fama são concedidos pela ADM nas premiações especiais do jogo.</div></div></div>
-  <div class="tutorial-step"><div class="tut-num">7</div><div><div class="tut-title">🎰 Empire Bet</div><div class="tut-text">Toda semana você pode apostar nas posições do Billboard Hot 100. Posição exata = 2 pts, erro de ±1 = 1 pt. Multiplicador máximo: 3x.</div></div></div>
+  <div class="tutorial-step"><div class="tut-num">1</div><div><div class="tut-title">🎤 Tiers de Artista</div><div class="tut-text">Rookie (0-199) → Rising (200-399) → Star (400-599) → Superstar (600-899) → Legend (900-1000). Cada tier muda o anel do avatar e desbloqueia badges exclusivos.</div></div></div>
+  <div class="tutorial-step"><div class="tut-num">2</div><div><div class="tut-title">🏟️ Empire Hub</div><div class="tut-text">Contrate turnês (Clubs, Arenas ou Estádios) e lance projetos de Cinema &amp; TV. Cada ação consome Empire Coins mas aumenta Prestígio e Fortuna.</div></div></div>
+  <div class="tutorial-step"><div class="tut-num">3</div><div><div class="tut-title">🛒 Empire Market</div><div class="tut-text">Compre composições, faça filantropia, adquira imóveis, rescinda contratos e aposte no Billboard Hot 100 com o Empire Bet.</div></div></div>
+  <div class="tutorial-step"><div class="tut-num">4</div><div><div class="tut-title">📊 Charts Semanais</div><div class="tut-text">Sempre exibe a semana mais recente de cada chart. Suporte a Airplay, Spotify, Apple Music, YouTube, Digital Sales, Hot 100 e BB 200.</div></div></div>
+  <div class="tutorial-step"><div class="tut-num">5</div><div><div class="tut-title">⚔️ Duelo por Pesos</div><div class="tut-text">Score calculado por posição: #1=100pts, #2=95pts, #5=80pts, #10=50pts, #100=1pt. Totalmente independente de épocas ou pontuações históricas.</div></div></div>
+  <div class="tutorial-step"><div class="tut-num">6</div><div><div class="tut-title">🎰 Empire Bet</div><div class="tut-text">Toda semana preveja as posições do Hot 100. Posição exata=2pts, ±1=1pt, ±2=0.5pt. Multiplicador vai de 1x a 3x conforme acertos.</div></div></div>
 </div>
 
 </div><!-- #app -->
 
-<!-- ══════════════ MODAIS ══════════════ -->
-
+<!-- ══════════ MODAIS ══════════ -->
 <div class="modal-overlay" id="modal-tour">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
@@ -670,21 +708,14 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
     <div class="input-group"><label>Quantidade de Datas</label><input type="number" id="t-qtd" placeholder="Ex: 10" min="1" max="100"></div>
     <div class="input-group"><label>Continente</label>
       <select id="t-continente">
-        <option value="América do Norte">América do Norte</option>
-        <option value="América do Sul">América do Sul</option>
-        <option value="Europa">Europa</option>
-        <option value="Ásia">Ásia</option>
-        <option value="Oceania">Oceania</option>
-        <option value="África">África</option>
+        <option value="América do Norte">América do Norte</option><option value="América do Sul">América do Sul</option>
+        <option value="Europa">Europa</option><option value="Ásia">Ásia</option>
+        <option value="Oceania">Oceania</option><option value="África">África</option>
         <option value="Mundial">Mundial (todos)</option>
       </select>
     </div>
     <div class="input-group"><label>Tipo de Venue</label>
-      <select id="t-porte">
-        <option value="Club">🎵 Clubs</option>
-        <option value="Arena">🏟️ Arenas</option>
-        <option value="Estadio">🏟️ Estádios</option>
-      </select>
+      <select id="t-porte"><option value="Club">🎵 Clubs</option><option value="Arena">🏟️ Arenas</option><option value="Estadio">🏟️ Estádios</option></select>
     </div>
     <button class="btn-main" onclick="comprarTour()">✅ CONFIRMAR TOUR</button>
     <button class="btn-main btn-outline" onclick="closeModal('modal-tour')">Cancelar</button>
@@ -698,18 +729,12 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
     <div class="modal-subtitle">Lance um projeto audiovisual</div>
     <div class="input-group"><label>Título do Projeto</label><input type="text" id="c-nome" placeholder="Ex: The Rise Documentary"></div>
     <div class="input-group"><label>Tipo</label>
-      <select id="c-tipo">
-        <option value="Filme">🎥 Filme</option>
-        <option value="Serie">📺 Série</option>
-        <option value="Reality">🎙️ Reality Show</option>
-      </select>
+      <select id="c-tipo"><option value="Filme">🎥 Filme</option><option value="Serie">📺 Série</option><option value="Reality">🎙️ Reality Show</option></select>
     </div>
     <div class="input-group"><label>Gênero</label>
       <select id="c-genero">
-        <option value="Drama">Drama</option><option value="Acao">Ação</option>
-        <option value="Comedia">Comédia</option><option value="Musical">Musical</option>
-        <option value="Documental">Documentário</option><option value="Terror">Terror</option>
-        <option value="Romance">Romance</option>
+        <option value="Drama">Drama</option><option value="Acao">Ação</option><option value="Comedia">Comédia</option>
+        <option value="Musical">Musical</option><option value="Documental">Documentário</option><option value="Terror">Terror</option><option value="Romance">Romance</option>
       </select>
     </div>
     <div class="input-group"><label>Data de Início</label><input type="date" id="c-data"></div>
@@ -738,11 +763,10 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
     <div class="modal-handle"></div>
     <div class="modal-title">❤️ Filantropia</div>
     <div class="modal-subtitle">Aumente sua reputação</div>
-    <div class="input-group"><label>Causa / Projeto</label>
+    <div class="input-group"><label>Causa</label>
       <select id="filant-causa">
         <option value="Educacao">📚 Educação</option><option value="Saude">🏥 Saúde</option>
-        <option value="Meio Ambiente">🌿 Meio Ambiente</option>
-        <option value="Combate a Fome">🍽️ Combate à Fome</option>
+        <option value="Meio Ambiente">🌿 Meio Ambiente</option><option value="Combate a Fome">🍽️ Combate à Fome</option>
         <option value="Direitos Humanos">✊ Direitos Humanos</option>
       </select>
     </div>
@@ -763,7 +787,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
         <option value="Mansao">🏰 Mansão</option><option value="Penthouse">🌆 Penthouse</option>
       </select>
     </div>
-    <div class="input-group"><label>Cidade</label><input type="text" id="imovel-cidade" placeholder="Ex: Los Angeles, Nova York..."></div>
+    <div class="input-group"><label>Cidade</label><input type="text" id="imovel-cidade" placeholder="Ex: Los Angeles..."></div>
     <button class="btn-main btn-gold" onclick="comprarImovel()">🏠 ADQUIRIR IMÓVEL</button>
     <button class="btn-main btn-outline" onclick="closeModal('modal-imovel')">Cancelar</button>
   </div>
@@ -774,10 +798,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
     <div class="modal-handle"></div>
     <div class="modal-title">🚀 Viralizar</div>
     <div class="modal-subtitle">Impulsione uma música</div>
-    <div class="card" style="margin-bottom:16px;text-align:center">
-      <div style="font-size:1.8em;margin-bottom:8px">🔥</div>
-      <div style="font-size:0.8em;color:var(--muted)">Sua música terá uma chance extra de viralizar na próxima semana, podendo subir posições no chart organicamente.</div>
-    </div>
+    <div class="card" style="margin-bottom:16px;text-align:center"><div style="font-size:1.8em;margin-bottom:8px">🔥</div><div style="font-size:.8em;color:var(--muted)">Sua música terá chance extra de viralizar nesta semana.</div></div>
     <div class="input-group"><label>Música Alvo</label><input type="text" id="viral-musica" placeholder="Nome da música"></div>
     <button class="btn-main" style="background:linear-gradient(135deg,#ff3b5c,#bc13fe)" onclick="comprarViral()">🚀 ATIVAR VIRAL</button>
     <button class="btn-main btn-outline" onclick="closeModal('modal-viral')">Cancelar</button>
@@ -789,11 +810,11 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
     <div class="modal-handle"></div>
     <div class="modal-title">🔨 Leilão</div>
     <div class="modal-subtitle">Compre e venda itens raros</div>
-    <div id="leilao-list"><div class="empty-state"><div class="empty-icon">🔨</div><div class="empty-text">Carregando itens...</div></div></div>
+    <div id="leilao-list"><div class="empty-state"><div class="empty-icon">🔨</div><div class="empty-text">Carregando...</div></div></div>
     <div class="divider"></div>
     <div style="font-family:'Bebas Neue',cursive;letter-spacing:2px;font-size:1em;color:var(--purple);margin-bottom:14px">COLOCAR ITEM À VENDA</div>
-    <div class="input-group"><label>Descrição do Item</label><input type="text" id="leilao-item" placeholder="Ex: Coleção de vinil autografada"></div>
-    <div class="input-group"><label>Lance Mínimo (EC)</label><input type="number" id="leilao-valor" placeholder="Ex: 1000000"></div>
+    <div class="input-group"><label>Descrição do Item</label><input type="text" id="leilao-item" placeholder="Ex: Vinil autografado"></div>
+    <div class="input-group"><label>Lance Mínimo (EC)</label><input type="number" id="leilao-valor"></div>
     <button class="btn-main" onclick="publicarLeilao()">🔨 PUBLICAR LANCE</button>
     <button class="btn-main btn-outline" onclick="closeModal('modal-leilao')">Fechar</button>
   </div>
@@ -804,10 +825,10 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
     <div class="modal-handle"></div>
     <div class="modal-title">🎰 Empire Bet</div>
     <div class="modal-subtitle">Aposte nas posições do Hot 100</div>
-    <div class="card" style="margin-bottom:16px;background:rgba(188,19,254,0.07);border-color:rgba(188,19,254,0.3)">
-      <div style="font-size:0.78em;color:var(--muted);line-height:1.6">Preveja onde cada música vai estar na <strong>próxima semana</strong>. Posição exata = 2pts · ±1 posição = 1pt · ±2 posições = 0.5pt. Multiplicador máximo: 3x.</div>
+    <div class="card" style="margin-bottom:16px;background:rgba(188,19,254,.07);border-color:rgba(188,19,254,.3)">
+      <div style="font-size:.78em;color:var(--muted);line-height:1.6">Preveja onde cada música vai estar na <strong>próxima semana</strong>. Posição exata=2pts · ±1=1pt · ±2=0.5pt. Mult. máximo: 3x.</div>
     </div>
-    <div id="bet-musicas-list"><div class="empty-state"><div class="empty-icon">⏳</div><div class="empty-text">Carregando músicas da semana...</div></div></div>
+    <div id="bet-musicas-list"><div class="empty-state"><div class="empty-icon">⏳</div><div class="empty-text">Carregando músicas...</div></div></div>
     <div class="input-group" style="margin-top:14px"><label>Valor da Aposta (EC)</label><input type="number" id="bet-valor" placeholder="Mínimo 10.000 EC"></div>
     <button class="btn-main" style="background:linear-gradient(135deg,#f5c842,#bc13fe)" onclick="enviarBet()">🎰 FAZER APOSTA</button>
     <button class="btn-main btn-outline" onclick="closeModal('modal-bet')">Cancelar</button>
@@ -820,7 +841,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
     <div class="modal-title">📻 Payola</div>
     <div class="modal-subtitle">Invista no Airplay</div>
     <div class="card" style="margin-bottom:16px">
-      <div style="font-size:0.72em;color:var(--muted);line-height:1.7">
+      <div style="font-size:.72em;color:var(--muted);line-height:1.7">
         <strong style="color:var(--text)">Regional</strong> $EC 50k → +100k audiência<br>
         <strong style="color:var(--text)">Nacional</strong> $EC 250k → +1M audiência<br>
         <strong style="color:var(--text)">Global</strong> $EC 1.5M → +10M audiência
@@ -841,7 +862,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
     <div class="card" style="margin-bottom:16px;text-align:center">
       <div class="badge-label">GRAVADORA ATUAL</div>
       <div class="badge-value stat-gold" id="rescisao-gravadora">—</div>
-      <div style="margin-top:12px;font-size:0.78em;color:var(--muted)" id="rescisao-info">Carregando informações...</div>
+      <div style="margin-top:12px;font-size:.78em;color:var(--muted)" id="rescisao-info">Ao rescindir, você pagará a multa contratual calculada automaticamente.</div>
     </div>
     <div class="input-group"><label>Após rescisão, desejo ir para</label>
       <select id="rescisao-destino">
@@ -857,582 +878,535 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 
 <script>
 // ══════════════════════════════════════════════════════════
-//  EMPIRE HUB v3 — JAVASCRIPT COMPLETO
+//  EMPIRE HUB v4 — JS COMPLETO
+//  Fixes: fotos (lh3 CDN), charts (gviz date parser)
+//  New: tiers, news feed, conquistas, confetti, breaking news
 // ══════════════════════════════════════════════════════════
 
-// ── CONFIGURAÇÃO — SUBSTITUA A URL PELO SEU SCRIPT ATUALIZADO ──
+// ── CONFIG — ATUALIZE COM SUA URL DO SCRIPT ──
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwxbkUndhZPtFvtK1uIFTkPNN-m6WeiFVMU3IDzuahsC0oQp8Ba2GLQFOAPkWv8eiA3/exec';
 const CHARTS_ID  = '1ThRhljmAS41JmVBPkPtYwe0JQHRx9Pih2PQAPT2ebyA';
 const ALBUMS_ID  = '1wUoCpi7_VSbXBhu7XGsqs2ZAJBwcPrx_TFmTS0OMyhY';
 
-let TG_USER = null;
-let TG_ID   = null;
-let ALL_ARTISTS   = [];
-let MY_ARTISTS    = [];
-let ARTISTA_ATUAL = null;
-let CURRENT_CHART = 'AIRPLAY';
-let BET_SEMANA    = '';
-let BET_MUSICAS   = [];
-let HALL_DATA     = [];
-let FIN_TAB       = 'tours';
-let RANK_TAB      = 'fortuna';
-let HALL_TAB      = 'todos';
+// ── STATE ──
+let TG_ID=null, TG_USER=null;
+let ALL_ARTISTS=[], MY_ARTISTS=[], ARTISTA_ATUAL=null;
+let HALL_DATA=[], BET_SEMANA='', BET_MUSICAS=[];
+let RANK_TAB='fortuna', HALL_TAB='todos';
+let SHOWN_ACHIEVEMENTS=new Set();
 
-// ── INIT ──────────────────────────────────────────────────
+// ══════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════
 window.addEventListener('load', () => {
+  // Telegram WebApp
   try {
     if (window.Telegram?.WebApp) {
       Telegram.WebApp.ready();
       Telegram.WebApp.expand();
       Telegram.WebApp.enableClosingConfirmation();
-      const user = Telegram.WebApp.initDataUnsafe?.user;
-      if (user && user.id) {
-        TG_USER = user;
-        TG_ID   = user.id;
-        const name = [user.first_name, user.last_name].filter(Boolean).join(' ');
-        document.getElementById('home-user-name').textContent = name || user.username || 'Jogador';
-        document.getElementById('home-user-avatar').textContent = (name || user.username || 'J').charAt(0).toUpperCase();
+      const u = Telegram.WebApp.initDataUnsafe?.user;
+      if (u?.id) {
+        TG_USER=u; TG_ID=u.id;
+        const name=[u.first_name,u.last_name].filter(Boolean).join(' ');
+        document.getElementById('home-user-name').textContent=name||u.username||'Jogador';
+        document.getElementById('home-avatar').textContent=(name||u.username||'J').charAt(0).toUpperCase();
       }
     }
-  } catch(e) { console.warn('TG init:', e); }
+  } catch(e) {}
 
   if (!TG_ID) {
-    document.getElementById('home-user-name').textContent = 'Abra pelo Telegram';
-    document.getElementById('home-user-avatar').textContent = '⚠';
-    // Para testes locais, descomente:
-    // TG_ID = 10101010; document.getElementById('home-user-name').textContent = 'Teste';
+    document.getElementById('home-user-name').textContent='Abra pelo Telegram';
+    document.getElementById('home-avatar').textContent='⚠';
+    // Para testes locais descomente:
+    // TG_ID=10101010; document.getElementById('home-user-name').textContent='Teste'; document.getElementById('home-avatar').textContent='T';
   }
 
+  // Hide loading after delay
   setTimeout(() => {
-    const ls = document.getElementById('loading-screen');
-    ls.style.transition = 'opacity 0.5s';
-    ls.style.opacity = '0';
-    setTimeout(() => ls.style.display = 'none', 500);
-    loadAllArtists();
-    loadRadar();
-    loadChartData('AIRPLAY');
-    loadHallData();
+    const ls=document.getElementById('loading-screen');
+    ls.style.opacity='0';
+    setTimeout(()=>ls.style.display='none',500);
+    bootApp();
   }, 1800);
 });
 
-// ── NAVEGAÇÃO ────────────────────────────────────────────
-function navigate(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  window.scrollTo(0, 0);
+async function bootApp() {
+  await loadAllArtists();
+  loadRadar();
+  loadChartData('AIRPLAY');
+  loadHallData();
+  generateNews();
 }
-function openHub()     { if(ARTISTA_ATUAL){ document.getElementById('hub-artist-name').textContent=ARTISTA_ATUAL.nome; document.getElementById('hub-saldo').textContent=formatEC(ARTISTA_ATUAL.saldo); } navigate('screen-hub'); }
+
+// ══════════════════════════════════════════════
+//  NAVEGAÇÃO
+// ══════════════════════════════════════════════
+function navigate(id) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+function openHub()     { if(ARTISTA_ATUAL){document.getElementById('hub-artist-name').textContent=ARTISTA_ATUAL.nome;document.getElementById('hub-saldo').textContent=formatEC(ARTISTA_ATUAL.saldo);} navigate('screen-hub'); }
 function openMarket()  { navigate('screen-market'); loadMuralComposicoes(); }
 function openProjects(){ navigate('screen-projects'); loadProjects(); }
-function openAgenda()  { navigate('screen-agenda');  loadAgenda(); }
+function openAgenda()  { navigate('screen-agenda'); loadAgenda(); }
 function openFinances(){ navigate('screen-finances'); loadFinances(); }
-function openBets()    { navigate('screen-mybets');   loadMyBets(); }
-function openCharts()  { navigate('screen-charts'); }
+function openBets()    { navigate('screen-mybets'); loadMyBets(); }
 
-// ── HELPERS: FORMATO ─────────────────────────────────────
+// ══════════════════════════════════════════════
+//  TIER SYSTEM
+// ══════════════════════════════════════════════
+function getTier(prestigio) {
+  const p=parseFloat(prestigio)||0;
+  if (p>=900) return {key:'legend',   label:'Legend',    icon:'👑', ring:'ring-legend'};
+  if (p>=600) return {key:'superstar',label:'Superstar', icon:'⭐', ring:'ring-superstar'};
+  if (p>=400) return {key:'star',     label:'Star',      icon:'🌟', ring:'ring-star'};
+  if (p>=200) return {key:'rising',   label:'Rising',    icon:'📈', ring:'ring-rising'};
+  return             {key:'rookie',   label:'Rookie',    icon:'🎤', ring:'ring-rookie'};
+}
+
+function tierBadgeHTML(prestigio) {
+  const t=getTier(prestigio);
+  return `<span class="tier-badge tier-${t.key}">${t.icon} ${t.label}</span>`;
+}
+
+// ══════════════════════════════════════════════
+//  CONQUISTAS & CONFETTI
+// ══════════════════════════════════════════════
+function showAchievement(icon, title, desc) {
+  const key=title;
+  if (SHOWN_ACHIEVEMENTS.has(key)) return;
+  SHOWN_ACHIEVEMENTS.add(key);
+  const card=document.getElementById('achievement-card');
+  document.getElementById('ach-icon').textContent=icon;
+  document.getElementById('ach-title').textContent=title;
+  document.getElementById('ach-desc').textContent=desc;
+  card.classList.add('show');
+  launchConfetti();
+  setTimeout(()=>card.classList.remove('show'),4000);
+}
+
+function launchConfetti() {
+  const colors=['#f5c842','#bc13fe','#00ffd4','#ff3b5c','#fff','#00e87a'];
+  for (let i=0;i<40;i++) {
+    const el=document.createElement('div');
+    el.className='confetti-piece';
+    el.style.cssText=`left:${Math.random()*100}vw;top:-10px;background:${colors[i%colors.length]};animation-delay:${Math.random()*1}s;animation-duration:${2+Math.random()*1.5}s;transform:rotate(${Math.random()*360}deg)`;
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(),4000);
+  }
+}
+
+function checkAchievements(artista) {
+  const p=parseFloat(artista.prestigio)||0;
+  if (p>=1000) showAchievement('👑','LEGEND DESBLOQUEADO!',`${artista.nome} atingiu o prestígio máximo!`);
+  else if (p>=600) showAchievement('⭐','SUPERSTAR!',`${artista.nome} chegou a Superstar!`);
+  else if (p>=400) showAchievement('🌟','STAR!',`${artista.nome} virou Star!`);
+  else if (p>=200) showAchievement('📈','RISING!',`${artista.nome} está em ascensão!`);
+}
+
+// ══════════════════════════════════════════════
+//  BREAKING NEWS TICKER
+// ══════════════════════════════════════════════
+function showBreakingNews(texto) {
+  const el=document.getElementById('news-ticker');
+  document.getElementById('news-ticker-text').textContent=texto;
+  el.style.display='flex';
+  // Empurra as telas para baixo para não cobrir conteúdo
+  document.querySelectorAll('.screen').forEach(s=>s.style.paddingTop='50px');
+  setTimeout(closeTicker, 8000);
+}
+function closeTicker() {
+  document.getElementById('news-ticker').style.display='none';
+  document.querySelectorAll('.screen').forEach(s=>s.style.paddingTop='');
+}
+
+// ══════════════════════════════════════════════
+//  FOTO — FIX: lh3 CDN sem redirect
+// ══════════════════════════════════════════════
+function fixFotoUrl(url) {
+  if (!url||url==='-'||url==='—'||!url.trim()) return '';
+  let id=null;
+  const m1=url.match(/[?&]id=([a-zA-Z0-9_-]{10,})/);   if(m1) id=m1[1];
+  const m2=url.match(/\/file\/d\/([a-zA-Z0-9_-]{10,})/); if(!id&&m2) id=m2[1];
+  const m3=url.match(/\/d\/([a-zA-Z0-9_-]{10,})=/);      if(!id&&m3) id=m3[1];
+  const m4=url.match(/open\?id=([a-zA-Z0-9_-]{10,})/);   if(!id&&m4) id=m4[1];
+  if (id) return `https://lh3.googleusercontent.com/d/${id}=w300`;
+  if (url.startsWith('http')) return url;
+  return '';
+}
+
+function iniciaisDiv(nome,w='52px',h='52px',fs='0.9em',extra='') {
+  const ini=(nome||'?').split(' ').map(p=>p[0]).slice(0,2).join('').toUpperCase();
+  return `<div style="width:${w};height:${h};border-radius:50%;background:linear-gradient(135deg,#8a00d4,#bc13fe);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:${fs};color:#fff;flex-shrink:0;${extra}">${ini}</div>`;
+}
+
+function fotoOuIniciais(foto,nome,cls,w='52px',h='52px',fs='0.9em') {
+  const url=fixFotoUrl(foto);
+  const fb=iniciaisDiv(nome,w,h,fs,'display:none').replace('display:none','');
+  if (url) {
+    const fbEsc=fb.replace(/"/g,"'");
+    return `<img src="${url}" alt="" class="${cls}" style="width:${w};height:${h};flex-shrink:0" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','${fbEsc}')">`;
+  }
+  return iniciaisDiv(nome,w,h,fs,'flex-shrink:0');
+}
+
+// ══════════════════════════════════════════════
+//  GVIZ DATE FIX
+// ══════════════════════════════════════════════
+function parseGvizDate(val) {
+  if (!val&&val!==0) return null;
+  // Formato "Date(2026,2,15)" — mês base 0
+  if (typeof val==='string'&&val.startsWith('Date(')) {
+    const m=val.match(/Date\((\d+),(\d+),(\d+)/);
+    if (m) return new Date(parseInt(m[1]),parseInt(m[2]),parseInt(m[3]));
+  }
+  if (typeof val==='number') return new Date(val);
+  const d=new Date(val);
+  return isNaN(d.getTime())?null:d;
+}
+
+function isSameDay(gvizVal, dataMax) {
+  if (!dataMax) return true;
+  if (!gvizVal&&gvizVal!==0) return false;
+  const d=parseGvizDate(gvizVal);
+  return d?d.toDateString()===dataMax.toDateString():false;
+}
+
+function getCell(row,idx) {
+  const c=row.c?.[idx];
+  if (!c) return '';
+  return (c.v!==undefined&&c.v!==null)?c.v:(c.f||'');
+}
+
+// ══════════════════════════════════════════════
+//  TOAST
+// ══════════════════════════════════════════════
+function showToast(msg,type='') {
+  const t=document.getElementById('toast');
+  const clean=String(msg||'').replace(/^[✅❌⚠️]\s*/,'').substring(0,90);
+  t.textContent=clean;
+  const isErr=msg.includes('❌')||type==='error';
+  t.className='show '+(isErr?'error':type);
+  setTimeout(()=>t.className='',3500);
+}
+
+// ══════════════════════════════════════════════
+//  FORMATO
+// ══════════════════════════════════════════════
 function formatEC(v) {
-  if (!v && v !== 0) return '—';
-  const n = parseFloat(v);
-  if (n >= 1e9) return '$EC ' + (n/1e9).toFixed(1) + 'B';
-  if (n >= 1e6) return '$EC ' + (n/1e6).toFixed(1) + 'M';
-  if (n >= 1e3) return '$EC ' + (n/1e3).toFixed(0) + 'K';
-  return '$EC ' + n.toLocaleString('pt-BR');
+  if (!v&&v!==0) return '—';
+  const n=parseFloat(v);
+  if(n>=1e9) return '$EC '+(n/1e9).toFixed(1)+'B';
+  if(n>=1e6) return '$EC '+(n/1e6).toFixed(1)+'M';
+  if(n>=1e3) return '$EC '+(n/1e3).toFixed(0)+'K';
+  return '$EC '+n.toLocaleString('pt-BR');
 }
 function formatMoney(v) {
-  if (!v && v !== 0) return '—';
-  const n = parseFloat(v);
-  if (n >= 1e9) return '$' + (n/1e9).toFixed(1) + 'B';
-  if (n >= 1e6) return '$' + (n/1e6).toFixed(1) + 'M';
-  if (n >= 1e3) return '$' + (n/1e3).toFixed(0) + 'K';
-  return '$' + n.toLocaleString('pt-BR');
+  if (!v&&v!==0) return '—';
+  const n=parseFloat(v);
+  if(n>=1e9) return '$'+(n/1e9).toFixed(1)+'B';
+  if(n>=1e6) return '$'+(n/1e6).toFixed(1)+'M';
+  if(n>=1e3) return '$'+(n/1e3).toFixed(0)+'K';
+  return '$'+n.toLocaleString('pt-BR');
 }
 function formatMini(v) {
-  const n = parseFloat(v)||0;
-  if (n >= 1e9) return (n/1e9).toFixed(1) + 'B';
-  if (n >= 1e6) return (n/1e6).toFixed(1) + 'M';
-  if (n >= 1e3) return (n/1e3).toFixed(0) + 'K';
-  return String(n);
+  const n=parseFloat(v)||0;
+  if(n>=1e9) return (n/1e9).toFixed(1)+'B';
+  if(n>=1e6) return (n/1e6).toFixed(1)+'M';
+  if(n>=1e3) return (n/1e3).toFixed(0)+'K';
+  return String(Math.floor(n));
 }
+function skeletons(n=4,h=80) { return `<div class="skeleton" style="height:${h}px;margin-bottom:10px"></div>`.repeat(n); }
+function enc(s) { return encodeURIComponent(s||''); }
 
-// ── HELPERS: FOTO ─────────────────────────────────────────
-function fixFotoUrl(url) {
-  if (!url || url === '-' || url === '—') return '';
-  if (url.includes('uc?export=view')) return url;
-  const m1 = url.match(/\/file\/d\/([^\/]+)/);
-  if (m1) return `https://drive.google.com/uc?export=view&id=${m1[1]}`;
-  const m2 = url.match(/[?&]id=([^&]+)/);
-  if (m2) return `https://drive.google.com/uc?export=view&id=${m2[1]}`;
-  return url;
-}
-function iniciaisAvatar(nome, size='52px', fontSize='0.9em') {
-  const ini = (nome||'?').split(' ').map(p=>p[0]).slice(0,2).join('').toUpperCase();
-  return `<div style="width:${size};height:${size};border-radius:50%;background:linear-gradient(135deg,#8a00d4,#bc13fe);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:${fontSize};color:#fff;flex-shrink:0;">${ini}</div>`;
-}
-function fotoOuIniciais(foto, nome, cls='artist-list-thumb', size='52px', fontSize='0.9em') {
-  const url = fixFotoUrl(foto);
-  if (url) {
-    return `<img src="${url}" alt="" class="${cls}" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','${iniciaisAvatar(nome,size,fontSize).replace(/'/g,'\\\'')}')">`; 
-  }
-  return iniciaisAvatar(nome, size, fontSize).replace(`class=""`, `class="${cls}"`);
-}
-
-// ── TOAST ─────────────────────────────────────────────────
-function showToast(msg, type='') {
-  const t = document.getElementById('toast');
-  t.textContent = msg.replace(/✅|❌/g,'').trim().substring(0,80);
-  t.className = 'show ' + (msg.includes('❌') ? 'error' : type);
-  setTimeout(() => t.className = '', 3500);
-}
-
-// ── ARTISTAS ──────────────────────────────────────────────
+// ══════════════════════════════════════════════
+//  ARTISTAS
+// ══════════════════════════════════════════════
 async function loadAllArtists() {
   try {
-    const data = await fetchJSON(`${SCRIPT_URL}?acao=listar_todos`);
+    const data=await fetchJSON(`${SCRIPT_URL}?acao=listar_todos`);
     if (Array.isArray(data)) {
-      ALL_ARTISTS = data;
-      MY_ARTISTS  = data.filter(a => String(a.telegram_id) === String(TG_ID));
+      ALL_ARTISTS=data;
+      MY_ARTISTS=data.filter(a=>String(a.telegram_id)===String(TG_ID));
       renderArtistList();
       renderLabelStats();
-      populateDuelSelects();
       renderRanking();
+      populateDuelSelects();
+      checkBreakingNews();
     }
   } catch(e) {
     try {
-      const data = await fetchJSON(`${SCRIPT_URL}?acao=meus_artistas&telegram_id=${TG_ID}`);
-      if (Array.isArray(data)) { MY_ARTISTS = data; renderArtistList(); }
+      const data=await fetchJSON(`${SCRIPT_URL}?acao=meus_artistas&telegram_id=${TG_ID}`);
+      if (Array.isArray(data)) { MY_ARTISTS=data; renderArtistList(); }
     } catch(e2) {
-      document.getElementById('artists-container').innerHTML = '<div class="empty-state"><div class="empty-icon">❌</div><div class="empty-text">Erro ao carregar artistas. Verifique a conexão e o script.</div></div>';
+      document.getElementById('artists-container').innerHTML='<div class="empty-state"><div class="empty-icon">❌</div><div class="empty-text">Erro ao carregar artistas.<br>Verifique a conexão e o script.</div></div>';
     }
   }
 }
 
 function renderArtistList() {
-  const c = document.getElementById('artists-container');
+  const c=document.getElementById('artists-container');
   if (!MY_ARTISTS.length) {
-    c.innerHTML = '<div class="empty-state"><div class="empty-icon">🎤</div><div class="empty-text">Nenhum artista encontrado.<br>Verifique seu Telegram ID na planilha.</div></div>';
+    c.innerHTML='<div class="empty-state"><div class="empty-icon">🎤</div><div class="empty-text">Nenhum artista encontrado.<br>Verifique seu Telegram ID na planilha DB_ARTISTAS.</div></div>';
     return;
   }
-  c.innerHTML = MY_ARTISTS.map(a => {
-    const foto = fixFotoUrl(a.foto);
-    const ini  = (a.nome||'?').split(' ').map(p=>p[0]).slice(0,2).join('').toUpperCase();
-    return `<div class="artist-list-item" onclick="openArtist(${escJSON(a)})">
-      ${foto ? `<img src="${foto}" alt="" class="artist-list-thumb" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">` : ''}
-      <div class="artist-list-thumb" style="display:${foto?'none':'flex'};align-items:center;justify-content:center;background:linear-gradient(135deg,#8a00d4,#bc13fe);font-weight:700;font-size:0.9em;color:#fff">${ini}</div>
-      <div>
+  c.innerHTML=MY_ARTISTS.map(a=>{
+    const tier=getTier(a.prestigio);
+    return `<div class="artist-list-item" onclick='openArtist(${JSON.stringify(a).replace(/'/g,"&#39;")})'>
+      ${fotoOuIniciais(a.foto,a.nome,'artist-list-thumb','52px','52px','0.9em')}
+      <div style="flex:1;min-width:0">
         <div class="artist-list-name">${a.nome}</div>
         <div class="artist-list-meta">${formatEC(a.saldo)}</div>
-        <div class="artist-list-label">${a.gravadora||'Independent'}</div>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:4px">
+          <span class="tier-badge tier-${tier.key}" style="padding:2px 8px;font-size:.52em">${tier.icon} ${tier.label}</span>
+        </div>
       </div>
-      <div style="margin-left:auto">
-        <span class="pill ${a.status==='Livre'?'pill-green':'pill-red'}">${a.status==='Livre'?'Livre':'Ocupado'}</span>
-      </div>
+      <span class="pill ${a.status==='Livre'?'pill-green':'pill-red'}" style="margin-left:8px">${a.status==='Livre'?'Livre':'Ocupado'}</span>
     </div>`;
   }).join('');
 }
 
-function escJSON(obj) {
-  return JSON.stringify(obj).replace(/"/g,'&quot;');
-}
-
 function openArtist(a) {
-  if (typeof a === 'string') a = JSON.parse(a);
-  ARTISTA_ATUAL = a;
+  if (typeof a==='string') a=JSON.parse(a);
+  ARTISTA_ATUAL=a;
 
-  // Avatar com fallback de iniciais
-  const foto    = fixFotoUrl(a.foto);
-  const avatarEl = document.getElementById('dash-avatar');
-  const ringEl   = avatarEl.parentNode;
-  ringEl.querySelectorAll('.avatar-iniciais').forEach(el => el.remove());
-  avatarEl.style.display = '';
+  // Avatar com fallback
+  const foto=fixFotoUrl(a.foto);
+  const avatarEl=document.getElementById('dash-avatar');
+  const ringEl=document.getElementById('dash-ring');
+  ringEl.querySelectorAll('.avatar-iniciais').forEach(el=>el.remove());
+  avatarEl.style.display='';
 
-  const criarIniciais = () => {
-    avatarEl.style.display = 'none';
-    const ini = (a.nome||'?').split(' ').map(p=>p[0]).slice(0,2).join('').toUpperCase();
-    const div = document.createElement('div');
-    div.className = 'artist-avatar avatar-iniciais';
-    div.style.cssText = 'width:110px;height:110px;border-radius:50%;background:linear-gradient(135deg,#8a00d4,#bc13fe);display:flex;align-items:center;justify-content:center;font-family:"Bebas Neue",cursive;font-size:2.2em;letter-spacing:2px;color:#fff';
-    div.textContent = ini;
-    ringEl.insertBefore(div, avatarEl);
+  // Tier ring
+  ringEl.className='artist-avatar-ring';
+  const tier=getTier(a.prestigio);
+  ringEl.classList.add(tier.ring);
+
+  const criarIniciais=()=>{
+    avatarEl.style.display='none';
+    const ini=(a.nome||'?').split(' ').map(p=>p[0]).slice(0,2).join('').toUpperCase();
+    const div=document.createElement('div');
+    div.className='artist-avatar avatar-iniciais';
+    div.style.cssText='width:110px;height:110px;border-radius:50%;background:linear-gradient(135deg,#8a00d4,#bc13fe);display:flex;align-items:center;justify-content:center;font-family:"Bebas Neue",cursive;font-size:2.2em;letter-spacing:2px;color:#fff';
+    div.textContent=ini;
+    ringEl.insertBefore(div,avatarEl);
   };
 
-  if (foto) { avatarEl.src = foto; avatarEl.onerror = criarIniciais; }
+  if (foto) { avatarEl.src=foto; avatarEl.onerror=criarIniciais; }
   else criarIniciais();
 
-  document.getElementById('dash-name').textContent = a.nome;
-  const isFree = a.status === 'Livre';
-  document.getElementById('dash-status-wrap').className = 'artist-status-wrap ' + (isFree ? 'status-free' : 'status-busy');
-  document.getElementById('dash-status-text').textContent = a.status;
-  document.getElementById('dash-saldo').textContent    = formatEC(a.saldo);
-  document.getElementById('dash-prestigio').textContent = a.prestigio || 0;
-  document.getElementById('dash-fadiga').textContent   = (a.fadiga||0) + '%';
-  document.getElementById('dash-fortuna').textContent  = formatMoney(a.fortuna_total);
-  document.getElementById('dash-gravadora').textContent = (a.gravadora||'INDIE').toUpperCase();
-  const pres = Math.min(100, ((a.prestigio||0)/1000)*100);
-  document.getElementById('dash-pres-bar').style.width = pres + '%';
-  document.getElementById('dash-pres-val').textContent = (a.prestigio||0) + '/1000';
-  document.getElementById('dash-fad-bar').style.width  = (a.fadiga||0) + '%';
-  document.getElementById('dash-fad-val').textContent  = (a.fadiga||0) + '%';
+  document.getElementById('dash-name').textContent=a.nome;
+  document.getElementById('dash-status-wrap').className='artist-status-wrap '+(a.status==='Livre'?'status-free':'status-busy');
+  document.getElementById('dash-status-text').textContent=a.status;
+  document.getElementById('dash-saldo').textContent=formatEC(a.saldo);
+  document.getElementById('dash-prestigio').textContent=a.prestigio||0;
+  document.getElementById('dash-fadiga').textContent=(a.fadiga||0)+'%';
+  document.getElementById('dash-fortuna').textContent=formatMoney(a.fortuna_total);
+  document.getElementById('dash-gravadora').textContent=(a.gravadora||'INDIE').toUpperCase();
+  const pres=Math.min(100,((a.prestigio||0)/1000)*100);
+  document.getElementById('dash-pres-bar').style.width=pres+'%';
+  document.getElementById('dash-pres-val').textContent=(a.prestigio||0)+'/1000';
+  document.getElementById('dash-fad-bar').style.width=(a.fadiga||0)+'%';
+  document.getElementById('dash-fad-val').textContent=(a.fadiga||0)+'%';
+  document.getElementById('dash-tier-badge').innerHTML=tierBadgeHTML(a.prestigio);
+
+  checkAchievements(a);
   navigate('screen-artist-dash');
 }
 
-// ── AGENDA DA TOUR ────────────────────────────────────────
-async function loadAgenda() {
-  if (!ARTISTA_ATUAL) return;
-  document.getElementById('agenda-artist-name').textContent = ARTISTA_ATUAL.nome;
-  const c = document.getElementById('agenda-container');
-  c.innerHTML = skeletons(5, 70);
-  try {
-    const data = await fetchJSON(`${SCRIPT_URL}?acao=agenda_tour&nome=${enc(ARTISTA_ATUAL.nome)}`);
-    if (!data || data.erro || !data.agenda?.length) {
-      c.innerHTML = '<div class="empty-state"><div class="empty-icon">🗓️</div><div class="empty-text">Nenhuma tour ativa no momento.</div></div>';
-      document.getElementById('agenda-summary').style.display = 'none';
-      return;
-    }
-    // Sumário
-    document.getElementById('agenda-summary').style.display = 'block';
-    document.getElementById('ag-nome').textContent  = data.nome_tour || '—';
-    document.getElementById('ag-shows').textContent = `${data.show_atual||1}/${data.total_shows||'?'}`;
-    document.getElementById('ag-total').textContent = formatEC(data.arrecadacao_total);
+// ══════════════════════════════════════════════
+//  EMPIRE NEWS — gerado a partir dos dados reais
+// ══════════════════════════════════════════════
+function generateNews() {
+  // Gera notícias quando os artistas já estiverem carregados
+  const interval=setInterval(()=>{
+    if (!ALL_ARTISTS.length) return;
+    clearInterval(interval);
+    buildNewsFromData();
+  },500);
+}
 
-    // Lista de shows
-    c.innerHTML = data.agenda.map((s, i) => {
-      const pct     = s.capacidade ? Math.round((s.vendidos/s.capacidade)*100) : 0;
-      const isCurr  = i === (data.show_atual - 1);
-      const isPast  = i < (data.show_atual - 1);
-      const cor     = isPast ? 'var(--muted)' : isCurr ? 'var(--purple)' : 'var(--text)';
-      const pctCol  = pct >= 80 ? 'var(--green)' : pct >= 50 ? 'var(--gold)' : 'var(--red)';
-      const dataArr = (s.data||'').split('/');
-      return `<div class="show-item" style="opacity:${isPast?0.5:1};border-color:${isCurr?'rgba(188,19,254,0.5)':''}">
-        <div class="show-date" style="color:${cor}">
-          ${dataArr[0]||'?'}<br><span style="font-size:0.7em">${dataArr[1]?dataArr[1]+'/'+dataArr[2]:'—'}</span>
-        </div>
-        <div class="show-info">
-          <div class="show-venue">${s.local||'—'}</div>
-          <div class="show-capacity">${(s.vendidos||0).toLocaleString('pt-BR')} / ${(s.capacidade||0).toLocaleString('pt-BR')} ingressos · $EC ${formatMini(s.arrecadado)}</div>
-        </div>
-        <div class="show-pct" style="color:${pctCol}">${pct}%</div>
-        ${isCurr ? '<span class="pill pill-purple" style="margin-left:6px;padding:3px 8px;font-size:0.5em">AO VIVO</span>' : ''}
-      </div>`;
-    }).join('');
-  } catch(e) {
-    c.innerHTML = '<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-text">Erro ao carregar agenda.</div></div>';
+function buildNewsFromData() {
+  const c=document.getElementById('news-container');
+  const news=[];
+  const agora=new Date();
+
+  // Artistas em tour
+  const emTour=ALL_ARTISTS.filter(a=>a.status&&a.status.includes('Tour'));
+  emTour.forEach(a=>{
+    news.push({
+      tipo:'gold', icon:'🏟️', headline:`${a.nome} está em tour!`,
+      corpo:`O artista está ${a.status}. Acompanhe a agenda completa no app.`,
+      tempo:'Agora'
+    });
+  });
+
+  // Top por fortuna
+  const top3=[...ALL_ARTISTS].sort((a,b)=>(parseFloat(b.fortuna_total)||0)-(parseFloat(a.fortuna_total)||0)).slice(0,3);
+  if (top3.length) {
+    news.push({
+      tipo:'purple', icon:'💰', headline:`${top3[0]?.nome} lidera o ranking de fortunas`,
+      corpo:`Com ${formatMoney(top3[0]?.fortuna_total)}, ${top3[0]?.nome} está no topo do Empire. ${top3[1]?.nome} é o vice-líder com ${formatMoney(top3[1]?.fortuna_total)}.`,
+      tempo:'Esta semana'
+    });
   }
-}
 
-// ── FINANÇAS ──────────────────────────────────────────────
-async function loadFinances() {
-  if (!ARTISTA_ATUAL) return;
-  const a = ARTISTA_ATUAL;
-  document.getElementById('fin-artist-name').textContent = a.nome;
-  document.getElementById('fin-real').textContent  = formatMoney(a.fortuna_real);
-  document.getElementById('fin-bens').textContent  = formatMoney(a.fortuna_bens);
-  document.getElementById('fin-total').textContent = formatMoney(a.fortuna_total);
-  switchFinTab(FIN_TAB, null);
-}
-
-async function switchFinTab(tab, btn) {
-  FIN_TAB = tab;
-  if (btn) { document.querySelectorAll('#screen-finances .tab-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); }
-  const c = document.getElementById('fin-content');
-  c.innerHTML = skeletons(4, 60);
-  try {
-    const data = await fetchJSON(`${SCRIPT_URL}?acao=financas&nome=${enc(ARTISTA_ATUAL.nome)}&tipo=${tab}`);
-    if (!Array.isArray(data) || !data.length) {
-      c.innerHTML = '<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-text">Nenhum registro encontrado.</div></div>'; return;
-    }
-    c.innerHTML = data.map(tx => {
-      const positivo = parseFloat(tx.valor||0) >= 0;
-      return `<div class="tx-item">
-        <div class="tx-icon">${tx.icone||'💰'}</div>
-        <div class="tx-info"><div class="tx-label">${tx.descricao||'—'}</div><div class="tx-date">${tx.data||''}</div></div>
-        <div class="tx-value ${positivo?'positive':'negative'}">${positivo?'+':''}${formatEC(tx.valor)}</div>
-      </div>`;
-    }).join('');
-  } catch(e) {
-    c.innerHTML = '<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-text">Erro ao carregar.</div></div>';
+  // Legends
+  const legends=ALL_ARTISTS.filter(a=>parseFloat(a.prestigio)>=900);
+  if (legends.length) {
+    news.push({
+      tipo:'gold', icon:'👑', headline:`${legends.length} artista(s) com status LEGEND`,
+      corpo:legends.map(a=>a.nome).join(', ')+(legends.length===1?' atingiu ':' atingiram ')+' prestígio máximo no Empire!',
+      tempo:'Destaque'
+    });
   }
-}
 
-// ── MINHAS BETS ───────────────────────────────────────────
-async function loadMyBets() {
-  if (!ARTISTA_ATUAL) return;
-  document.getElementById('bets-artist-name').textContent = ARTISTA_ATUAL.nome;
-  const c = document.getElementById('mybets-container');
-  c.innerHTML = skeletons(3, 70);
-  try {
-    const data = await fetchJSON(`${SCRIPT_URL}?acao=minhas_bets&nome=${enc(ARTISTA_ATUAL.nome)}`);
-    if (!Array.isArray(data) || !data.length) {
-      c.innerHTML = '<div class="empty-state"><div class="empty-icon">🎰</div><div class="empty-text">Nenhuma aposta encontrada.</div></div>';
-      return;
-    }
-    const pagas    = data.filter(b => b.status === 'Pago');
-    const retTotal = pagas.reduce((s,b) => s + (parseFloat(b.retorno)||0), 0);
-    const ponTotal = pagas.reduce((s,b) => s + (parseFloat(b.pontos)||0), 0);
-    const maxPon   = pagas.reduce((s,b) => s + (parseFloat(b.total_apost)||0)*2, 0);
-    const taxa     = maxPon > 0 ? Math.round((ponTotal/maxPon)*100) : 0;
-    document.getElementById('bets-total').textContent   = data.length;
-    document.getElementById('bets-retorno').textContent = formatEC(retTotal);
-    document.getElementById('bets-taxa').textContent    = taxa + '%';
-
-    c.innerHTML = data.map(b => {
-      const isPago = b.status === 'Pago';
-      const ganhou = parseFloat(b.retorno||0) > parseFloat(b.valor||0);
-      return `<div class="card-sm" style="margin-bottom:10px">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-          <div>
-            <div style="font-weight:700;font-size:0.85em">Semana ${b.semana||'—'}</div>
-            <div style="font-size:0.65em;color:var(--muted);margin-top:2px">${b.total_apost||0} música(s) apostadas</div>
-          </div>
-          <span class="pill ${isPago?(ganhou?'pill-green':'pill-red'):'pill-purple'}">${isPago?(ganhou?'Ganhou':'Perdeu'):'Aguardando'}</span>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center">
-          <div><span class="badge-label">Apostado</span><div style="font-size:0.82em;font-weight:700;color:var(--gold)">${formatEC(b.valor)}</div></div>
-          <div><span class="badge-label">Multiplicador</span><div style="font-size:0.82em;font-weight:700;color:var(--neon)">${isPago?(parseFloat(b.multiplicador||1).toFixed(2)+'x'):'—'}</div></div>
-          <div><span class="badge-label">Retorno</span><div style="font-size:0.82em;font-weight:700;color:${isPago?(ganhou?'var(--green)':'var(--red)'):'var(--muted)'}">${isPago?formatEC(b.retorno):'—'}</div></div>
-        </div>
-      </div>`;
-    }).join('');
-  } catch(e) {
-    c.innerHTML = '<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-text">Erro ao carregar apostas.</div></div>';
+  // Artistas com fadiga crítica
+  const cansados=ALL_ARTISTS.filter(a=>parseFloat(a.fadiga)>=80);
+  if (cansados.length) {
+    news.push({
+      tipo:'red', icon:'😴', headline:`Alerta de fadiga crítica`,
+      corpo:`${cansados.map(a=>a.nome).join(', ')} ${cansados.length===1?'está':'estão'} com fadiga acima de 80%. Considere dar férias!`,
+      tempo:'Urgente'
+    });
   }
+
+  // Mensagem geral se não houver nada
+  if (!news.length) {
+    news.push({
+      tipo:'default', icon:'📰', headline:'Empire News — Sem manchetes no momento',
+      corpo:'Assim que os artistas tiverem atividades registradas, as notícias aparecerão aqui automaticamente.',
+      tempo:'—'
+    });
+  }
+
+  const tipoClass={gold:'gold',purple:'',red:'red',green:'green',default:''};
+  c.innerHTML=news.map(n=>`
+    <div class="news-card ${tipoClass[n.tipo]||''}">
+      <div class="news-time">${n.icon} ${n.tempo}</div>
+      <div class="news-headline">${n.headline}</div>
+      <div class="news-body">${n.corpo}</div>
+    </div>`).join('');
+
+  // Breaking news ticker com a mais urgente
+  const urgente=news.find(n=>n.tipo==='red')||news[0];
+  if (urgente) showBreakingNews(`${urgente.icon} ${urgente.headline}`);
 }
 
-// ── RANKING GERAL ─────────────────────────────────────────
-function switchRankTab(tab, btn) {
-  RANK_TAB = tab;
-  if (btn) { document.querySelectorAll('#screen-ranking .tab-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); }
+function checkBreakingNews() {
+  // Notícias automáticas baseadas em eventos
+  const cansados=ALL_ARTISTS.filter(a=>parseFloat(a.fadiga)>=90);
+  if (cansados.length) showBreakingNews(`😴 URGENTE: ${cansados[0].nome} com fadiga crítica (${cansados[0].fadiga}%)!`);
+}
+
+// ══════════════════════════════════════════════
+//  RANKING
+// ══════════════════════════════════════════════
+function switchRankTab(tab,btn) {
+  RANK_TAB=tab;
+  if(btn){document.querySelectorAll('#screen-ranking .tab-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');}
   renderRanking();
 }
 
 function renderRanking() {
-  const c = document.getElementById('ranking-container');
-  if (!ALL_ARTISTS.length) { c.innerHTML = skeletons(8, 60); return; }
-
+  const c=document.getElementById('ranking-container');
+  if (!ALL_ARTISTS.length) { c.innerHTML=skeletons(8,60); return; }
   let sorted;
-  if (RANK_TAB === 'fortuna') {
-    sorted = [...ALL_ARTISTS].sort((a,b) => (parseFloat(b.fortuna_total)||0) - (parseFloat(a.fortuna_total)||0));
-  } else if (RANK_TAB === 'prestigio') {
-    sorted = [...ALL_ARTISTS].sort((a,b) => (parseFloat(b.prestigio)||0) - (parseFloat(a.prestigio)||0));
-  } else {
-    sorted = [...ALL_ARTISTS].sort((a,b) => (parseFloat(b.fadiga)||0) - (parseFloat(a.fadiga)||0));
-  }
+  if (RANK_TAB==='fortuna') sorted=[...ALL_ARTISTS].sort((a,b)=>(parseFloat(b.fortuna_total)||0)-(parseFloat(a.fortuna_total)||0));
+  else if (RANK_TAB==='prestigio') sorted=[...ALL_ARTISTS].sort((a,b)=>(parseFloat(b.prestigio)||0)-(parseFloat(a.prestigio)||0));
+  else sorted=[...ALL_ARTISTS].sort((a,b)=>(parseFloat(b.fadiga)||0)-(parseFloat(a.fadiga)||0));
 
-  c.innerHTML = sorted.map((a, i) => {
-    const pos  = i + 1;
-    const foto = fixFotoUrl(a.foto);
-    const ini  = (a.nome||'?').split(' ').map(p=>p[0]).slice(0,2).join('').toUpperCase();
-    const posClass = pos===1?'rank-pos-1':pos===2?'rank-pos-2':pos===3?'rank-pos-3':'rank-pos-other';
-    const medal = pos===1?'🥇':pos===2?'🥈':pos===3?'🥉':'';
-    let valor, cor;
-    if (RANK_TAB==='fortuna')    { valor = formatMoney(a.fortuna_total); cor = 'var(--gold)'; }
-    else if (RANK_TAB==='prestigio') { valor = (a.prestigio||0)+'/1000'; cor = 'var(--purple)'; }
-    else                         { valor = (a.fadiga||0)+'%';  cor = 'var(--red)'; }
-
-    const isMe = String(a.telegram_id) === String(TG_ID);
-    return `<div class="rank-item" style="${isMe?'border-color:rgba(188,19,254,0.5)':''}">
+  c.innerHTML=sorted.map((a,i)=>{
+    const pos=i+1;
+    const posClass=pos===1?'rp-1':pos===2?'rp-2':pos===3?'rp-3':'rp-o';
+    const medal=pos===1?'🥇':pos===2?'🥈':pos===3?'🥉':'';
+    const tier=getTier(a.prestigio);
+    let valor,cor;
+    if(RANK_TAB==='fortuna'){valor=formatMoney(a.fortuna_total);cor='var(--gold)';}
+    else if(RANK_TAB==='prestigio'){valor=(a.prestigio||0)+'/1000';cor='var(--purple)';}
+    else{valor=(a.fadiga||0)+'%';cor='var(--red)';}
+    const isMe=String(a.telegram_id)===String(TG_ID);
+    const foto=fixFotoUrl(a.foto);
+    const ini=(a.nome||'?').split(' ').map(p=>p[0]).slice(0,2).join('').toUpperCase();
+    return `<div class="rank-item" style="${isMe?'border-color:rgba(188,19,254,.5)':''}">
       <div class="rank-pos ${posClass}">${medal||pos}</div>
       ${foto
-        ? `<img src="${foto}" alt="" class="rank-thumb" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<div class=\\'rank-thumb\\' style=\\'display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#8a00d4,#bc13fe);font-weight:700;font-size:0.85em;color:#fff\\'>${ini}</div>')">`
-        : `<div class="rank-thumb" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#8a00d4,#bc13fe);font-weight:700;font-size:0.85em;color:#fff">${ini}</div>`}
+        ?`<img src="${foto}" alt="" class="rank-thumb" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<div class=\\'rank-thumb\\' style=\\'display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#8a00d4,#bc13fe);font-weight:700;font-size:.85em;color:#fff\\'>${ini}</div>')">`
+        :`<div class="rank-thumb" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#8a00d4,#bc13fe);font-weight:700;font-size:.85em;color:#fff">${ini}</div>`}
       <div class="rank-info">
         <div class="rank-name">${a.nome}${isMe?' 👤':''}</div>
-        <div class="rank-label">${a.gravadora||'Independent'}</div>
+        <div class="rank-sub">
+          <span class="tier-badge tier-${tier.key}" style="padding:2px 7px;font-size:.5em">${tier.icon} ${tier.label}</span>
+          <span style="margin-left:6px;font-size:.62em;color:var(--muted)">${a.gravadora||'Independent'}</span>
+        </div>
       </div>
       <div class="rank-value" style="color:${cor}">${valor}</div>
     </div>`;
   }).join('');
 }
 
-// ── HALL DA FAMA ──────────────────────────────────────────
-async function loadHallData() {
-  try {
-    const data = await fetchJSON(`${SCRIPT_URL}?acao=hall_da_fama`);
-    if (Array.isArray(data)) { HALL_DATA = data; renderHall(); }
-  } catch(e) {}
-}
-
-function switchHallTab(tab, btn) {
-  HALL_TAB = tab;
-  if (btn) { document.querySelectorAll('#screen-hall .tab-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); }
-  renderHall();
-}
-
-function renderHall() {
-  const c = document.getElementById('hall-container');
-  if (!HALL_DATA.length) { c.innerHTML = '<div class="empty-state"><div class="empty-icon">🏅</div><div class="empty-text">Nenhum prêmio registrado ainda.</div></div>'; return; }
-  const filtered = HALL_TAB === 'todos' ? HALL_DATA : HALL_DATA.filter(h => (h.categoria||'').toLowerCase().includes(HALL_TAB));
-  if (!filtered.length) { c.innerHTML = '<div class="empty-state"><div class="empty-icon">🏅</div><div class="empty-text">Nenhum prêmio nesta categoria.</div></div>'; return; }
-  const trofeus = { musica:'🎵', cinema:'🎬', especial:'⭐', padrao:'🏆' };
-  c.innerHTML = filtered.map(h => {
-    const cat = (h.categoria||'').toLowerCase();
-    const icone = cat.includes('musica')||cat.includes('música') ? trofeus.musica :
-                  cat.includes('cinema') ? trofeus.cinema :
-                  cat.includes('especial') ? trofeus.especial : trofeus.padrao;
-    return `<div class="trophy-item">
-      <div class="trophy-icon">${icone}</div>
-      <div class="trophy-info">
-        <div class="trophy-name">${h.nome_premio||'—'}</div>
-        <div class="trophy-cat">${h.artista||'—'} · ${h.categoria||''}</div>
-        <div class="trophy-year">${h.obra||''} ${h.ano?'· '+h.ano:''}</div>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-// ── GRAVADORAS ────────────────────────────────────────────
-function renderLabelStats() {
-  const labels = {'King & Queen':[],'Crown':[],'Independent':[]};
-  ALL_ARTISTS.forEach(a => {
-    const g = a.gravadora||'Independent';
-    if (labels[g]) labels[g].push(a); else labels['Independent'].push(a);
-  });
-  setLabelStat('kq', labels['King & Queen']);
-  setLabelStat('crown', labels['Crown']);
-  setLabelStat('indie', labels['Independent']);
-}
-function setLabelStat(id, artists) {
-  const el = document.getElementById(id+'-count'); const tel = document.getElementById(id+'-total');
-  if(el)  el.textContent = artists.length+' artistas';
-  if(tel) { const t = artists.reduce((s,a)=>s+(parseFloat(a.fortuna_total)||0),0); tel.textContent = formatMoney(t); }
-}
-function loadLabelArtists(label) {
-  document.getElementById('label-artists-title').textContent = label.toUpperCase();
-  const arts = ALL_ARTISTS.filter(a => (a.gravadora||'Independent')===label || (!a.gravadora && label==='Independent'));
-  const c = document.getElementById('label-artists-container');
-  if (!arts.length) { c.innerHTML = '<div class="empty-state"><div class="empty-icon">🎤</div><div class="empty-text">Nenhum artista neste selo.</div></div>'; }
-  else c.innerHTML = arts.sort((a,b)=>(parseFloat(b.fortuna_total)||0)-(parseFloat(a.fortuna_total)||0)).map((a,i) => {
-    const foto = fixFotoUrl(a.foto); const ini=(a.nome||'?').split(' ').map(p=>p[0]).slice(0,2).join('').toUpperCase();
-    return `<div class="artist-list-item">
-      <div style="font-family:'Bebas Neue',cursive;font-size:1.2em;color:${i<3?'var(--gold)':'var(--muted)'};width:24px;flex-shrink:0">${i+1}</div>
-      ${foto?`<img src="${foto}" alt="" class="artist-list-thumb" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`:``}
-      <div class="artist-list-thumb" style="display:${foto?'none':'flex'};align-items:center;justify-content:center;background:linear-gradient(135deg,#8a00d4,#bc13fe);font-weight:700;font-size:0.9em;color:#fff">${ini}</div>
-      <div><div class="artist-list-name">${a.nome}</div><div class="artist-list-meta">${formatMoney(a.fortuna_total)}</div><div class="artist-list-label">Prestígio: ${a.prestigio||0}</div></div>
-    </div>`;
-  }).join('');
-  navigate('screen-label-artists');
-}
-
-// ── RADAR ─────────────────────────────────────────────────
-async function loadRadar() {
-  try {
-    const data = await fetchJSON(`${SCRIPT_URL}?acao=radar`);
-    const c = document.getElementById('radar-container');
-    if (!Array.isArray(data)||!data.length) { renderRadarFromArtists(); return; }
-    c.innerHTML = data.map(item => {
-      const foto = fixFotoUrl(item.foto);
-      const ini  = (item.nome||'?').split(' ').map(p=>p[0]).slice(0,2).join('').toUpperCase();
-      return `<div class="radar-item">
-        ${foto?`<img src="${foto}" alt="" class="radar-avatar" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<div class=\\'radar-avatar\\' style=\\'display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#8a00d4,#bc13fe);font-weight:700;font-size:0.9em;color:#fff\\'>${ini}</div>')">`:
-          `<div class="radar-avatar" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#8a00d4,#bc13fe);font-weight:700;font-size:0.9em;color:#fff">${ini}</div>`}
-        <div class="radar-content">
-          <div class="radar-name">${item.nome}</div>
-          <div class="radar-action">${item.acao}</div>
-          <div class="radar-time">${item.timestamp||''}</div>
-        </div>
-      </div>`;
-    }).join('');
-  } catch(e) { renderRadarFromArtists(); }
-}
-function renderRadarFromArtists() {
-  const c = document.getElementById('radar-container');
-  if (!ALL_ARTISTS.length) { setTimeout(renderRadarFromArtists,2000); return; }
-  const busy = ALL_ARTISTS.filter(a => a.status && a.status!=='Livre');
-  if (!busy.length) { c.innerHTML='<div class="empty-state"><div class="empty-icon">🌍</div><div class="empty-text">Nenhuma atividade recente.</div></div>'; return; }
-  c.innerHTML = busy.map(a => {
-    const foto=fixFotoUrl(a.foto); const ini=(a.nome||'?').split(' ').map(p=>p[0]).slice(0,2).join('').toUpperCase();
-    return `<div class="radar-item">
-      ${foto?`<img src="${foto}" alt="" class="radar-avatar" onerror="this.style.display='none'">`:
-        `<div class="radar-avatar" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#8a00d4,#bc13fe);font-weight:700;color:#fff">${ini}</div>`}
-      <div class="radar-content"><div class="radar-name">${a.nome}</div><div class="radar-action">${a.status}</div><div class="radar-time">${a.gravadora||'Independent'}</div></div>
-    </div>`;
-  }).join('');
-}
-
-// ── PROJETOS ──────────────────────────────────────────────
-async function loadProjects() {
-  if (!ARTISTA_ATUAL) return;
-  document.getElementById('proj-artist-name').textContent = ARTISTA_ATUAL.nome;
-  const c = document.getElementById('projects-container');
-  c.innerHTML = skeletons(3, 80);
-  try {
-    const data = await fetchJSON(`${SCRIPT_URL}?acao=projetos&nome=${enc(ARTISTA_ATUAL.nome)}`);
-    if (!Array.isArray(data)||!data.length) { c.innerHTML='<div class="empty-state"><div class="empty-icon">🎬</div><div class="empty-text">Nenhum projeto encontrado.</div></div>'; return; }
-    c.innerHTML = data.map(p => {
-      const critica = parseFloat(p.critica)||0;
-      const corCrit = critica>=85?'var(--green)':critica>=60?'var(--gold)':critica>=30?'var(--purple)':'var(--red)';
-      return `<div class="card-sm" style="margin-bottom:12px">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
-          <div>
-            <div style="font-weight:700;font-size:0.9em">${p.titulo||'—'}</div>
-            <div style="font-size:0.7em;color:var(--muted);margin-top:2px">${p.tipo||''} · ${p.genero||''}</div>
-            ${p.data_inicio?`<div style="font-size:0.62em;color:var(--muted);margin-top:2px">Início: ${p.data_inicio}</div>`:''}
-          </div>
-          <span class="pill ${p.status==='Finalizado'?'pill-green':'pill-purple'}">${p.status||'—'}</span>
-        </div>
-        ${p.status==='Finalizado'?`
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center;margin-top:8px">
-            <div><span class="badge-label">Crítica</span><div style="font-family:'Bebas Neue',cursive;font-size:1.3em;color:${corCrit}">${critica}/100</div></div>
-            <div><span class="badge-label">Investido</span><div style="font-size:0.75em;font-weight:700;color:var(--red)">${formatEC(p.investimento)}</div></div>
-            <div><span class="badge-label">Retorno</span><div style="font-size:0.75em;font-weight:700;color:var(--green)">${formatEC(p.arrecadacao)}</div></div>
-          </div>`:``}
-      </div>`;
-    }).join('');
-  } catch(e) { c.innerHTML='<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-text">Erro ao carregar projetos.</div></div>'; }
-}
-
-// ── CHARTS ────────────────────────────────────────────────
-function selectChart(name, el) {
+// ══════════════════════════════════════════════
+//  CHARTS — COM FIX DE DATA GVIZ
+// ══════════════════════════════════════════════
+function selectChart(name,el) {
   document.querySelectorAll('.chart-pill').forEach(p=>p.classList.remove('selected'));
   el.classList.add('selected');
-  CURRENT_CHART = name;
   loadChartData(name);
 }
 
 async function loadChartData(chartName) {
-  const c = document.getElementById('chart-container');
-  c.innerHTML = skeletons(8, 80);
+  const c=document.getElementById('chart-container');
+  c.innerHTML=skeletons(8,80);
+  document.getElementById('chart-week-label').textContent='Carregando...';
   try {
-    const sheetId = chartName==='BILLBOARD 200' ? ALBUMS_ID : CHARTS_ID;
-    const tab     = chartName==='BILLBOARD 200' ? 'DADOS ÁLBUNS' : chartName;
-    const txt = await fetch(`https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(tab)}`).then(r=>r.text());
-    const start=txt.indexOf('{'), end=txt.lastIndexOf('}');
-    if (start===-1) throw new Error('Planilha sem dados ou sem acesso público');
-    const json = JSON.parse(txt.substring(start,end+1));
-    const rows = json.table?.rows||[];
+    const sheetId=chartName==='BILLBOARD 200'?ALBUMS_ID:CHARTS_ID;
+    const tab=chartName==='BILLBOARD 200'?'DADOS ÁLBUNS':chartName;
+    const txt=await fetch(`https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(tab)}`).then(r=>r.text());
+    const start=txt.indexOf('{'),end=txt.lastIndexOf('}');
+    if (start===-1) throw new Error('Planilha sem dados ou sem acesso público de leitura');
+    const json=JSON.parse(txt.substring(start,end+1));
+    const rows=json.table?.rows||[];
     if (!rows.length) { c.innerHTML='<div class="empty-state"><div class="empty-icon">📊</div><div class="empty-text">Chart ainda não disponível esta semana.</div></div>'; return; }
 
+    // Encontra data mais recente usando parseGvizDate
     let dataMax=null;
-    rows.slice(1).forEach(r=>{const v=r.c?.[1]?.v||r.c?.[1]?.f; if(v){const d=new Date(v);if(!isNaN(d)&&(!dataMax||d>dataMax))dataMax=d;}});
+    rows.slice(1).forEach(r=>{
+      const v=r.c?.[1]?.v||r.c?.[1]?.f;
+      const d=parseGvizDate(v);
+      if (d&&(!dataMax||d>dataMax)) dataMax=d;
+    });
+
+    if (dataMax) {
+      document.getElementById('chart-week-label').textContent=
+        'Semana de '+dataMax.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'});
+    }
 
     if (chartName==='BILLBOARD 200') renderAlbumsChart(rows,c,dataMax);
     else renderSinglesChart(rows,c,dataMax);
   } catch(e) {
-    c.innerHTML=`<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-text">Não foi possível carregar o chart.<br><small style="opacity:0.5">${e.message}</small><br><small style="opacity:0.4;margin-top:8px;display:block">A planilha precisa estar com acesso público de leitura.</small></div></div>`;
+    c.innerHTML=`<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-text">Não foi possível carregar o chart.<br><small style="opacity:.5">${e.message}</small><br><small style="opacity:.4;margin-top:8px;display:block">A planilha precisa estar com acesso público de leitura (Compartilhar → Qualquer pessoa com o link).</small></div></div>`;
+    document.getElementById('chart-week-label').textContent='Erro ao carregar';
   }
 }
 
-function isSameWeek(v, dataMax) {
-  if (!dataMax||!v) return !dataMax;
-  const d=new Date(v); if(isNaN(d)) return false;
-  return d.toDateString()===dataMax.toDateString();
-}
-function getCell(row,idx) { const c=row.c?.[idx]; if(!c) return ''; return c.v!==undefined&&c.v!==null?c.v:(c.f||''); }
-
 function renderSinglesChart(rows,container,dataMax) {
   const dados=rows.slice(1);
-  const daSemana=dataMax?dados.filter(r=>isSameWeek(getCell(r,1),dataMax)&&getCell(r,2)):dados.filter(r=>getCell(r,2));
-  if (!daSemana.length) { container.innerHTML='<div class="empty-state"><div class="empty-icon">📊</div><div class="empty-text">Nenhum dado para a semana mais recente.</div></div>'; return; }
+  const daSemana=dados.filter(r=>isSameDay(getCell(r,1),dataMax)&&getCell(r,2));
+  if (!daSemana.length) { container.innerHTML='<div class="empty-state"><div class="empty-icon">📊</div><div class="empty-text">Nenhum dado para esta semana.</div></div>'; return; }
   daSemana.sort((a,b)=>parseInt(getCell(a,2))-parseInt(getCell(b,2)));
-  const dataStr=dataMax?dataMax.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'}):'';
-  container.innerHTML=`<div style="font-size:0.62em;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:14px">Semana de ${dataStr} · ${daSemana.length} entradas</div>`+
-  daSemana.map(r=>{
-    const pos=parseInt(getCell(r,2))||0, song=String(getCell(r,3)||'—'), pts=getCell(r,4);
+  container.innerHTML=daSemana.map(r=>{
+    const pos=parseInt(getCell(r,2))||0;
+    const song=String(getCell(r,3)||'—');
+    const pts=getCell(r,4);
     const artist=[getCell(r,6),getCell(r,7),getCell(r,8),getCell(r,9),getCell(r,10)].filter(Boolean).join(', ')||'—';
-    const status=String(getCell(r,11)||''), change=parseInt(getCell(r,12))||0;
+    const status=String(getCell(r,11)||'');
+    const change=parseInt(getCell(r,12))||0;
     const cover=fixFotoUrl(String(getCell(r,13)||''));
     const posColor=pos===1?'var(--gold)':pos<=10?'var(--purple)':'var(--muted)';
     const chIcon=change>0?`<span class="change-up">▲${change}</span>`:change<0?`<span class="change-down">▼${Math.abs(change)}</span>`:(status==='NEW'||status==='RE-ENTRY')?'':'<span class="change-same">●</span>';
-    const badge=status==='NEW'?'<span class="pill pill-green" style="padding:2px 8px;font-size:0.52em;margin-left:4px">NEW</span>':status==='RE-ENTRY'?'<span class="pill pill-purple" style="padding:2px 8px;font-size:0.52em;margin-left:4px">RE</span>':'';
+    const badge=status==='NEW'?'<span class="pill pill-green" style="padding:2px 8px;font-size:.52em;margin-left:4px">NEW</span>':status==='RE-ENTRY'?'<span class="pill pill-purple" style="padding:2px 8px;font-size:.52em;margin-left:4px">RE</span>':'';
     return `<div class="chart-entry">
       <div class="chart-pos" style="color:${posColor}">${pos}</div>
       ${cover?`<img src="${cover}" alt="" class="chart-cover" onerror="this.style.display='none'">`:
@@ -1445,15 +1419,17 @@ function renderSinglesChart(rows,container,dataMax) {
 
 function renderAlbumsChart(rows,container,dataMax) {
   const dados=rows.slice(1);
-  const daSemana=dataMax?dados.filter(r=>isSameWeek(getCell(r,1),dataMax)&&getCell(r,2)):dados.filter(r=>getCell(r,2));
-  if (!daSemana.length) { container.innerHTML='<div class="empty-state"><div class="empty-icon">📀</div><div class="empty-text">Nenhum dado para a semana mais recente.</div></div>'; return; }
+  const daSemana=dados.filter(r=>isSameDay(getCell(r,1),dataMax)&&getCell(r,2));
+  if (!daSemana.length) { container.innerHTML='<div class="empty-state"><div class="empty-icon">📀</div><div class="empty-text">Nenhum dado para esta semana.</div></div>'; return; }
   daSemana.sort((a,b)=>parseInt(getCell(a,2))-parseInt(getCell(b,2)));
-  const dataStr=dataMax?dataMax.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'}):'';
-  container.innerHTML=`<div style="font-size:0.62em;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:14px">Semana de ${dataStr} · ${daSemana.length} entradas</div>`+
-  daSemana.map(r=>{
-    const pos=parseInt(getCell(r,2))||0, album=String(getCell(r,3)||'—'), sales=getCell(r,5);
-    const status=String(getCell(r,7)||''), change=parseInt(getCell(r,8))||0;
-    const cover=fixFotoUrl(String(getCell(r,10)||'')), genre=String(getCell(r,11)||''), artist=String(getCell(r,12)||'—');
+  container.innerHTML=daSemana.map(r=>{
+    const pos=parseInt(getCell(r,2))||0;
+    const album=String(getCell(r,3)||'—');
+    const sales=getCell(r,5);
+    const change=parseInt(getCell(r,8))||0;
+    const cover=fixFotoUrl(String(getCell(r,10)||''));
+    const genre=String(getCell(r,11)||'');
+    const artist=String(getCell(r,12)||'—');
     const posColor=pos===1?'var(--gold)':pos<=10?'var(--purple)':'var(--muted)';
     const chStr=change>0?`<span class="change-up">▲${change}</span>`:change<0?`<span class="change-down">▼${Math.abs(change)}</span>`:'<span class="change-same">●</span>';
     return `<div class="album-card">
@@ -1469,7 +1445,9 @@ function renderAlbumsChart(rows,container,dataMax) {
   }).join('');
 }
 
-// ── DUELO ─────────────────────────────────────────────────
+// ══════════════════════════════════════════════
+//  DUELO
+// ══════════════════════════════════════════════
 function populateDuelSelects() {
   const opts=ALL_ARTISTS.map(a=>`<option value="${a.nome}">${a.nome}</option>`).join('');
   document.getElementById('duel-a').innerHTML='<option value="">Artista A...</option>'+opts;
@@ -1477,18 +1455,18 @@ function populateDuelSelects() {
 }
 
 function pesoPorPosicao(pos) {
-  if (pos===1) return 100; if (pos===2) return 95; if (pos===3) return 90;
-  if (pos<=5)  return 85-(pos-4)*5; if (pos<=10) return 70-(pos-6)*5;
-  if (pos<=20) return 45-(pos-11)*2; if (pos<=40) return 25-(pos-21)*0.5;
-  if (pos<=60) return 15-(pos-41)*0.25; if (pos<=80) return 9-(pos-61)*0.1;
-  return Math.max(1, 6-(pos-81)*0.05);
+  if(pos===1)return 100;if(pos===2)return 95;if(pos===3)return 90;
+  if(pos<=5)return 85-(pos-4)*5;if(pos<=10)return 70-(pos-6)*5;
+  if(pos<=20)return 45-(pos-11)*2;if(pos<=40)return 25-(pos-21)*0.5;
+  if(pos<=60)return 15-(pos-41)*0.25;if(pos<=80)return 9-(pos-61)*0.1;
+  return Math.max(1,6-(pos-81)*0.05);
 }
 
 async function startDuel() {
   const nameA=document.getElementById('duel-a').value, nameB=document.getElementById('duel-b').value;
   const chart=document.getElementById('duel-chart').value;
-  if (!nameA||!nameB) { showToast('Selecione os dois artistas!','error'); return; }
-  if (nameA===nameB)  { showToast('Escolha artistas diferentes!','error'); return; }
+  if(!nameA||!nameB){showToast('Selecione os dois artistas!','error');return;}
+  if(nameA===nameB){showToast('Escolha artistas diferentes!','error');return;}
   const aData=ALL_ARTISTS.find(a=>a.nome===nameA), bData=ALL_ARTISTS.find(a=>a.nome===nameB);
   document.getElementById('duel-name-a').textContent=nameA;
   document.getElementById('duel-name-b').textContent=nameB;
@@ -1505,39 +1483,256 @@ async function startDuel() {
     const json=JSON.parse(txt.substring(txt.indexOf('{'),txt.lastIndexOf('}')+1));
     const rows=json.table?.rows||[];
     let dataMax=null;
-    rows.slice(1).forEach(r=>{const v=r.c?.[1]?.v||r.c?.[1]?.f;if(v){const d=new Date(v);if(!isNaN(d)&&(!dataMax||d>dataMax))dataMax=d;}});
-    const daSemana=rows.slice(1).filter(r=>isSameWeek(getCell(r,1),dataMax)&&getCell(r,2));
-    const findArt=(nome)=>daSemana.filter(r=>{for(let i=6;i<=10;i++){if(String(getCell(r,i)||'').trim().toLowerCase()===nome.trim().toLowerCase())return true;}return false;})
+    rows.slice(1).forEach(r=>{const v=r.c?.[1]?.v||r.c?.[1]?.f;const d=parseGvizDate(v);if(d&&(!dataMax||d>dataMax))dataMax=d;});
+    const daSemana=rows.slice(1).filter(r=>isSameDay(getCell(r,1),dataMax)&&getCell(r,2));
+    const findArt=nome=>daSemana.filter(r=>{for(let i=6;i<=10;i++){if(String(getCell(r,i)||'').trim().toLowerCase()===nome.trim().toLowerCase())return true;}return false;})
       .map(r=>{const pos=parseInt(getCell(r,2))||99;return{pos,song:String(getCell(r,3)||'—'),peso:pesoPorPosicao(pos),cover:fixFotoUrl(String(getCell(r,13)||''))};}).sort((a,b)=>a.pos-b.pos);
-    const tracksA=findArt(nameA), tracksB=findArt(nameB);
-    const scoreA=tracksA.reduce((s,t)=>s+t.peso,0), scoreB=tracksB.reduce((s,t)=>s+t.peso,0);
-    const maxScore=Math.max(scoreA,scoreB,1);
-    document.getElementById('duel-hp-a').style.width=Math.round((scoreA/maxScore)*100)+'%';
-    document.getElementById('duel-hp-b').style.width=Math.round((scoreB/maxScore)*100)+'%';
-    const bestA=tracksA.length?tracksA[0].pos:null, bestB=tracksB.length?tracksB[0].pos:null;
-    let html=`<div class="duel-stat-row"><div class="duel-val-a">${tracksA.length}</div><div class="duel-stat-name">Músicas<br>no Chart</div><div class="duel-val-b">${tracksB.length}</div></div>`;
-    html+=`<div class="duel-stat-row"><div class="duel-val-a">${bestA?'#'+bestA:'—'}</div><div class="duel-stat-name">Melhor<br>Posição</div><div class="duel-val-b">${bestB?'#'+bestB:'—'}</div></div>`;
-    html+=`<div class="duel-stat-row"><div class="duel-val-a">${scoreA.toFixed(1)}</div><div class="duel-stat-name">Score<br>(pesos)</div><div class="duel-val-b">${scoreB.toFixed(1)}</div></div>`;
-    const renderTracks=(tracks,nome,cor)=>tracks.length?`<div style="margin-top:14px"><div style="font-size:0.6em;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">${nome}</div>${tracks.map(t=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">${t.cover?`<img src="${t.cover}" style="width:32px;height:32px;border-radius:6px;object-fit:cover" onerror="this.style.display='none'">`:''}  <span style="font-size:0.8em;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.song}</span><span style="font-family:'Bebas Neue',cursive;font-size:1.1em;color:${cor}">#${t.pos}</span><span style="font-size:0.65em;color:var(--muted)">${t.peso}pts</span></div>`).join('')}</div>`:`<div style="margin-top:14px;font-size:0.75em;color:var(--muted);text-align:center;padding:12px 0;border-top:1px solid var(--border)">${nome} não tem músicas esta semana</div>`;
-    html+=renderTracks(tracksA,nameA,'var(--neon)'); html+=renderTracks(tracksB,nameB,'var(--gold)');
-    html+=`<div style="margin-top:16px;padding:10px;background:rgba(255,255,255,0.03);border-radius:var(--radius-sm);font-size:0.62em;color:var(--muted);line-height:1.6">⚖️ Score por peso de posição: #1=100pts · #2=95pts · #5=80pts · #10=50pts · #100=1pt</div>`;
+    const tA=findArt(nameA), tB=findArt(nameB);
+    const sA=tA.reduce((s,t)=>s+t.peso,0), sB=tB.reduce((s,t)=>s+t.peso,0);
+    const maxS=Math.max(sA,sB,1);
+    document.getElementById('duel-hp-a').style.width=Math.round((sA/maxS)*100)+'%';
+    document.getElementById('duel-hp-b').style.width=Math.round((sB/maxS)*100)+'%';
+    let html=`<div class="duel-stat-row"><div class="duel-val-a">${tA.length}</div><div class="duel-stat-name">Músicas<br>no Chart</div><div class="duel-val-b">${tB.length}</div></div>`;
+    html+=`<div class="duel-stat-row"><div class="duel-val-a">${tA[0]?'#'+tA[0].pos:'—'}</div><div class="duel-stat-name">Melhor<br>Posição</div><div class="duel-val-b">${tB[0]?'#'+tB[0].pos:'—'}</div></div>`;
+    html+=`<div class="duel-stat-row"><div class="duel-val-a">${sA.toFixed(1)}</div><div class="duel-stat-name">Score<br>(pesos)</div><div class="duel-val-b">${sB.toFixed(1)}</div></div>`;
+    const rt=(tracks,nome,cor)=>tracks.length?`<div style="margin-top:14px"><div style="font-size:.6em;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">${nome}</div>${tracks.map(t=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">${t.cover?`<img src="${t.cover}" style="width:32px;height:32px;border-radius:6px;object-fit:cover" onerror="this.style.display='none'">`:''}<span style="font-size:.8em;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.song}</span><span style="font-family:'Bebas Neue',cursive;font-size:1.1em;color:${cor}">#${t.pos}</span><span style="font-size:.65em;color:var(--muted)">${t.peso}pts</span></div>`).join('')}</div>`:`<div style="margin-top:14px;font-size:.75em;color:var(--muted);text-align:center;padding:12px 0;border-top:1px solid var(--border)">${nome} não tem músicas esta semana</div>`;
+    html+=rt(tA,nameA,'var(--neon)'); html+=rt(tB,nameB,'var(--gold)');
+    html+=`<div style="margin-top:16px;padding:10px;background:rgba(255,255,255,.03);border-radius:var(--radius-sm);font-size:.62em;color:var(--muted);line-height:1.6">⚖️ #1=100pts · #2=95pts · #5=80pts · #10=50pts · #100=1pt</div>`;
     document.getElementById('duel-results').innerHTML=html;
-    const winEl=document.getElementById('duel-winner'); winEl.style.display='block';
-    if (scoreA===scoreB) { winEl.textContent='🤝 EMPATE!'; winEl.style.color='var(--muted)'; }
-    else { const vence=scoreA>scoreB?nameA:nameB; const diff=Math.abs(scoreA-scoreB).toFixed(1); winEl.innerHTML=`🏆 ${vence} VENCE!<div style="font-family:'DM Sans',sans-serif;font-size:0.4em;color:var(--muted);margin-top:4px;font-weight:400">por ${diff} pontos</div>`; winEl.style.color='var(--gold)'; }
+    const wEl=document.getElementById('duel-winner'); wEl.style.display='block';
+    if(sA===sB){wEl.textContent='🤝 EMPATE!';wEl.style.color='var(--muted)';}
+    else{const v=sA>sB?nameA:nameB;wEl.innerHTML=`🏆 ${v} VENCE!<div style="font-family:'DM Sans',sans-serif;font-size:.4em;color:var(--muted);margin-top:4px;font-weight:400">por ${Math.abs(sA-sB).toFixed(1)} pontos</div>`;wEl.style.color='var(--gold)';
+    if(sA>sB) showAchievement('⚔️','VITÓRIA NO DUELO!',`${nameA} derrotou ${nameB} no ${chart}!`);
+    else showAchievement('⚔️','VITÓRIA NO DUELO!',`${nameB} derrotou ${nameA} no ${chart}!`);}
   } catch(e) { document.getElementById('duel-results').innerHTML=`<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-text">Erro: ${e.message}</div></div>`; }
 }
 function resetDuel() { document.getElementById('duel-setup').style.display='block'; document.getElementById('duel-arena-container').style.display='none'; document.getElementById('duel-a').value=''; document.getElementById('duel-b').value=''; }
 
-// ── MODAIS ────────────────────────────────────────────────
+// ══════════════════════════════════════════════
+//  GRAVADORAS
+// ══════════════════════════════════════════════
+function renderLabelStats() {
+  const lb={'King & Queen':[],'Crown':[],'Independent':[]};
+  ALL_ARTISTS.forEach(a=>{const g=a.gravadora||'Independent';if(lb[g])lb[g].push(a);else lb['Independent'].push(a);});
+  const set=(id,arr)=>{
+    const t=arr.reduce((s,a)=>s+(parseFloat(a.fortuna_total)||0),0);
+    const ec=document.getElementById(id+'-count'); const et=document.getElementById(id+'-total');
+    if(ec) ec.textContent=arr.length+' artistas';
+    if(et) et.textContent=formatMoney(t);
+  };
+  set('kq',lb['King & Queen']); set('crown',lb['Crown']); set('indie',lb['Independent']);
+}
+
+function loadLabelArtists(label) {
+  document.getElementById('label-artists-title').textContent=label.toUpperCase();
+  const arts=ALL_ARTISTS.filter(a=>(a.gravadora||'Independent')===label||(!a.gravadora&&label==='Independent'));
+  const c=document.getElementById('label-artists-container');
+  if (!arts.length) { c.innerHTML='<div class="empty-state"><div class="empty-icon">🎤</div><div class="empty-text">Nenhum artista.</div></div>'; }
+  else c.innerHTML=arts.sort((a,b)=>(parseFloat(b.fortuna_total)||0)-(parseFloat(a.fortuna_total)||0)).map((a,i)=>{
+    const foto=fixFotoUrl(a.foto); const ini=(a.nome||'?').split(' ').map(p=>p[0]).slice(0,2).join('').toUpperCase();
+    const tier=getTier(a.prestigio);
+    return `<div class="artist-list-item">
+      <div style="font-family:'Bebas Neue',cursive;font-size:1.2em;color:${i<3?'var(--gold)':'var(--muted)'};width:24px;flex-shrink:0">${i+1}</div>
+      ${foto?`<img src="${foto}" alt="" class="artist-list-thumb" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<div class=\\'artist-list-thumb\\' style=\\'display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#8a00d4,#bc13fe);font-weight:700;font-size:.9em;color:#fff\\'>${ini}</div>')">`:
+        `<div class="artist-list-thumb" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#8a00d4,#bc13fe);font-weight:700;font-size:.9em;color:#fff">${ini}</div>`}
+      <div><div class="artist-list-name">${a.nome}</div><div class="artist-list-meta">${formatMoney(a.fortuna_total)}</div><div style="margin-top:4px"><span class="tier-badge tier-${tier.key}" style="padding:2px 7px;font-size:.5em">${tier.icon} ${tier.label}</span></div></div>
+    </div>`;
+  }).join('');
+  navigate('screen-label-artists');
+}
+
+// ══════════════════════════════════════════════
+//  RADAR
+// ══════════════════════════════════════════════
+async function loadRadar() {
+  try {
+    const data=await fetchJSON(`${SCRIPT_URL}?acao=radar`);
+    const c=document.getElementById('radar-container');
+    if (!Array.isArray(data)||!data.length) { renderRadarFromArtists(); return; }
+    c.innerHTML=data.map(item=>{
+      const foto=fixFotoUrl(item.foto); const ini=(item.nome||'?').split(' ').map(p=>p[0]).slice(0,2).join('').toUpperCase();
+      return `<div class="radar-item">
+        ${foto?`<img src="${foto}" alt="" class="radar-avatar" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<div class=\\'radar-avatar\\' style=\\'display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#8a00d4,#bc13fe);font-weight:700;font-size:.9em;color:#fff\\'>${ini}</div>')">`:
+          `<div class="radar-avatar" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#8a00d4,#bc13fe);font-weight:700;font-size:.9em;color:#fff">${ini}</div>`}
+        <div class="radar-content"><div class="radar-name">${item.nome}</div><div class="radar-action">${item.acao}</div><div class="radar-time">${item.timestamp||''}</div></div>
+      </div>`;
+    }).join('');
+  } catch(e) { renderRadarFromArtists(); }
+}
+function renderRadarFromArtists() {
+  const c=document.getElementById('radar-container');
+  if (!ALL_ARTISTS.length) { setTimeout(renderRadarFromArtists,2000); return; }
+  const busy=ALL_ARTISTS.filter(a=>a.status&&a.status!=='Livre');
+  if (!busy.length) { c.innerHTML='<div class="empty-state"><div class="empty-icon">🌍</div><div class="empty-text">Nenhuma atividade recente.</div></div>'; return; }
+  c.innerHTML=busy.map(a=>{
+    const foto=fixFotoUrl(a.foto); const ini=(a.nome||'?').split(' ').map(p=>p[0]).slice(0,2).join('').toUpperCase();
+    return `<div class="radar-item">
+      ${foto?`<img src="${foto}" alt="" class="radar-avatar" onerror="this.style.display='none'">`:
+        `<div class="radar-avatar" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#8a00d4,#bc13fe);font-weight:700;color:#fff">${ini}</div>`}
+      <div class="radar-content"><div class="radar-name">${a.nome}</div><div class="radar-action">${a.status}</div><div class="radar-time">${a.gravadora||'Independent'}</div></div>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════
+//  HALL DA FAMA
+// ══════════════════════════════════════════════
+async function loadHallData() {
+  try {
+    const data=await fetchJSON(`${SCRIPT_URL}?acao=hall_da_fama`);
+    if (Array.isArray(data)) { HALL_DATA=data; renderHall(); }
+  } catch(e) {}
+}
+function switchHallTab(tab,btn) {
+  HALL_TAB=tab;
+  if(btn){document.querySelectorAll('#screen-hall .tab-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');}
+  renderHall();
+}
+function renderHall() {
+  const c=document.getElementById('hall-container');
+  if (!HALL_DATA.length) { c.innerHTML='<div class="empty-state"><div class="empty-icon">🏅</div><div class="empty-text">Nenhum prêmio registrado ainda.</div></div>'; return; }
+  const filtered=HALL_TAB==='todos'?HALL_DATA:HALL_DATA.filter(h=>(h.categoria||'').toLowerCase().includes(HALL_TAB));
+  if (!filtered.length) { c.innerHTML='<div class="empty-state"><div class="empty-icon">🏅</div><div class="empty-text">Nenhum prêmio nesta categoria.</div></div>'; return; }
+  const ic=(cat)=>{const c2=(cat||'').toLowerCase();return c2.includes('música')||c2.includes('musica')?'🎵':c2.includes('cinema')?'🎬':c2.includes('especial')?'⭐':'🏆';};
+  c.innerHTML=filtered.map(h=>`<div class="trophy-item">
+    <div class="trophy-icon">${ic(h.categoria)}</div>
+    <div class="trophy-info"><div class="trophy-name">${h.nome_premio||'—'}</div><div class="trophy-cat">${h.artista||'—'} · ${h.categoria||''}</div><div class="trophy-year">${h.obra||''}${h.ano?' · '+h.ano:''}</div></div>
+  </div>`).join('');
+}
+
+// ══════════════════════════════════════════════
+//  AGENDA DA TOUR
+// ══════════════════════════════════════════════
+async function loadAgenda() {
+  if (!ARTISTA_ATUAL) return;
+  document.getElementById('agenda-artist-name').textContent=ARTISTA_ATUAL.nome;
+  const c=document.getElementById('agenda-container');
+  c.innerHTML=skeletons(5,70);
+  try {
+    const data=await fetchJSON(`${SCRIPT_URL}?acao=agenda_tour&nome=${enc(ARTISTA_ATUAL.nome)}`);
+    if (!data||data.erro||!data.agenda?.length) {
+      c.innerHTML='<div class="empty-state"><div class="empty-icon">🗓️</div><div class="empty-text">Nenhuma tour ativa no momento.</div></div>';
+      document.getElementById('agenda-summary').style.display='none'; return;
+    }
+    document.getElementById('agenda-summary').style.display='block';
+    document.getElementById('ag-nome').textContent=data.nome_tour||'—';
+    document.getElementById('ag-shows').textContent=`${data.show_atual||1}/${data.total_shows||'?'}`;
+    document.getElementById('ag-total').textContent=formatEC(data.arrecadacao_total);
+    c.innerHTML=data.agenda.map((s,i)=>{
+      const pct=s.capacidade?Math.round((s.vendidos/s.capacidade)*100):0;
+      const isCurr=i===(data.show_atual-1), isPast=i<(data.show_atual-1);
+      const pctCol=pct>=80?'var(--green)':pct>=50?'var(--gold)':'var(--red)';
+      const [d,m,y]=(s.data||'').split('/');
+      return `<div class="show-item" style="opacity:${isPast?.5:1};border-color:${isCurr?'rgba(188,19,254,.5)':''}">
+        <div class="show-date" style="color:${isPast?'var(--muted)':isCurr?'var(--purple)':'var(--text)'}">${d||'?'}<br><span style="font-size:.7em">${m&&y?m+'/'+y:'—'}</span></div>
+        <div class="show-info"><div class="show-venue">${s.local||'—'}</div><div class="show-capacity">${(s.vendidos||0).toLocaleString('pt-BR')} / ${(s.capacidade||0).toLocaleString('pt-BR')} · $EC ${formatMini(s.arrecadado)}</div></div>
+        <div style="font-size:.72em;font-weight:700;color:${pctCol};flex-shrink:0">${pct}%</div>
+        ${isCurr?'<span class="pill pill-purple" style="margin-left:6px;padding:3px 8px;font-size:.5em">AO VIVO</span>':''}
+      </div>`;
+    }).join('');
+  } catch(e) { c.innerHTML='<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-text">Erro ao carregar agenda.</div></div>'; }
+}
+
+// ══════════════════════════════════════════════
+//  FINANÇAS
+// ══════════════════════════════════════════════
+async function loadFinances() {
+  if (!ARTISTA_ATUAL) return;
+  const a=ARTISTA_ATUAL;
+  document.getElementById('fin-artist-name').textContent=a.nome;
+  document.getElementById('fin-real').textContent=formatMoney(a.fortuna_real);
+  document.getElementById('fin-bens').textContent=formatMoney(a.fortuna_bens);
+  document.getElementById('fin-total').textContent=formatMoney(a.fortuna_total);
+  await switchFinTab('tours',null);
+}
+async function switchFinTab(tab,btn) {
+  if(btn){document.querySelectorAll('#screen-finances .tab-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');}
+  const c=document.getElementById('fin-content');
+  c.innerHTML=skeletons(4,60);
+  try {
+    const data=await fetchJSON(`${SCRIPT_URL}?acao=financas&nome=${enc(ARTISTA_ATUAL.nome)}&tipo=${tab}`);
+    if (!Array.isArray(data)||!data.length) { c.innerHTML='<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-text">Nenhum registro encontrado.</div></div>'; return; }
+    c.innerHTML=data.map(tx=>{
+      const pos=parseFloat(tx.valor||0)>=0;
+      return `<div class="tx-item"><div class="tx-icon">${tx.icone||'💰'}</div><div class="tx-info"><div class="tx-label">${tx.descricao||'—'}</div><div class="tx-date">${tx.data||''}</div></div><div class="tx-value ${pos?'positive':'negative'}">${pos?'+':''}${formatEC(tx.valor)}</div></div>`;
+    }).join('');
+  } catch(e) { c.innerHTML='<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-text">Erro.</div></div>'; }
+}
+
+// ══════════════════════════════════════════════
+//  MINHAS BETS
+// ══════════════════════════════════════════════
+async function loadMyBets() {
+  if (!ARTISTA_ATUAL) return;
+  document.getElementById('bets-artist-name').textContent=ARTISTA_ATUAL.nome;
+  const c=document.getElementById('mybets-container');
+  c.innerHTML=skeletons(3,70);
+  try {
+    const data=await fetchJSON(`${SCRIPT_URL}?acao=minhas_bets&nome=${enc(ARTISTA_ATUAL.nome)}`);
+    if (!Array.isArray(data)||!data.length) { c.innerHTML='<div class="empty-state"><div class="empty-icon">🎰</div><div class="empty-text">Nenhuma aposta encontrada.</div></div>'; return; }
+    const pagas=data.filter(b=>b.status==='Pago');
+    const retTotal=pagas.reduce((s,b)=>s+(parseFloat(b.retorno)||0),0);
+    const ponTotal=pagas.reduce((s,b)=>s+(parseFloat(b.pontos)||0),0);
+    const maxPon=pagas.reduce((s,b)=>s+(parseFloat(b.total_apost)||0)*2,0);
+    const taxa=maxPon>0?Math.round((ponTotal/maxPon)*100):0;
+    document.getElementById('bets-total').textContent=data.length;
+    document.getElementById('bets-retorno').textContent=formatEC(retTotal);
+    document.getElementById('bets-taxa').textContent=taxa+'%';
+    c.innerHTML=data.map(b=>{
+      const isPago=b.status==='Pago';
+      const ganhou=parseFloat(b.retorno||0)>parseFloat(b.valor||0);
+      return `<div class="card-sm" style="margin-bottom:10px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <div><div style="font-weight:700;font-size:.85em">Semana ${b.semana||'—'}</div><div style="font-size:.65em;color:var(--muted);margin-top:2px">${b.total_apost||0} músicas apostadas</div></div>
+          <span class="pill ${isPago?(ganhou?'pill-green':'pill-red'):'pill-purple'}">${isPago?(ganhou?'Ganhou':'Perdeu'):'Aguardando'}</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center">
+          <div><span class="badge-label">Apostado</span><div style="font-size:.82em;font-weight:700;color:var(--gold)">${formatEC(b.valor)}</div></div>
+          <div><span class="badge-label">Multiplicador</span><div style="font-size:.82em;font-weight:700;color:var(--neon)">${isPago?parseFloat(b.multiplicador||1).toFixed(2)+'x':'—'}</div></div>
+          <div><span class="badge-label">Retorno</span><div style="font-size:.82em;font-weight:700;color:${isPago?(ganhou?'var(--green)':'var(--red)'):'var(--muted)'}">${isPago?formatEC(b.retorno):'—'}</div></div>
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) { c.innerHTML='<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-text">Erro.</div></div>'; }
+}
+
+// ══════════════════════════════════════════════
+//  PROJETOS
+// ══════════════════════════════════════════════
+async function loadProjects() {
+  if (!ARTISTA_ATUAL) return;
+  document.getElementById('proj-artist-name').textContent=ARTISTA_ATUAL.nome;
+  const c=document.getElementById('projects-container');
+  c.innerHTML=skeletons(3,80);
+  try {
+    const data=await fetchJSON(`${SCRIPT_URL}?acao=projetos&nome=${enc(ARTISTA_ATUAL.nome)}`);
+    if (!Array.isArray(data)||!data.length) { c.innerHTML='<div class="empty-state"><div class="empty-icon">🎬</div><div class="empty-text">Nenhum projeto encontrado.</div></div>'; return; }
+    c.innerHTML=data.map(p=>{
+      const cr=parseFloat(p.critica)||0;
+      const cor=cr>=85?'var(--green)':cr>=60?'var(--gold)':cr>=30?'var(--purple)':'var(--red)';
+      return `<div class="card-sm" style="margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+          <div><div style="font-weight:700;font-size:.9em">${p.titulo||'—'}</div><div style="font-size:.7em;color:var(--muted);margin-top:2px">${p.tipo||''} · ${p.genero||''}</div>${p.data_inicio?`<div style="font-size:.62em;color:var(--muted);margin-top:2px">Início: ${p.data_inicio}</div>`:''}</div>
+          <span class="pill ${p.status==='Finalizado'?'pill-green':'pill-purple'}">${p.status||'—'}</span>
+        </div>
+        ${p.status==='Finalizado'?`<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center;margin-top:8px">
+          <div><span class="badge-label">Crítica</span><div style="font-family:'Bebas Neue',cursive;font-size:1.3em;color:${cor}">${cr}/100</div></div>
+          <div><span class="badge-label">Investido</span><div style="font-size:.75em;font-weight:700;color:var(--red)">${formatEC(p.investimento)}</div></div>
+          <div><span class="badge-label">Retorno</span><div style="font-size:.75em;font-weight:700;color:var(--green)">${formatEC(p.arrecadacao)}</div></div>
+        </div>`:``}
+      </div>`;
+    }).join('');
+  } catch(e) { c.innerHTML='<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-text">Erro.</div></div>'; }
+}
+
+// ══════════════════════════════════════════════
+//  MODAIS
+// ══════════════════════════════════════════════
 function openModal(id) {
-  if (id==='modal-rescisao'&&ARTISTA_ATUAL) {
-    document.getElementById('rescisao-gravadora').textContent=ARTISTA_ATUAL.gravadora||'Independent';
-    document.getElementById('rescisao-info').textContent='Ao rescindir, você pagará a multa contratual calculada automaticamente.';
-  }
-  if (id==='modal-bet')    loadBetMusicas();
-  if (id==='modal-leilao') loadLeilaoItens();
-  if (id==='modal-composicao') loadMuralComposicoes();
+  if(id==='modal-rescisao'&&ARTISTA_ATUAL){document.getElementById('rescisao-gravadora').textContent=ARTISTA_ATUAL.gravadora||'Independent';}
+  if(id==='modal-bet') loadBetMusicas();
+  if(id==='modal-leilao') loadLeilaoItens();
+  if(id==='modal-composicao') loadMuralComposicoes();
   document.getElementById(id).classList.add('open');
 }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
@@ -1550,25 +1745,25 @@ async function loadBetMusicas() {
     const data=await fetchJSON(`${SCRIPT_URL}?acao=musicas_bet`);
     if (data.erro||!data.musicas?.length) { c.innerHTML=`<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-text">${data.erro||'Sem dados'}</div></div>`; return; }
     BET_SEMANA=data.semana; BET_MUSICAS=data.musicas;
-    c.innerHTML=`<div style="font-size:0.7em;color:var(--muted);margin-bottom:12px">Semana <strong style="color:var(--gold)">${data.semana}</strong> — Digite a posição que você prevê para a próxima semana</div>`+
+    c.innerHTML=`<div style="font-size:.7em;color:var(--muted);margin-bottom:12px">Semana <strong style="color:var(--gold)">${data.semana}</strong> — Digite onde cada música estará na próxima semana</div>`+
     data.musicas.map((m,i)=>`<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)">
       <span style="font-family:'Bebas Neue',cursive;color:var(--gold);width:28px;font-size:1.1em">#${m.posicao}</span>
-      ${m.capa?`<img src="${m.capa}" style="width:36px;height:36px;border-radius:6px;object-fit:cover" onerror="this.style.display='none'">`:``}
-      <div style="flex:1;min-width:0"><div style="font-size:0.8em;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${m.musica}</div><div style="font-size:0.65em;color:var(--muted)">${m.artista}</div></div>
-      <input type="number" placeholder="?" min="1" max="100" id="bet-pos-${i}" data-musica="${m.musica.replace(/"/g,'&quot;')}" style="width:60px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px 8px;color:var(--text);font-size:0.8em;text-align:center">
+      ${m.capa?`<img src="${fixFotoUrl(m.capa)}" style="width:36px;height:36px;border-radius:6px;object-fit:cover" onerror="this.style.display='none'">`:``}
+      <div style="flex:1;min-width:0"><div style="font-size:.8em;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${m.musica}</div><div style="font-size:.65em;color:var(--muted)">${m.artista}</div></div>
+      <input type="number" placeholder="?" min="1" max="100" id="bet-pos-${i}" data-musica="${m.musica.replace(/"/g,'&quot;')}" style="width:60px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px 8px;color:var(--text);font-size:.8em;text-align:center">
     </div>`).join('');
-  } catch(e) { c.innerHTML='<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-text">Erro ao carregar músicas.</div></div>'; }
+  } catch(e) { c.innerHTML='<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-text">Erro.</div></div>'; }
 }
 
 async function loadLeilaoItens() {
   const c=document.getElementById('leilao-list');
   try {
     const data=await fetchJSON(`${SCRIPT_URL}?acao=leilao`);
-    if (!Array.isArray(data)||!data.length) { c.innerHTML='<div style="font-size:0.75em;color:var(--muted);margin-bottom:12px">Nenhum item em leilão no momento.</div>'; return; }
+    if (!Array.isArray(data)||!data.length) { c.innerHTML='<div style="font-size:.75em;color:var(--muted);margin-bottom:12px">Nenhum item em leilão.</div>'; return; }
     c.innerHTML='<div style="font-family:\'Bebas Neue\',cursive;letter-spacing:2px;font-size:1em;color:var(--purple);margin-bottom:10px">ITENS DISPONÍVEIS</div>'+
     data.map(item=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:8px">
-      <div><div style="font-weight:700;font-size:0.85em">${item.descricao}</div><div style="font-size:0.65em;color:var(--muted)">${item.vendedor} · Lance atual: ${formatEC(item.lance_atual)}</div><div style="font-size:0.62em;color:var(--muted)">Expira: ${item.expiracao}</div></div>
-      <button style="background:rgba(245,200,66,0.2);border:1px solid var(--gold);color:var(--gold);padding:8px 14px;border-radius:20px;font-size:0.7em;font-weight:700;cursor:pointer" onclick="darLance('${item.id}')">Lance ›</button>
+      <div><div style="font-weight:700;font-size:.85em">${item.descricao}</div><div style="font-size:.65em;color:var(--muted)">${item.vendedor} · Lance: ${formatEC(item.lance_atual)}</div><div style="font-size:.62em;color:var(--muted)">Expira: ${item.expiracao}</div></div>
+      <button style="background:rgba(245,200,66,.2);border:1px solid var(--gold);color:var(--gold);padding:8px 14px;border-radius:20px;font-size:.7em;font-weight:700;cursor:pointer" onclick="darLance('${item.id}')">Lance ›</button>
     </div>`).join('');
   } catch(e) { c.innerHTML=''; }
 }
@@ -1580,30 +1775,28 @@ async function loadMuralComposicoes() {
     if (!Array.isArray(data)||!data.length) { c.innerHTML='<div class="empty-state"><div class="empty-icon">🎼</div><div class="empty-text">Nenhuma composição disponível.</div></div>'; return; }
     c.innerHTML='<div style="font-family:\'Bebas Neue\',cursive;letter-spacing:2px;font-size:1em;color:var(--purple);margin-bottom:12px">COMPOSIÇÕES DISPONÍVEIS</div>'+
     data.map(item=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:8px">
-      <div><div style="font-weight:700;font-size:0.85em">${item.titulo||item.descricao}</div><div style="font-size:0.68em;color:var(--muted)">${item.vendedor}</div></div>
-      <div style="text-align:right"><div style="color:var(--gold);font-weight:700;font-size:0.85em">${formatEC(item.preco)}</div><button style="background:rgba(188,19,254,0.2);border:1px solid rgba(188,19,254,0.4);color:var(--purple);padding:5px 12px;border-radius:20px;font-size:0.7em;font-weight:700;cursor:pointer;margin-top:4px" onclick="comprarItem('${item.id}')">Comprar</button></div>
+      <div><div style="font-weight:700;font-size:.85em">${item.titulo||item.descricao}</div><div style="font-size:.68em;color:var(--muted)">${item.vendedor}</div></div>
+      <div style="text-align:right"><div style="color:var(--gold);font-weight:700;font-size:.85em">${formatEC(item.preco)}</div><button style="background:rgba(188,19,254,.2);border:1px solid rgba(188,19,254,.4);color:var(--purple);padding:5px 12px;border-radius:20px;font-size:.7em;font-weight:700;cursor:pointer;margin-top:4px" onclick="comprarItem('${item.id}')">Comprar</button></div>
     </div>`).join('');
-  } catch(e) { c.innerHTML='<div class="empty-state"><div class="empty-icon">🎼</div><div class="empty-text">Mural indisponível.</div></div>'; }
+  } catch(e) { c.innerHTML='<div class="empty-state"><div class="empty-icon">🎼</div><div class="empty-text">Indisponível.</div></div>'; }
 }
 
-// ── API CALLS ─────────────────────────────────────────────
+// ══════════════════════════════════════════════
+//  API CALLS
+// ══════════════════════════════════════════════
 async function fetchJSON(url) {
-  const res=await fetch(url);
-  const txt=await res.text();
+  const res=await fetch(url); const txt=await res.text();
   try { return JSON.parse(txt); } catch(e) { return txt; }
 }
 async function apiCall(params) {
-  try {
-    const res=await fetch(`${SCRIPT_URL}?${new URLSearchParams(params)}`);
-    return await res.text();
-  } catch(e) { return null; }
+  try { const res=await fetch(`${SCRIPT_URL}?${new URLSearchParams(params)}`); return await res.text(); }
+  catch(e) { return null; }
 }
 
-// ── AÇÕES HUB ─────────────────────────────────────────────
+// ── AÇÕES ──
 async function comprarTour() {
   const nome=document.getElementById('t-nome').value.trim(), data=document.getElementById('t-data').value;
-  const qtd=document.getElementById('t-qtd').value, cont=document.getElementById('t-continente').value;
-  const porte=document.getElementById('t-porte').value;
+  const qtd=document.getElementById('t-qtd').value, cont=document.getElementById('t-continente').value, porte=document.getElementById('t-porte').value;
   if (!nome||!data) { showToast('Preencha nome e data!','error'); return; }
   const res=await apiCall({acao:'compra_unificada_tour',nome:ARTISTA_ATUAL?.nome,tipo:porte,titulo:nome,dataInicio:data,qtd,continente:cont});
   closeModal('modal-tour'); showToast(res||'Tour contratada!'); loadAllArtists();
@@ -1652,12 +1845,12 @@ async function darLance(id) {
 }
 async function enviarBet() {
   const valor=document.getElementById('bet-valor').value;
-  if (!valor) { showToast('Informe o valor da aposta!','error'); return; }
-  if (!BET_SEMANA) { showToast('Carregue as músicas primeiro.','error'); return; }
-  const previsoes={};
-  document.querySelectorAll('[id^="bet-pos-"]').forEach(inp=>{if(inp.value&&parseInt(inp.value)>0)previsoes[inp.getAttribute('data-musica')]=parseInt(inp.value);});
-  if (!Object.keys(previsoes).length) { showToast('Preencha ao menos uma posição!','error'); return; }
-  const url=`${SCRIPT_URL}?acao=bet&nome=${enc(ARTISTA_ATUAL?.nome)}&valor=${valor}&semana=${enc(BET_SEMANA)}&previsoes=${enc(JSON.stringify(previsoes))}`;
+  if (!valor) { showToast('Informe o valor!','error'); return; }
+  if (!BET_SEMANA) { showToast('Aguarde carregar as músicas.','error'); return; }
+  const prev={};
+  document.querySelectorAll('[id^="bet-pos-"]').forEach(inp=>{if(inp.value&&parseInt(inp.value)>0)prev[inp.getAttribute('data-musica')]=parseInt(inp.value);});
+  if (!Object.keys(prev).length) { showToast('Preencha ao menos uma posição!','error'); return; }
+  const url=`${SCRIPT_URL}?acao=bet&nome=${enc(ARTISTA_ATUAL?.nome)}&valor=${valor}&semana=${enc(BET_SEMANA)}&previsoes=${enc(JSON.stringify(prev))}`;
   try { const res=await fetch(url); const txt=await res.text(); closeModal('modal-bet'); showToast(txt||'Aposta registrada!'); }
   catch(e) { showToast('Erro de conexão.','error'); }
 }
@@ -1676,10 +1869,6 @@ async function comprarItem(id) {
   const res=await apiCall({acao:'comprar_item',nome:ARTISTA_ATUAL?.nome,itemId:id,tipo:'composicao'});
   showToast(res||'Compra realizada!'); loadMuralComposicoes();
 }
-
-// ── HELPERS INTERNOS ──────────────────────────────────────
-function enc(s) { return encodeURIComponent(s||''); }
-function skeletons(n=4, h=80) { return `<div class="skeleton" style="height:${h}px;margin-bottom:10px"></div>`.repeat(n); }
 </script>
 </body>
 </html>
