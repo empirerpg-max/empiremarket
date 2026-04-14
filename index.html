@@ -293,6 +293,15 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .tutorial-step{display:flex;gap:14px;margin-bottom:22px}
 .tut-num{width:36px;height:36px;border-radius:50%;background:rgba(188,19,254,.2);border:1px solid rgba(188,19,254,.4);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',cursive;font-size:1.1em;flex-shrink:0;color:var(--purple)}
 .tut-title{font-weight:700;font-size:.9em;margin-bottom:4px}.tut-text{font-size:.78em;color:var(--muted);line-height:1.6}
+
+/* ── AVATAR SELECTOR ── */
+.avatar-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:16px 0}
+.avatar-opt{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.6em;cursor:pointer;border:2px solid transparent;transition:.2s;background:var(--surface)}
+.avatar-opt.selected{border-color:var(--purple);background:rgba(188,19,254,.15)}
+.avatar-opt:active{transform:scale(.9)}
+/* ── REGISTRO TABS ── */
+.reg-form{padding:4px 0}
+.reg-section{font-family:'Bebas Neue',cursive;letter-spacing:2px;font-size:1em;color:var(--purple);margin:16px 0 10px}
 </style>
 </head>
 <body>
@@ -332,7 +341,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
     <div class="home-tagline">Music &amp; Entertainment Hub</div>
   </div>
   <div class="user-pill">
-    <div class="user-pill-inner">
+    <div class="user-pill-inner" onclick="openAvatarSelector()" style="cursor:pointer" title="Trocar avatar">
       <div class="user-avatar-sm" id="home-avatar">?</div>
       <span style="font-size:.8em;font-weight:500" id="home-user-name">Carregando...</span>
     </div>
@@ -393,6 +402,9 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
     <div><div class="page-title">Meus Artistas</div><div class="page-subtitle">Seu portfólio</div></div>
   </div>
   <div id="artists-container"><div class="empty-state"><div class="empty-icon">🎤</div><div class="empty-text">Carregando...</div></div></div>
+  <div style="margin-top:16px">
+    <button onclick="navigate('screen-sem-id');loadArtistasSemId()" style="width:100%;padding:14px;border-radius:var(--radius-sm);border:1px dashed var(--border);background:transparent;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:.8em;cursor:pointer">🔍 Sentiu falta de algum artista?</button>
+  </div>
 </div>
 
 <!-- ══ DASHBOARD DO ARTISTA ══ -->
@@ -436,6 +448,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
     <div class="artist-menu-btn" onclick="openAgenda()"><span class="menu-btn-icon">🗓️</span><span class="menu-btn-label">Agenda Tour</span></div>
     <div class="artist-menu-btn" onclick="openFinances()"><span class="menu-btn-icon">💹</span><span class="menu-btn-label">Finanças</span></div>
     <div class="artist-menu-btn" onclick="openBets()"><span class="menu-btn-icon">🎰</span><span class="menu-btn-label">Minhas Bets</span></div>
+    <div class="artist-menu-btn" onclick="openRegistro()" style="grid-column:span 2;background:rgba(188,19,254,.08);border-color:rgba(188,19,254,.3)"><span class="menu-btn-icon">📝</span><span class="menu-btn-label">Registro / Bater Ponto</span></div>
   </div>
 </div>
 
@@ -695,6 +708,36 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
   <div class="tutorial-step"><div class="tut-num">6</div><div><div class="tut-title">🎰 Empire Bet</div><div class="tut-text">Toda semana preveja as posições do Hot 100. Posição exata=2pts, ±1=1pt, ±2=0.5pt. Multiplicador vai de 1x a 3x conforme acertos.</div></div></div>
 </div>
 
+
+<!-- ══ REGISTRO — BATER PONTO ══ -->
+<div id="screen-registro" class="screen">
+  <div class="back-row">
+    <button class="back-btn" onclick="navigate('screen-artist-dash')">←</button>
+    <div><div class="page-title">Registro</div><div class="page-subtitle" id="reg-artist-name">—</div></div>
+  </div>
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchRegTab('ponto',this)">📝 Ponto</button>
+    <button class="tab-btn" onclick="switchRegTab('pontos',this)">📊 Pontos</button>
+    <button class="tab-btn" onclick="switchRegTab('ecoin',this)">💎 eCoin</button>
+    <button class="tab-btn" onclick="switchRegTab('musica',this)">🎵 Música</button>
+    <button class="tab-btn" onclick="switchRegTab('album',this)">💿 Álbum</button>
+    <button class="tab-btn" onclick="switchRegTab('retro',this)">📅 Retroativo</button>
+  </div>
+  <div id="reg-content"></div>
+</div>
+
+<!-- ══ SENTIU FALTA DE ARTISTA ══ -->
+<div id="screen-sem-id" class="screen">
+  <div class="back-row">
+    <button class="back-btn" onclick="navigate('screen-artists')">←</button>
+    <div><div class="page-title">Vincular Artista</div><div class="page-subtitle">Artistas sem Telegram ID</div></div>
+  </div>
+  <div class="card" style="margin-bottom:20px">
+    <div style="font-size:.78em;color:var(--muted);line-height:1.7">Estes artistas ainda não têm um jogador vinculado. Se algum deles é seu, clique para vincular seu Telegram ID.</div>
+  </div>
+  <div id="sem-id-container"><div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-text">Carregando...</div></div></div>
+</div>
+
 </div><!-- #app -->
 
 <!-- ══════════ MODAIS ══════════ -->
@@ -932,7 +975,9 @@ window.addEventListener('load', () => {
 });
 
 async function bootApp() {
+  initAvatar();
   await loadAllArtists();
+  carregarCapasMusicas(); // carrega mapa de capas de singles em background
   loadRadar();
   loadChartData('AIRPLAY');
   loadHallData();
@@ -1350,9 +1395,37 @@ function renderRanking() {
 // ══════════════════════════════════════════════
 //  CHARTS — COM FIX DE DATA GVIZ
 // ══════════════════════════════════════════════
+// Mapa de capas de singles (nome_música lowercase → url_lh3)
+let CAPAS_MUSICAS = {};
+async function carregarCapasMusicas() {
+  try {
+    const data = await fetchJSON(`${SCRIPT_URL}?acao=capas_musicas`);
+    if (data && typeof data === 'object' && !data.erro) {
+      // Converte todas as URLs para lh3
+      Object.entries(data).forEach(([k,v]) => { CAPAS_MUSICAS[k] = fixFotoUrl(v); });
+    }
+  } catch(e) {}
+}
+
+// Retorna a capa de uma música pelo nome (busca no mapa INFOS MÚSICAS)
+function capaSingle(nome) {
+  return CAPAS_MUSICAS[String(nome||'').trim().toLowerCase()] || '';
+}
+
+// Label da métrica conforme o chart
+function metricaLabel(chartName) {
+  if (chartName==='SPOTIFY'||chartName==='APPLE MUSIC') return 'streams';
+  if (chartName==='YOUTUBE') return 'views';
+  if (chartName==='DIGITAL SALES'||chartName==='BILLBOARD 200') return 'vendas';
+  return 'pts';
+}
+
+let CURRENT_CHART = 'AIRPLAY';
+
 function selectChart(name,el) {
   document.querySelectorAll('.chart-pill').forEach(p=>p.classList.remove('selected'));
   el.classList.add('selected');
+  CURRENT_CHART = name;
   loadChartData(name);
 }
 
@@ -1396,6 +1469,7 @@ function renderSinglesChart(rows,container,dataMax) {
   const daSemana=dados.filter(r=>isSameDay(getCell(r,1),dataMax)&&getCell(r,2));
   if (!daSemana.length) { container.innerHTML='<div class="empty-state"><div class="empty-icon">📊</div><div class="empty-text">Nenhum dado para esta semana.</div></div>'; return; }
   daSemana.sort((a,b)=>parseInt(getCell(a,2))-parseInt(getCell(b,2)));
+  const label=metricaLabel(CURRENT_CHART);
   container.innerHTML=daSemana.map(r=>{
     const pos=parseInt(getCell(r,2))||0;
     const song=String(getCell(r,3)||'—');
@@ -1403,16 +1477,20 @@ function renderSinglesChart(rows,container,dataMax) {
     const artist=[getCell(r,6),getCell(r,7),getCell(r,8),getCell(r,9),getCell(r,10)].filter(Boolean).join(', ')||'—';
     const status=String(getCell(r,11)||'');
     const change=parseInt(getCell(r,12))||0;
-    const cover=fixFotoUrl(String(getCell(r,13)||''));
+    // Usa capa da col 13 se disponível; senão busca no mapa INFOS MÚSICAS
+    const coverRaw=fixFotoUrl(String(getCell(r,13)||''));
+    const cover=coverRaw||capaSingle(song);
     const posColor=pos===1?'var(--gold)':pos<=10?'var(--purple)':'var(--muted)';
     const chIcon=change>0?`<span class="change-up">▲${change}</span>`:change<0?`<span class="change-down">▼${Math.abs(change)}</span>`:(status==='NEW'||status==='RE-ENTRY')?'':'<span class="change-same">●</span>';
     const badge=status==='NEW'?'<span class="pill pill-green" style="padding:2px 8px;font-size:.52em;margin-left:4px">NEW</span>':status==='RE-ENTRY'?'<span class="pill pill-purple" style="padding:2px 8px;font-size:.52em;margin-left:4px">RE</span>':'';
+    // Formata valor: sem casas decimais
+    const ptsFormatado=pts?Math.floor(parseFloat(pts)||0).toLocaleString('pt-BR'):'—';
     return `<div class="chart-entry">
       <div class="chart-pos" style="color:${posColor}">${pos}</div>
       ${cover?`<img src="${cover}" alt="" class="chart-cover" onerror="this.style.display='none'">`:
         `<div class="chart-cover" style="display:flex;align-items:center;justify-content:center;font-size:1.2em">🎵</div>`}
       <div class="chart-info"><div class="chart-song">${song}</div><div class="chart-artist">${artist}</div><div style="margin-top:4px">${chIcon}${badge}</div></div>
-      <div class="chart-points"><div class="chart-pts-val">${pts?Number(pts).toLocaleString('pt-BR'):'—'}</div><div class="chart-pts-label">pts</div></div>
+      <div class="chart-points"><div class="chart-pts-val">${ptsFormatado}</div><div class="chart-pts-label">${label}</div></div>
     </div>`;
   }).join('');
 }
@@ -1439,7 +1517,7 @@ function renderAlbumsChart(rows,container,dataMax) {
         <div class="album-pos" style="color:${posColor}">#${pos}</div>
         <div class="album-title">${album}</div>
         <div class="album-artist">${artist}${genre?' · '+genre:''}</div>
-        <div class="album-sales">${sales?Number(sales).toLocaleString('pt-BR')+' vendas':''} ${chStr}</div>
+        <div class="album-sales">${sales?Math.floor(parseFloat(sales)||0).toLocaleString('pt-BR')+' vendas':''} ${chStr}</div>
       </div>
     </div>`;
   }).join('');
@@ -1869,6 +1947,593 @@ async function comprarItem(id) {
   const res=await apiCall({acao:'comprar_item',nome:ARTISTA_ATUAL?.nome,itemId:id,tipo:'composicao'});
   showToast(res||'Compra realizada!'); loadMuralComposicoes();
 }
+
+// ══════════════════════════════════════════════
+//  AVATAR SELECTOR
+// ══════════════════════════════════════════════
+
+const AVATAR_OPTS = [
+  '🎤','🎧','🎵','🎶','🌟','⭐','👑','💎','🔥','🌙',
+  '🦋','🌈','⚡','🎭','🏆','🎸','🎹','🎺','🎻','🥁',
+  '🦁','🐯','🦊','🐺','🦅','🌊','🌸','🍀','💫','✨'
+];
+
+let USER_AVATAR = localStorage.getItem('empire_avatar') || '';
+
+function initAvatar() {
+  const el = document.getElementById('home-avatar');
+  if (!el) return;
+  if (USER_AVATAR && AVATAR_OPTS.includes(USER_AVATAR)) {
+    el.textContent = USER_AVATAR;
+    el.style.background = 'transparent';
+    el.style.fontSize = '1.4em';
+  }
+}
+
+function openAvatarSelector() {
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(16px);z-index:600;display:flex;align-items:flex-end;justify-content:center';
+  overlay.innerHTML = `
+    <div style="width:100%;max-width:440px;background:#120020;border-top:1px solid rgba(188,19,254,.4);border-radius:28px 28px 0 0;padding:20px 20px 44px;animation:slideUp .35s cubic-bezier(.16,1,.3,1)">
+      <div style="width:40px;height:4px;background:rgba(255,255,255,.12);border-radius:4px;margin:0 auto 20px"></div>
+      <div style="font-family:'Bebas Neue',cursive;font-size:1.6em;letter-spacing:2px;margin-bottom:4px">Escolha seu Avatar</div>
+      <div style="font-size:.68em;color:rgba(240,232,255,.42);margin-bottom:18px">Aparece no menu principal</div>
+      <div class="avatar-grid" id="avatar-grid-inner"></div>
+      <button onclick="this.closest('div[style*=fixed]').remove()" style="width:100%;margin-top:16px;padding:14px;border-radius:12px;border:1px solid rgba(188,19,254,.4);background:transparent;color:rgba(188,19,254,1);font-family:'DM Sans',sans-serif;font-weight:700;font-size:.85em;cursor:pointer;text-transform:uppercase;letter-spacing:1px">Cancelar</button>
+    </div>`;
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', e => { if(e.target===overlay) overlay.remove(); });
+
+  const grid = overlay.querySelector('#avatar-grid-inner');
+  AVATAR_OPTS.forEach(emoji => {
+    const btn = document.createElement('div');
+    btn.className = 'avatar-opt' + (USER_AVATAR===emoji?' selected':'');
+    btn.textContent = emoji;
+    btn.onclick = () => {
+      USER_AVATAR = emoji;
+      localStorage.setItem('empire_avatar', emoji);
+      initAvatar();
+      overlay.remove();
+      showToast('Avatar atualizado! ' + emoji);
+    };
+    grid.appendChild(btn);
+  });
+}
+
+// ══════════════════════════════════════════════
+//  REGISTRO — BATER PONTO
+// ══════════════════════════════════════════════
+
+const TIPOS_REGISTRO = [
+  'COMENTÁRIOS (SINGLES, VÍDEOS, MÚSICAS)',
+  'COMENTÁRIOS (TODOS OS TIPOS DE ÁLBUM)',
+  'VÍDEOS (CLIPES, LYRICS E ALTERNATIVOS)',
+  'EMPIRE HITS EM POST',
+  'EMPIRE HITS EM POST + ESTRÉIAS'
+];
+
+const PLAYLISTS_SPOTIFY = [
+  "TOPO TODAY'S TOP HITS","TODAY'S TOP HITS","POP UP","ROCK SOLID","RAP CAVIAR",
+  "MINT","ARE & BE","VIVA LATINO","ALTERNATIVE PARTY","JUST HITS",
+  "NEW SONGS","WORKOUT TIME","RANDOM SONGS","THIS IS... (ARTIST)"
+];
+const PLAYLISTS_APPLE = [
+  "TOPO TODAY'S HITS","TODAY'S HITS","A-LIST POP","hyped<D>","RAPLIFE",
+  "danceXL","R&B NOW","!DalePlay!","ALT CTRL","JUST HITS",
+  "JUST NEW","GYM SONGS","RANDOM SONGS","JUST... (ARTIST)"
+];
+const PLAYLISTS_YOUTUBE = [
+  "Ad 5 segundos (Comercial/Vídeo)",
+  "Ad 30 segundos (Comercial/Vídeo)",
+  "Ad (Vídeo Completo)"
+];
+
+let REG_TAB = 'ponto';
+let REG_MUSICAS = [];  // músicas do artista atual
+let REG_ALBUMS  = [];  // álbuns disponíveis
+
+function openRegistro() {
+  if (!ARTISTA_ATUAL) return;
+  document.getElementById('reg-artist-name').textContent = ARTISTA_ATUAL.nome;
+  navigate('screen-registro');
+  switchRegTab('ponto', null);
+  // Carrega músicas e álbuns do artista em background
+  fetchJSON(`${SCRIPT_URL}?acao=lista_musicas&nome=${enc(ARTISTA_ATUAL.nome)}`).then(d => { if(Array.isArray(d)) REG_MUSICAS=d; }).catch(()=>{});
+  fetchJSON(`${SCRIPT_URL}?acao=lista_albums`).then(d => { if(Array.isArray(d)) REG_ALBUMS=d; }).catch(()=>{});
+}
+
+function switchRegTab(tab, btn) {
+  REG_TAB = tab;
+  if (btn) {
+    document.querySelectorAll('#screen-registro .tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+  const c = document.getElementById('reg-content');
+
+  if (tab === 'ponto')   c.innerHTML = renderFormPonto();
+  if (tab === 'pontos')  c.innerHTML = renderFormPontos();
+  if (tab === 'ecoin')   c.innerHTML = renderFormEcoin();
+  if (tab === 'musica')  c.innerHTML = renderFormMusica();
+  if (tab === 'album')   c.innerHTML = renderFormAlbum();
+  if (tab === 'retro')   c.innerHTML = renderFormRetroativo();
+}
+
+// ── FORM: BATER PONTO ──
+function renderFormPonto() {
+  const tipos = TIPOS_REGISTRO.map(t => `<option value="${t}">${t}</option>`).join('');
+  return `
+    <div class="reg-form">
+      <div class="reg-section">📝 REGISTRAR AÇÃO</div>
+      <div class="input-group">
+        <label>Seu nome de Off</label>
+        <input type="text" id="rp-nome" placeholder="Ex: João" value="${ARTISTA_ATUAL?.nome||''}">
+      </div>
+      <div class="input-group">
+        <label>Conteúdo registrado (link ou descrição)</label>
+        <input type="text" id="rp-conteudo" placeholder="Cole o link ou descreva a ação">
+      </div>
+      <div class="input-group">
+        <label>Tipo do Registro</label>
+        <select id="rp-tipo">${tipos}</select>
+      </div>
+      <div id="rp-codigo-wrap" class="input-group" style="display:none">
+        <label>Código Empire Hits</label>
+        <input type="text" id="rp-codigo" placeholder="Ex: EMP-LS0LUE">
+      </div>
+      <button class="btn-main" onclick="enviarPonto()">✅ REGISTRAR PONTO</button>
+    </div>
+    <script>
+      document.getElementById('rp-tipo').addEventListener('change', function() {
+        const wrap = document.getElementById('rp-codigo-wrap');
+        const precisaCodigo = this.value.includes('EMPIRE HITS');
+        wrap.style.display = precisaCodigo ? 'block' : 'none';
+      });
+    </scr` + `ipt>`;
+}
+
+async function enviarPonto() {
+  const nome     = document.getElementById('rp-nome')?.value.trim();
+  const conteudo = document.getElementById('rp-conteudo')?.value.trim();
+  const tipo     = document.getElementById('rp-tipo')?.value;
+  const codigo   = document.getElementById('rp-codigo')?.value.trim();
+  if (!nome || !tipo) { showToast('Preencha nome e tipo!', 'error'); return; }
+  const res = await apiCall({ acao:'bater_ponto', nome_off:nome, conteudo, tipo, codigo });
+  showToast(res || 'Ponto registrado!');
+}
+
+// ── FORM: PONTOS ──
+function renderFormPontos() {
+  const opts = REG_MUSICAS.length
+    ? REG_MUSICAS.map(m => `<option value="${m}">${m}</option>`).join('')
+    : `<option value="">Carregando músicas...</option>`;
+
+  return `
+    <div class="reg-form">
+      <div class="reg-section">📊 DISTRIBUIÇÃO DE PONTOS</div>
+      <div class="card" style="margin-bottom:16px;font-size:.75em;color:var(--muted);line-height:1.6">
+        Distribua os pontos disponíveis da música entre os charts. A soma deve ser ≤ 1.0 (100%). Ex: Hot100=0.30, Spotify=0.40, Apple=0.30.
+      </div>
+      <div class="input-group">
+        <label>Música</label>
+        <select id="pts-musica">${opts}</select>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="input-group">
+          <label>Hot 100 (0–1)</label>
+          <input type="number" id="pts-hot100" placeholder="Ex: 0.30" min="0" max="1" step="0.01">
+        </div>
+        <div class="input-group">
+          <label>Spotify (0–1)</label>
+          <input type="number" id="pts-spotify" placeholder="Ex: 0.40" min="0" max="1" step="0.01">
+        </div>
+        <div class="input-group">
+          <label>Apple Music (0–1)</label>
+          <input type="number" id="pts-apple" placeholder="Ex: 0.20" min="0" max="1" step="0.01">
+        </div>
+        <div class="input-group">
+          <label>YouTube (0–1)</label>
+          <input type="number" id="pts-youtube" placeholder="Ex: 0.05" min="0" max="1" step="0.01">
+        </div>
+        <div class="input-group">
+          <label>Digital Sales (0–1)</label>
+          <input type="number" id="pts-digital" placeholder="Ex: 0.05" min="0" max="1" step="0.01">
+        </div>
+        <div class="input-group">
+          <label>Billboard 200 (0–1)</label>
+          <input type="number" id="pts-bb200" placeholder="Ex: 0" min="0" max="1" step="0.01">
+        </div>
+      </div>
+      <div id="pts-soma" style="text-align:center;font-size:.75em;margin:8px 0;color:var(--muted)">Soma: 0.00 / 1.00</div>
+      <button class="btn-main" onclick="enviarPontos()">✅ DISTRIBUIR PONTOS</button>
+    </div>
+    <script>
+      ['hot100','spotify','apple','youtube','digital','bb200'].forEach(id => {
+        document.getElementById('pts-'+id)?.addEventListener('input', () => {
+          const ids = ['hot100','spotify','apple','youtube','digital','bb200'];
+          const soma = ids.reduce((s,i) => s + (parseFloat(document.getElementById('pts-'+i)?.value)||0), 0);
+          const el = document.getElementById('pts-soma');
+          if (el) { el.textContent = 'Soma: '+soma.toFixed(2)+' / 1.00'; el.style.color = soma > 1 ? 'var(--red)' : soma > 0.9 ? 'var(--green)' : 'var(--muted)'; }
+        });
+      });
+    </scr` + `ipt>`;
+}
+
+async function enviarPontos() {
+  const musica  = document.getElementById('pts-musica')?.value;
+  const hot100  = document.getElementById('pts-hot100')?.value;
+  const spotify = document.getElementById('pts-spotify')?.value;
+  const apple   = document.getElementById('pts-apple')?.value;
+  const youtube = document.getElementById('pts-youtube')?.value;
+  const digital = document.getElementById('pts-digital')?.value;
+  const bb200   = document.getElementById('pts-bb200')?.value;
+  if (!musica) { showToast('Selecione a música!', 'error'); return; }
+  const res = await apiCall({ acao:'distribuir_pontos', artista:ARTISTA_ATUAL?.nome, musica, hot100, spotify, apple, youtube, digital, bb200 });
+  showToast(res || 'Pontos distribuídos!');
+}
+
+// ── FORM: ECOIN + INVESTIMENTO ──
+function renderFormEcoin() {
+  const opts = REG_MUSICAS.length
+    ? REG_MUSICAS.map(m => `<option value="${m}">${m}</option>`).join('')
+    : `<option value="">Carregando músicas...</option>`;
+
+  const spotOpts   = ['', ...PLAYLISTS_SPOTIFY].map(p => `<option value="${p}">${p||'— Nenhuma —'}</option>`).join('');
+  const appleOpts  = ['', ...PLAYLISTS_APPLE].map(p => `<option value="${p}">${p||'— Nenhuma —'}</option>`).join('');
+  const ytOpts     = ['', ...PLAYLISTS_YOUTUBE].map(p => `<option value="${p}">${p||'— Nenhuma —'}</option>`).join('');
+
+  return `
+    <div class="reg-form">
+      <div class="reg-section">💎 INVESTIMENTO EM PLAYLIST</div>
+      <div class="input-group">
+        <label>Música</label>
+        <select id="ec-musica">${opts}</select>
+      </div>
+      <div class="input-group">
+        <label>🎵 Playlist Spotify 1</label>
+        <select id="ec-spot1">${spotOpts}</select>
+      </div>
+      <div class="input-group">
+        <label>🎵 Playlist Spotify 2 (opcional)</label>
+        <select id="ec-spot2">${spotOpts}</select>
+      </div>
+      <div class="input-group">
+        <label>🍎 Playlist Apple Music (opcional)</label>
+        <select id="ec-apple">${appleOpts}</select>
+      </div>
+      <div class="input-group">
+        <label>▶️ YouTube Ads (opcional)</label>
+        <select id="ec-yt">${ytOpts}</select>
+      </div>
+      <button class="btn-main btn-gold" onclick="enviarEcoin()">💎 REGISTRAR INVESTIMENTO</button>
+    </div>`;
+}
+
+async function enviarEcoin() {
+  const musica    = document.getElementById('ec-musica')?.value;
+  const playlist1 = document.getElementById('ec-spot1')?.value;
+  const playlist2 = document.getElementById('ec-spot2')?.value || document.getElementById('ec-apple')?.value;
+  const playlist3 = document.getElementById('ec-yt')?.value;
+  if (!musica) { showToast('Selecione a música!', 'error'); return; }
+  const res = await apiCall({ acao:'investir_playlist', artista:ARTISTA_ATUAL?.nome, musica, playlist1, playlist2, playlist3 });
+  showToast(res || 'Investimento registrado!');
+}
+
+// ── FORM: REGISTRO DE MÚSICA ──
+function renderFormMusica() {
+  const albumOpts = ['', ...REG_ALBUMS].map(a => `<option value="${a}">${a||'— Nenhum —'}</option>`).join('');
+  const artistsOpts = ALL_ARTISTS.map(a => `<option value="${a.nome}">${a.nome}</option>`).join('');
+
+  return `
+    <div class="reg-form">
+      <div class="reg-section">🎵 REGISTRAR MÚSICA</div>
+      <div class="card" style="margin-bottom:16px;font-size:.75em;color:var(--muted);line-height:1.6">
+        Esta ação envia a música diretamente para a EDIÇÃO CHARTS. A capa pode ser enviada aqui e ficará na pasta do Drive.
+      </div>
+      <div class="input-group">
+        <label>Título (formato: Artista - Música)</label>
+        <input type="text" id="rm-titulo" placeholder="Ex: Raven - Aurora">
+      </div>
+      <div class="input-group">
+        <label>Tipo de Single</label>
+        <select id="rm-tipo-single">
+          <option value="PÓS-ALBUM">Pós-álbum</option>
+          <option value="SINGLE">Single</option>
+          <option value="LEAD SINGLE">Lead Single</option>
+          <option value="PROMOTIONAL">Promotional</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>Tipo de Música</label>
+        <select id="rm-tipo-musica">
+          <option value="SOLO">Solo</option>
+          <option value="FEAT">Feat.</option>
+          <option value="COLLAB">Collab</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>Álbum (se pertencer a um)</label>
+        <select id="rm-album">${albumOpts}</select>
+      </div>
+      <div class="input-group">
+        <label>ACT Principal</label>
+        <select id="rm-act"><option value="${ARTISTA_ATUAL?.nome}">${ARTISTA_ATUAL?.nome}</option>${artistsOpts}</select>
+      </div>
+      <div class="input-group">
+        <label>Artista 2 (feat.)</label>
+        <select id="rm-art2"><option value="">— Nenhum —</option>${artistsOpts}</select>
+      </div>
+      <div class="input-group">
+        <label>Artista 3 (opcional)</label>
+        <select id="rm-art3"><option value="">— Nenhum —</option>${artistsOpts}</select>
+      </div>
+      <div class="input-group">
+        <label>Substituir música existente?</label>
+        <select id="rm-sub">
+          <option value="nao">Não (música nova)</option>
+          <option value="sim">Sim (remix, relançamento)</option>
+        </select>
+      </div>
+      <div id="rm-alvo-wrap" class="input-group" style="display:none">
+        <label>Qual música substituir?</label>
+        <input type="text" id="rm-alvo" placeholder="Nome exato da música">
+      </div>
+      <div class="input-group">
+        <label>Capa da música (foto 1:1)</label>
+        <input type="file" id="rm-capa" accept="image/*" style="padding:10px 16px">
+      </div>
+      <div id="rm-preview" style="display:none;margin:8px 0;text-align:center">
+        <img id="rm-preview-img" style="width:120px;height:120px;border-radius:12px;object-fit:cover;border:2px solid var(--purple)">
+      </div>
+      <button class="btn-main" onclick="enviarMusica()">🎵 REGISTRAR NOS CHARTS</button>
+    </div>
+    <script>
+      document.getElementById('rm-sub').addEventListener('change', function() {
+        document.getElementById('rm-alvo-wrap').style.display = this.value==='sim' ? 'block' : 'none';
+      });
+      document.getElementById('rm-capa').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = ev => {
+          document.getElementById('rm-preview').style.display = 'block';
+          document.getElementById('rm-preview-img').src = ev.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    </scr` + `ipt>`;
+}
+
+async function enviarMusica() {
+  const titulo     = document.getElementById('rm-titulo')?.value.trim();
+  const tipoSingle = document.getElementById('rm-tipo-single')?.value;
+  const tipoMusica = document.getElementById('rm-tipo-musica')?.value;
+  const album      = document.getElementById('rm-album')?.value;
+  const act        = document.getElementById('rm-act')?.value;
+  const art2       = document.getElementById('rm-art2')?.value;
+  const art3       = document.getElementById('rm-art3')?.value;
+  const sub        = document.getElementById('rm-sub')?.value;
+  const alvo       = document.getElementById('rm-alvo')?.value.trim();
+  const capaFile   = document.getElementById('rm-capa')?.files[0];
+
+  if (!titulo || !act) { showToast('Título e ACT são obrigatórios!', 'error'); return; }
+
+  showToast('Enviando...', '');
+
+  // Upload da capa primeiro (se houver)
+  let urlCapa = '';
+  if (capaFile) {
+    try {
+      const b64 = await fileToBase64(capaFile);
+      const resp = await fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({ acao:'upload_capa', base64:b64.split(',')[1], filename: titulo.replace(/[^a-zA-Z0-9]/g,'-')+'.jpg', mime_type: capaFile.type })
+      });
+      const uploadData = await resp.json();
+      if (uploadData.url_lh3) urlCapa = uploadData.url_lh3;
+    } catch(e) { console.warn('Upload capa falhou:', e); }
+  }
+
+  const res = await apiCall({
+    acao: 'registrar_musica',
+    titulo, tipo_single: tipoSingle, tipo_musica: tipoMusica,
+    album, act_principal: act,
+    artista2: art2, artista3: art3,
+    substituir: sub, musica_alvo: alvo,
+    url_capa: urlCapa
+  });
+  showToast(res || 'Música registrada!');
+}
+
+// ── FORM: REGISTRO DE ÁLBUM ──
+function renderFormAlbum() {
+  return `
+    <div class="reg-form">
+      <div class="reg-section">💿 REGISTRAR ÁLBUM</div>
+      <div class="input-group">
+        <label>Nome do Álbum (formato: Artista - Álbum)</label>
+        <input type="text" id="ra-nome" placeholder="Ex: Raven - 1997">
+      </div>
+      <div class="input-group">
+        <label>ACT Principal</label>
+        <input type="text" id="ra-act" value="${ARTISTA_ATUAL?.nome||''}" readonly style="opacity:.6">
+      </div>
+      <div class="input-group">
+        <label>Data de Lançamento</label>
+        <input type="date" id="ra-data">
+      </div>
+      <div class="input-group">
+        <label>Número de Faixas</label>
+        <input type="number" id="ra-faixas" placeholder="Ex: 12" min="1">
+      </div>
+      <div class="input-group">
+        <label>É um relançamento / special edition?</label>
+        <select id="ra-sub">
+          <option value="nao">Não (álbum novo)</option>
+          <option value="sim">Sim (relançamento)</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>Capa do Álbum (foto 1:1)</label>
+        <input type="file" id="ra-capa" accept="image/*" style="padding:10px 16px">
+      </div>
+      <div id="ra-preview" style="display:none;margin:8px 0;text-align:center">
+        <img id="ra-preview-img" style="width:120px;height:120px;border-radius:12px;object-fit:cover;border:2px solid var(--gold)">
+      </div>
+      <button class="btn-main btn-gold" onclick="enviarAlbum()">💿 REGISTRAR ÁLBUM</button>
+    </div>
+    <script>
+      document.getElementById('ra-capa').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = ev => {
+          document.getElementById('ra-preview').style.display = 'block';
+          document.getElementById('ra-preview-img').src = ev.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    </scr` + `ipt>`;
+}
+
+async function enviarAlbum() {
+  const nome     = document.getElementById('ra-nome')?.value.trim();
+  const act      = document.getElementById('ra-act')?.value.trim();
+  const data     = document.getElementById('ra-data')?.value;
+  const faixas   = document.getElementById('ra-faixas')?.value;
+  const sub      = document.getElementById('ra-sub')?.value;
+  const capaFile = document.getElementById('ra-capa')?.files[0];
+
+  if (!nome || !act) { showToast('Nome do álbum é obrigatório!', 'error'); return; }
+
+  showToast('Enviando...', '');
+
+  let urlCapa = '';
+  if (capaFile) {
+    try {
+      const b64 = await fileToBase64(capaFile);
+      const resp = await fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({ acao:'upload_capa', base64:b64.split(',')[1], filename: nome.replace(/[^a-zA-Z0-9]/g,'-')+'.jpg', mime_type: capaFile.type })
+      });
+      const uploadData = await resp.json();
+      if (uploadData.url_lh3) urlCapa = uploadData.url_lh3;
+    } catch(e) { console.warn('Upload capa falhou:', e); }
+  }
+
+  const res = await apiCall({
+    acao: 'registrar_album',
+    act_principal: act, nome_album: nome,
+    data_lancamento: data, num_faixas: faixas,
+    substituir: sub, url_capa: urlCapa
+  });
+  showToast(res || 'Álbum registrado!');
+}
+
+// ── FORM: RETROATIVO ──
+function renderFormRetroativo() {
+  const tipos = TIPOS_REGISTRO.map(t => `<option value="${t}">${t}</option>`).join('');
+  return `
+    <div class="reg-form">
+      <div class="reg-section">📅 REGISTRO RETROATIVO</div>
+      <div class="card" style="margin-bottom:16px;background:rgba(188,19,254,.07);border-color:rgba(188,19,254,.3)">
+        <div style="font-size:.75em;color:var(--muted);line-height:1.7">
+          Use para registrar ações de semanas anteriores que não foram registradas no momento. Confie na sua integridade — cada registro é de sua responsabilidade.
+        </div>
+      </div>
+      <div class="input-group">
+        <label>Seu nome de Off</label>
+        <input type="text" id="rv-nome" placeholder="Ex: João" value="${ARTISTA_ATUAL?.nome||''}">
+      </div>
+      <div class="input-group">
+        <label>Semana de referência (data de qualquer dia da semana)</label>
+        <input type="date" id="rv-data">
+      </div>
+      <div class="input-group">
+        <label>Tipo do Registro</label>
+        <select id="rv-tipo">${tipos}</select>
+      </div>
+      <div class="input-group">
+        <label>Conteúdo (link ou descrição)</label>
+        <input type="text" id="rv-conteudo" placeholder="Cole o link ou descreva a ação">
+      </div>
+      <div class="input-group">
+        <label>Código Empire Hits (se necessário)</label>
+        <input type="text" id="rv-codigo" placeholder="Deixe em branco se não aplicável">
+      </div>
+      <div class="input-group">
+        <label>Observação (por que é retroativo?)</label>
+        <input type="text" id="rv-obs" placeholder="Ex: Esqueci de registrar na época">
+      </div>
+      <button class="btn-main" style="background:linear-gradient(135deg,var(--purple2),var(--purple))" onclick="enviarRetroativo()">📅 REGISTRAR RETROATIVO</button>
+    </div>`;
+}
+
+async function enviarRetroativo() {
+  const nome     = document.getElementById('rv-nome')?.value.trim();
+  const data     = document.getElementById('rv-data')?.value;
+  const tipo     = document.getElementById('rv-tipo')?.value;
+  const conteudo = document.getElementById('rv-conteudo')?.value.trim();
+  const codigo   = document.getElementById('rv-codigo')?.value.trim();
+  const obs      = document.getElementById('rv-obs')?.value.trim();
+  if (!nome || !data || !tipo) { showToast('Preencha nome, data e tipo!', 'error'); return; }
+  const res = await apiCall({ acao:'registrar_retroativo', nome_off:nome, semana_data:data, tipo, conteudo, codigo, observacao:obs });
+  showToast(res || 'Retroativo registrado!');
+}
+
+// ── HELPER: File → base64 ──
+function fileToBase64(file) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload  = () => res(r.result);
+    r.onerror = () => rej(new Error('Erro ao ler arquivo'));
+    r.readAsDataURL(file);
+  });
+}
+
+// ══════════════════════════════════════════════
+//  ARTISTAS SEM TELEGRAM ID
+// ══════════════════════════════════════════════
+
+async function loadArtistasSemId() {
+  const c = document.getElementById('sem-id-container');
+  c.innerHTML = skeletons(5, 60);
+  try {
+    const data = await fetchJSON(`${SCRIPT_URL}?acao=artistas_sem_id`);
+    if (!Array.isArray(data) || !data.length) {
+      c.innerHTML = '<div class="empty-state"><div class="empty-icon">✅</div><div class="empty-text">Todos os artistas já têm Telegram ID vinculado.</div></div>';
+      return;
+    }
+    c.innerHTML = `
+      <div style="font-size:.75em;color:var(--muted);margin-bottom:16px;line-height:1.6">
+        ${data.length} artista(s) sem jogador vinculado. Clique em "Sou eu!" para vincular seu ID.
+      </div>` +
+      data.map(a => {
+        const ini = (a.nome||'?').split(' ').map(p=>p[0]).slice(0,2).join('').toUpperCase();
+        return `<div class="artist-list-item">
+          <div style="width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,#8a00d4,#bc13fe);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9em;color:#fff;flex-shrink:0">${ini}</div>
+          <div style="flex:1">
+            <div class="artist-list-name">${a.nome}</div>
+            <div class="artist-list-label">${a.gravadora||'Independent'}</div>
+          </div>
+          <button onclick="vincularArtistaNome('${a.nome.replace(/'/g,"\'")}')" style="background:rgba(188,19,254,.2);border:1px solid rgba(188,19,254,.4);color:var(--purple);padding:8px 14px;border-radius:20px;font-size:.7em;font-weight:700;cursor:pointer;flex-shrink:0">Sou eu! →</button>
+        </div>`;
+      }).join('');
+  } catch(e) {
+    c.innerHTML = '<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-text">Erro ao carregar.</div></div>';
+  }
+}
+
+async function vincularArtistaNome(nome) {
+  if (!TG_ID) { showToast('Abra o app pelo Telegram para vincular.', 'error'); return; }
+  if (!confirm('Confirmar: você é o jogador de "'+nome+'"?')) return;
+  const res = await apiCall({ acao:'vincular_artista', nome, telegram_id: TG_ID });
+  showToast(res || 'Vinculado!');
+  if (res && res.includes('✅')) {
+    setTimeout(() => { loadAllArtists(); navigate('screen-artists'); }, 1500);
+  }
+  loadArtistasSemId();
+}
+
 </script>
 </body>
 </html>
