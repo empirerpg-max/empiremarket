@@ -729,18 +729,6 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
   <div class="tutorial-step"><div class="tut-num">5</div><div><div class="tut-title">⚔️ Duelo por Pesos</div><div class="tut-text">Score calculado por posição: #1=100pts, #2=95pts, #5=80pts, #10=50pts, #100=1pt. Totalmente independente de épocas ou pontuações históricas.</div></div></div>
   <div class="tutorial-step"><div class="tut-num">6</div><div><div class="tut-title">🎰 Empire Bet</div><div class="tut-text">Toda semana preveja as posições do Hot 100. Posição exata=2pts, ±1=1pt, ±2=0.5pt. Multiplicador vai de 1x a 3x conforme acertos.</div></div></div>
 </div>
-
-  </div>
-  <div class="tab-bar">
-    <button class="tab-btn active" onclick="switchRegTab('ponto',this)">📝 Ponto</button>
-    <button class="tab-btn" onclick="switchRegTab('pontos',this)">📊 Pontos</button>
-    <button class="tab-btn" onclick="switchRegTab('ecoin',this)">💎 eCoin</button>
-    <button class="tab-btn" onclick="switchRegTab('musica',this)">🎵 Música</button>
-    <button class="tab-btn" onclick="switchRegTab('album',this)">💿 Álbum</button>
-    <button class="tab-btn" onclick="switchRegTab('retro',this)">📅 Retroativo</button>
-  </div>
-  <div id="reg-content"></div>
-</div>
   </div>
   <div class="card" style="margin-bottom:20px">
     <div style="font-size:.78em;color:var(--muted);line-height:1.7">Estes artistas ainda não têm um jogador vinculado. Se algum deles é seu, clique para vincular seu Telegram ID.</div>
@@ -1220,8 +1208,18 @@ async function bootApp() {
 // ══════════════════════════════════════════════
 function navigate(id) {
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+  const el = document.getElementById(id);
+  if (!el) { console.warn('Tela não encontrada:', id); return; }
+  el.classList.add('active');
   window.scrollTo(0,0);
+  // Hooks de inicialização por tela
+  if (id === 'screen-ops')         setTimeout(initOpsPanel, 0);
+  if (id === 'screen-ops-ponto')   setTimeout(initPontoForm, 0);
+  if (id === 'screen-ops-pontos')  setTimeout(loadPontosPainel, 0);
+  if (id === 'screen-ops-ecoin')   setTimeout(loadEcoinForm, 0);
+  if (id === 'screen-ops-musica')  setTimeout(initMusicaForm, 0);
+  if (id === 'screen-ops-album')   setTimeout(initAlbumForm, 0);
+  if (id === 'screen-sem-id')      setTimeout(loadArtistasSemId, 0);
 }
 function openHub()     { if(ARTISTA_ATUAL){document.getElementById('hub-artist-name').textContent=ARTISTA_ATUAL.nome;document.getElementById('hub-saldo').textContent=formatEC(ARTISTA_ATUAL.saldo);} navigate('screen-hub'); }
 function openMarket()  { navigate('screen-market'); loadMuralComposicoes(); }
@@ -2832,17 +2830,7 @@ function fileToBase64(file) {
   });
 }
 
-// Hooks de navegação — inicializa formulários ao entrar nas telas
-const _origNavigate = navigate;
-function navigate(id) {
-  _origNavigate(id);
-  if (id === 'screen-ops')         initOpsPanel();
-  if (id === 'screen-ops-ponto')   initPontoForm();
-  if (id === 'screen-ops-pontos')  loadPontosPainel();
-  if (id === 'screen-ops-ecoin')   loadEcoinForm();
-  if (id === 'screen-ops-musica')  initMusicaForm();
-  if (id === 'screen-ops-album')   initAlbumForm();
-}
+// Hooks de navegação integrados direto na função navigate principal
 
 </script>
 </body>
